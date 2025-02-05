@@ -125,8 +125,8 @@ class _CategoryState extends State<Category> {
             Center(
               //pickimage code start...
               child: SizedBox(
-                height: 120,
-                width: 120,
+                height: 100,
+                width: 100,
                 child: pickedImage == null
                     ? GestureDetector(
                         onTap: handleImagePick,

@@ -5,7 +5,6 @@ import 'package:admin_triveni/Screen/booking.dart';
 import 'package:admin_triveni/Screen/category.dart';
 import 'package:admin_triveni/Screen/complaint.dart';
 import 'package:admin_triveni/Screen/dashboard.dart';
-import 'package:admin_triveni/Screen/district.dart';
 import 'package:admin_triveni/Screen/pattribute.dart';
 import 'package:admin_triveni/Screen/product.dart';
 import 'package:admin_triveni/Screen/rejectedlist.dart';
@@ -25,7 +24,6 @@ class _HomepageState extends State<Homepage> {
   List<String> pageName = [
     'Dashboard',
     'Account',
-    'District',
     'Category',
     'Subcategory',
     'Attribute',
@@ -40,12 +38,11 @@ class _HomepageState extends State<Homepage> {
   List<IconData> pageIcon = [
     Icons.home,
     Icons.supervised_user_circle,
-    Icons.location_city,
     Icons.category_outlined,
+    Icons.category_rounded,
     Icons.subdirectory_arrow_left,
-    Icons.edit_attributes,
-    Icons.add,
-    Icons.subject,
+    Icons.subdirectory_arrow_right,
+    Icons.present_to_all_sharp,
     Icons.online_prediction_sharp,
     Icons.sync_problem,
     Icons.person_add_alt_sharp,
@@ -55,7 +52,6 @@ class _HomepageState extends State<Homepage> {
   List<Widget> pageContent = [
     Dashboard(),
     Account(),
-    District(),
     Category(),
     Subcategory(),
     Attribute(),
@@ -71,14 +67,18 @@ class _HomepageState extends State<Homepage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: const Color.fromARGB(255, 54, 3, 116),
         title: Text('Admin Dashboard'),
+        titleTextStyle: TextStyle(color: Colors.yellowAccent, fontSize: 32),
       ),
       body: Row(
         children: [
           Expanded(
             flex: 1,
             child: Container(
+              // decoration: BoxDecoration(
               color: Colors.yellowAccent,
+              // shape: BoxShape.rectangle, ),
               child: ListView.builder(
                 itemCount: pageName.length,
                 itemBuilder: (context, index) {
@@ -89,8 +89,13 @@ class _HomepageState extends State<Homepage> {
                         selectedIndex = index;
                       });
                     },
-                    leading: Icon(pageIcon[index]),
+                    leading: Icon(
+                      pageIcon[index],
+                      color: const Color.fromARGB(255, 54, 3, 116),
+                    ),
                     title: Text(pageName[index]),
+                    textColor: const Color.fromARGB(255, 54, 3, 116),
+                    titleTextStyle: TextStyle(fontSize: 18),
                   );
                 },
               ),

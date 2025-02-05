@@ -29,7 +29,7 @@ class _AttributeState extends State<Attribute> {
         backgroundColor: const Color.fromARGB(255, 54, 3, 116),
       ));
       attributeController.clear();
-      fetchAttribute();
+      fetchattribute();
     } catch (e) {
       print("Error Attribute: $e");
     }
@@ -42,11 +42,36 @@ class _AttributeState extends State<Attribute> {
         content: Text("Deleted"),
         backgroundColor: const Color.fromARGB(255, 54, 3, 116),
       ));
-      fetchAttribute();
+      fetchattribute();
     } catch (e) {}
   }
 
-  Future<void> fetchAttribute() async {
+  int eid = 0;
+
+  Future<void> update() async {
+    try {
+      await supabase.from('tbl_attribute').update({
+        'attribute_name': attributeController.text,
+        //'category_id': selectedCat,
+        //'subcategory_id': selectedSub,
+      }).eq('attribute_id', eid);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Updated"),
+        backgroundColor: const Color.fromARGB(255, 54, 3, 116),
+      ));
+      // fetchcategory();
+      // fetchsubcategory();
+      fetchattribute();
+      attributeController.clear();
+      setState(() {
+        eid = 0;
+      });
+    } catch (e) {
+      print("Error updating data: $e");
+    }
+  }
+
+  Future<void> fetchattribute() async {
     try {
       final response =
           await supabase.from('tbl_attribute').select(" * ,tbl_subcategory(*)");
@@ -85,111 +110,141 @@ class _AttributeState extends State<Attribute> {
     // TODO: implement initState
     super.initState();
     fetchcategory();
-    fetchAttribute();
+    fetchattribute();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Form(
-            child: ListView(
-      padding: EdgeInsets.all(20),
-      children: [
-        DropdownButtonFormField(
-            style: TextStyle(color: Colors.white),
-            dropdownColor: Colors.green,
-            decoration: InputDecoration(
-              fillColor: const Color.fromARGB(255, 54, 3, 116),
-              filled: true,
-              labelText: "Select category",
-              labelStyle: TextStyle(color: Colors.yellowAccent),
+      body: Form(
+        child: ListView(
+          padding: EdgeInsets.all(20),
+          children: [
+            DropdownButtonFormField(
+                style: TextStyle(color: Colors.white),
+                dropdownColor: Colors.green,
+                decoration: InputDecoration(
+                  fillColor: const Color.fromARGB(255, 54, 3, 116),
+                  filled: true,
+                  labelText: "Select category",
+                  labelStyle: TextStyle(color: Colors.yellowAccent),
+                ),
+                value: selectedCat,
+                items: categories.map((cat) {
+                  return DropdownMenuItem(
+                    child: Text(
+                      cat['category_name'],
+                      style: TextStyle(),
+                    ),
+                    value: cat['category_id'].toString(),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  fetchsubcategory(value!);
+                  setState(() {
+                    selectedCat = value;
+                  });
+                }),
+            SizedBox(
+              height: 20,
             ),
-            value: selectedCat,
-            items: categories.map((cat) {
-              return DropdownMenuItem(
-                child: Text(
-                  cat['category_name'],
-                  style: TextStyle(),
-                ),
-                value: cat['category_id'].toString(),
-              );
-            }).toList(),
-            onChanged: (value) {
-              fetchsubcategory(value!);
-              setState(() {
-                selectedCat = value;
-              });
-            }),
-        SizedBox(
-          height: 20,
+            DropdownButtonFormField(
+                style: TextStyle(color: Colors.white),
+                dropdownColor: Colors.greenAccent,
+                decoration: InputDecoration(
+                    fillColor: const Color.fromARGB(255, 54, 3, 116),
+                    filled: true,
+                    labelText: "Select Subcategory",
+                    labelStyle: TextStyle(color: Colors.yellowAccent)),
+                value: selectedSub,
+                items: subcategories.map((sub) {
+                  return DropdownMenuItem(
+                    child: Text(
+                      sub['subcategory_name'],
+                      style: TextStyle(),
+                    ),
+                    value: sub['subcategory_id'].toString(),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    selectedSub = value;
+                  });
+                }),
+            SizedBox(
+              height: 20,
+            ),
+            TextFormField(
+              style: TextStyle(color: Colors.white),
+              controller: attributeController,
+              keyboardType: TextInputType.name,
+              decoration: InputDecoration(
+                  hintText: "Enter Attribute Name",
+                  hintStyle:
+                      TextStyle(color: const Color.fromARGB(255, 248, 240, 10)),
+                  border: OutlineInputBorder(),
+                  filled: true,
+                  fillColor: const Color.fromARGB(255, 54, 3, 116)),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            ElevatedButton(
+                onPressed: () {
+                  if (eid == 0) {
+                    submit();
+                  } else {
+                    update();
+                  }
+                },
+                child: Text("Submit")),
+            SizedBox(
+              height: 50,
+            ),
+            ListView.builder(
+              itemCount: attributes.length,
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                final data = attributes[index];
+                return ListTile(
+                  leading: Text((index + 1).toString()),
+                  title: Text(data['attribute_name']),
+                  subtitle: Text(data['tbl_subcategory']['subcategory_name']),
+                  trailing: SizedBox(
+                    width: 80,
+                    child: Row(
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            setState(() {
+                              eid = data['attribute_id'];
+                              attributeController.text = data['attribute_name'];
+                              selectedCat = data['tbl_category']['category_id']
+                                  .toString();
+                              selectedSub = data['tbl_subcategory']
+                                      ['subcategory_id']
+                                  .toString();
+                            });
+                          },
+                          icon: Icon(Icons.edit),
+                          color: const Color.fromARGB(255, 27, 1, 69),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            delete(data['attribute_id']);
+                          },
+                          icon: Icon(Icons.delete),
+                          color: const Color.fromARGB(255, 250, 34, 10),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            )
+          ],
         ),
-        DropdownButtonFormField(
-            style: TextStyle(color: Colors.white),
-            decoration: InputDecoration(
-                fillColor: const Color.fromARGB(255, 54, 3, 116),
-                filled: true,
-                labelText: "Select Subcategory",
-                labelStyle: TextStyle(color: Colors.yellowAccent)),
-            value: selectedSub,
-            items: subcategories.map((sub) {
-              return DropdownMenuItem(
-                child: Text(
-                  sub['subcategory_name'],
-                  style: TextStyle(),
-                ),
-                value: sub['subcategory_id'].toString(),
-              );
-            }).toList(),
-            onChanged: (value) {
-              setState(() {
-                selectedSub = value;
-              });
-            }),
-        SizedBox(
-          height: 20,
-        ),
-        TextFormField(
-          style: TextStyle(color: Colors.white),
-          controller: attributeController,
-          keyboardType: TextInputType.name,
-          decoration: InputDecoration(
-              hintText: "Enter Attribute Name",
-              hintStyle:
-                  TextStyle(color: const Color.fromARGB(255, 248, 240, 10)),
-              border: OutlineInputBorder(),
-              filled: true,
-              fillColor: const Color.fromARGB(255, 54, 3, 116)),
-        ),
-        SizedBox(
-          height: 20,
-        ),
-        ElevatedButton(
-            onPressed: () {
-              submit();
-            },
-            child: Text("Submit")),
-        SizedBox(
-          height: 50,
-        ),
-        ListView.builder(
-          itemCount: attributes.length,
-          shrinkWrap: true,
-          itemBuilder: (context, index) {
-            final data = attributes[index];
-            return ListTile(
-              leading: Text((index + 1).toString()),
-              title: Text(data['attribute_name']),
-              subtitle: Text(data['tbl_subcategory']['subcategory_name']),
-              trailing: IconButton(
-                  onPressed: () {
-                    delete(data['attribute_id']);
-                  },
-                  icon: Icon(Icons.delete,
-                      color: const Color.fromARGB(255, 255, 21, 0))),
-            );
-          },
-        )
-      ],
-    )));
+      ),
+    );
   }
 }

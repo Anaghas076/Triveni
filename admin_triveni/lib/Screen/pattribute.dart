@@ -28,19 +28,8 @@ class _PattributeState extends State<Pattribute> {
       pattributeController.clear();
       fetchpattribute();
     } catch (e) {
-      print("Error Pattribute: $e");
+      print("Error pattribute: $e");
     }
-  }
-
-  Future<void> delete(int id) async {
-    try {
-      await supabase.from('tbl_pattribute').delete().eq('pattribute_id', id);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("Deleted"),
-        backgroundColor: const Color.fromARGB(255, 54, 3, 116),
-      ));
-      fetchpattribute();
-    } catch (e) {}
   }
 
   Future<void> fetchpattribute() async {
@@ -66,6 +55,40 @@ class _PattributeState extends State<Pattribute> {
     }
   }
 
+  Future<void> delete(int id) async {
+    try {
+      await supabase.from('tbl_pattribute').delete().eq('pattribute_id', id);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Deleted"),
+        backgroundColor: const Color.fromARGB(255, 54, 3, 116),
+      ));
+      fetchpattribute();
+    } catch (e) {}
+  }
+
+  int eid = 0;
+
+  Future<void> update() async {
+    try {
+      await supabase.from('tbl_pattribute').update({
+        'pattribute_name': pattributeController.text,
+        'attribute_id': selectedAtt,
+      }).eq('pattribute_id', eid);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Updated"),
+        backgroundColor: const Color.fromARGB(255, 54, 3, 116),
+      ));
+      fetchattribute();
+      fetchpattribute();
+      pattributeController.clear();
+      setState(() {
+        eid = 0;
+      });
+    } catch (e) {
+      print("Error updating data: $e");
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -77,69 +100,107 @@ class _PattributeState extends State<Pattribute> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Form(
-            child: ListView(
-      padding: EdgeInsets.all(20),
-      children: [
-        DropdownButtonFormField(
-            value: selectedAtt,
-            items: attributes.map((att) {
-              return DropdownMenuItem(
-                child: Text(
-                  att['attribute_name'],
+      body: Form(
+        child: ListView(
+          padding: EdgeInsets.all(20),
+          children: [
+            DropdownButtonFormField(
+                style: TextStyle(color: Colors.white),
+                dropdownColor: Colors.green,
+                decoration: InputDecoration(
+                  fillColor: const Color.fromARGB(255, 54, 3, 116),
+                  filled: true,
+                  labelText: "Select Attribute",
+                  labelStyle: TextStyle(color: Colors.yellowAccent),
                 ),
-                value: att['attribute_id'].toString(),
-              );
-            }).toList(),
-            onChanged: (value) {
-              setState(() {
-                selectedAtt = value;
-              });
-            }),
-        SizedBox(
-          height: 20,
+                value: selectedAtt,
+                items: attributes.map((att) {
+                  return DropdownMenuItem(
+                    child: Text(
+                      att['attribute_name'],
+                      style: TextStyle(),
+                    ),
+                    value: att['attribute_id'].toString(),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    selectedAtt = value;
+                  });
+                }),
+            SizedBox(
+              height: 20,
+            ),
+            TextFormField(
+              style: TextStyle(color: Colors.white),
+              controller: pattributeController,
+              keyboardType: TextInputType.name,
+              decoration: InputDecoration(
+                  hintText: "Enter pattribute Name",
+                  hintStyle:
+                      TextStyle(color: const Color.fromARGB(255, 248, 240, 10)),
+                  border: OutlineInputBorder(),
+                  filled: true,
+                  fillColor: const Color.fromARGB(255, 54, 3, 116)),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            ElevatedButton(
+                onPressed: () {
+                  if (eid == 0) {
+                    submit();
+                  } else {
+                    update();
+                  }
+                },
+                child: Text("Submit")),
+            SizedBox(
+              height: 50,
+            ),
+            ListView.builder(
+              itemCount: pattributes.length,
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                final data = pattributes[index];
+                return ListTile(
+                  leading: Text((index + 1).toString()),
+                  title: Text(data['pattribute_name']),
+                  subtitle: Text(data['tbl_attribute']['attribute_name']),
+                  trailing: SizedBox(
+                    width: 80,
+                    child: Row(
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            setState(() {
+                              eid = data['pattribute_id'];
+                              pattributeController.text =
+                                  data['pattribute_name'];
+                              selectedAtt = data['tbl_attribute']
+                                      ['attribute_id']
+                                  .toString();
+                            });
+                          },
+                          icon: Icon(Icons.edit),
+                          color: const Color.fromARGB(255, 27, 1, 69),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            delete(data['pattribute_id']);
+                          },
+                          icon: Icon(Icons.delete),
+                          color: const Color.fromARGB(255, 250, 34, 10),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            )
+          ],
         ),
-        TextFormField(
-          controller: pattributeController,
-          keyboardType: TextInputType.name,
-          decoration: InputDecoration(
-              hintText: "Enter Pattribute Name",
-              hintStyle:
-                  TextStyle(color: const Color.fromARGB(255, 248, 240, 10)),
-              border: OutlineInputBorder(),
-              filled: true,
-              fillColor: const Color.fromARGB(255, 54, 3, 116)),
-        ),
-        SizedBox(
-          height: 20,
-        ),
-        ElevatedButton(
-            onPressed: () {
-              submit();
-            },
-            child: Text("Submit")),
-        SizedBox(
-          height: 50,
-        ),
-        ListView.builder(
-          itemCount: pattributes.length,
-          shrinkWrap: true,
-          itemBuilder: (context, index) {
-            final data = pattributes[index];
-            return ListTile(
-              leading: Text((index + 1).toString()),
-              title: Text(data['pattribute_name']),
-              subtitle: Text(data['tbl_attribute']['attribute_name']),
-              trailing: IconButton(
-                  onPressed: () {
-                    delete(data['pattribute_id']);
-                  },
-                  icon: Icon(Icons.delete,
-                      color: const Color.fromARGB(255, 255, 21, 0))),
-            );
-          },
-        )
-      ],
-    )));
+      ),
+    );
   }
 }

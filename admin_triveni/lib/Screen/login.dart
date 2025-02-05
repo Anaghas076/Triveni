@@ -70,7 +70,9 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   TextFormField(
                     controller: _emailController,
-                    style: TextStyle(color: const Color.fromARGB(255, 0, 0, 0)),
+                    style: TextStyle(
+                        color: const Color.fromARGB(255, 3, 1, 68),
+                        fontWeight: FontWeight.bold),
                     decoration: InputDecoration(
                       enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
@@ -94,8 +96,9 @@ class _LoginPageState extends State<LoginPage> {
                   TextFormField(
                     controller: _passwordController,
                     keyboardType: TextInputType.visiblePassword,
-                    style:
-                        TextStyle(color: const Color.fromARGB(255, 10, 10, 10)),
+                    style: TextStyle(
+                        color: const Color.fromARGB(255, 3, 1, 68),
+                        fontWeight: FontWeight.bold),
                     decoration: InputDecoration(
                       enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(30),
