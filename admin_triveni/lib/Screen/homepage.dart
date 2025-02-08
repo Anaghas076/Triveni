@@ -1,3 +1,4 @@
+import 'package:admin_triveni/Screen/landingpage.dart';
 import 'package:admin_triveni/Screen/acceptedlist.dart';
 import 'package:admin_triveni/Screen/account.dart';
 import 'package:admin_triveni/Screen/attribute.dart';
@@ -26,6 +27,7 @@ class _HomepageState extends State<Homepage> {
     'Account',
     'Category',
     'Subcategory',
+    'LandingPage',
     'Attribute',
     'Pattribute',
     'Product',
@@ -42,6 +44,7 @@ class _HomepageState extends State<Homepage> {
     Icons.category_rounded,
     Icons.subdirectory_arrow_left,
     Icons.subdirectory_arrow_right,
+    Icons.subdirectory_arrow_right,
     Icons.present_to_all_sharp,
     Icons.online_prediction_sharp,
     Icons.sync_problem,
@@ -54,6 +57,7 @@ class _HomepageState extends State<Homepage> {
     Account(),
     Category(),
     Subcategory(),
+    Landingpage(),
     Attribute(),
     Pattribute(),
     Product(),
@@ -77,7 +81,7 @@ class _HomepageState extends State<Homepage> {
             flex: 1,
             child: Container(
               // decoration: BoxDecoration(
-              color: Colors.yellowAccent,
+              color: Colors.yellowAccent, //side bar
               // shape: BoxShape.rectangle, ),
               child: ListView.builder(
                 itemCount: pageName.length,

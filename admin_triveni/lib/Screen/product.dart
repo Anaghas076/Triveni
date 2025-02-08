@@ -1,8 +1,5 @@
-import 'dart:io';
-import 'dart:typed_data';
-
+import 'package:admin_triveni/Screen/addbutton.dart';
 import 'package:admin_triveni/main.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 class Product extends StatefulWidget {
@@ -25,112 +22,15 @@ class _ProductState extends State<Product> {
   String? selectedCat;
   String? selectedSub;
 
-  PlatformFile? pickedImage;
-
-  // Handle File Upload Process
-  Future<void> handleImagePick() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      allowMultiple: false, // Only single file upload
-    );
-    if (result != null) {
-      setState(() {
-        pickedImage = result.files.first;
-      });
-    }
-  }
-
-  Future<String?> photoUpload(String name) async {
+  Future<void> Add() async {
     try {
-      final bucketName = 'product'; // Replace with your bucket name
-      final filePath = "$name-${pickedImage!.name}";
-      await supabase.storage.from(bucketName).uploadBinary(
-            filePath,
-            pickedImage!.bytes!, // Use file.bytes for Flutter Web
-          );
-      final publicUrl =
-          supabase.storage.from(bucketName).getPublicUrl(filePath);
-      // await updateImage(uid, publicUrl);
-      return publicUrl;
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Addbutton(),
+          ));
     } catch (e) {
-      print("Error photo upload: $e");
-      return null;
-    }
-  }
-
-  Future<void> submit() async {
-    try {
-      String name = nameController.text;
-      String code = codeController.text;
-      String price = priceController.text;
-      String description = descriptionController.text;
-      String? url = await photoUpload(name);
-
-      print(name);
-      print(code);
-      print(price);
-      print(description);
-
-      await supabase.from('tbl_product').insert({
-        'product_name': name,
-        'product_code': code,
-        'product_price': price,
-        'product_photo': url,
-        'product_description': description,
-        'subcategory_id': selectedSub,
-      });
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("Inserted"),
-        backgroundColor: const Color.fromARGB(255, 54, 3, 116),
-      ));
-      nameController.clear();
-      codeController.clear();
-      priceController.clear();
-      descriptionController.clear();
-      fetchproduct();
-    } catch (e) {
-      print("Error Product: $e");
-    }
-  }
-
-  Future<void> delete(int id) async {
-    try {
-      await supabase.from('tbl_product').delete().eq('product_id', id);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("Deleted"),
-        backgroundColor: const Color.fromARGB(255, 54, 3, 116),
-      ));
-      fetchproduct();
-    } catch (e) {}
-  }
-
-  int eid = 0;
-
-  Future<void> update() async {
-    try {
-      await supabase.from('tbl_product').update({
-        'product_name': nameController.text,
-        'product_code': codeController.text,
-        'product_price': priceController.text,
-        'product_description': descriptionController.text,
-        'category_id': selectedCat,
-        'subcategory_id': selectedSub,
-      }).eq('product_id', eid);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("Updated"),
-        backgroundColor: const Color.fromARGB(255, 54, 3, 116),
-      ));
-      fetchproduct();
-      // fetchsubcategory(String id);
-      fetchcategory();
-      nameController.clear();
-      codeController.clear();
-      priceController.clear();
-      descriptionController.clear();
-      setState(() {
-        eid = 0;
-      });
-    } catch (e) {
-      print("Error updating data: $e");
+      print("Error: $e");
     }
   }
 
@@ -141,7 +41,9 @@ class _ProductState extends State<Product> {
       setState(() {
         products = response;
       });
-    } catch (e) {}
+    } catch (e) {
+      print("Error: $e");
+    }
   }
 
   Future<void> fetchsubcategory(String id) async {
@@ -152,7 +54,9 @@ class _ProductState extends State<Product> {
       setState(() {
         subcategories = response;
       });
-    } catch (e) {}
+    } catch (e) {
+      print("Error: $e");
+    }
   }
 
   Future<void> fetchcategory() async {
@@ -173,225 +77,47 @@ class _ProductState extends State<Product> {
     // TODO: implement initState
     super.initState();
     fetchcategory();
+    //fetchsubcategory(String id);
     fetchproduct();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Form(
-        child: ListView(
-          padding: EdgeInsets.all(20),
-          children: [
-            Center(
-              //pickimage code start...
-              child: SizedBox(
-                height: 100,
-                width: 100,
-                child: pickedImage == null
-                    ? GestureDetector(
-                        onTap: handleImagePick,
-                        child: Icon(
-                          Icons.add_a_photo,
-                          color: Color.fromARGB(255, 19, 1, 83),
-                          size: 50,
-                        ),
-                      )
-                    : GestureDetector(
-                        onTap: handleImagePick,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(100),
-                          child: pickedImage!.bytes != null
-                              ? Image.memory(
-                                  Uint8List.fromList(
-                                      pickedImage!.bytes!), // For web
-                                  fit: BoxFit.cover,
-                                )
-                              : Image.file(
-                                  File(
-                                      pickedImage!.path!), // For mobile/desktop
-                                  fit: BoxFit.cover,
-                                ),
-                        ),
-                      ),
-              ),
-            ), //pickimage code ending
-            SizedBox(
-              height: 30,
-            ),
-            DropdownButtonFormField(
-                style: TextStyle(color: Colors.white),
-                dropdownColor: Colors.green,
-                decoration: InputDecoration(
-                  fillColor: const Color.fromARGB(255, 54, 3, 116),
-                  filled: true,
-                  labelText: "Select category",
-                  labelStyle: TextStyle(color: Colors.yellowAccent),
+    return Form(
+      child: ListView(
+        padding: EdgeInsets.all(20),
+        children: [
+          ListView.builder(
+            itemCount: products.length,
+            shrinkWrap: true,
+            itemBuilder: (context, index) {
+              final data = products[index];
+              return ListTile(
+                leading: Text((index + 1).toString()),
+                title: Text(data['product_name'] ?? ''),
+                subtitle: Text(data['tbl_subcategory']['subcategory_name']),
+                trailing: SizedBox(
+                  width: 80,
                 ),
-                value: selectedCat,
-                items: categories.map((cat) {
-                  return DropdownMenuItem(
-                    child: Text(
-                      cat['category_name'],
-                      style: TextStyle(),
-                    ),
-                    value: cat['category_id'].toString(),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  fetchsubcategory(value!);
-                  setState(() {
-                    selectedCat = value;
-                  });
-                }),
-            SizedBox(
-              height: 20,
+              );
+            },
+          ),
+          SizedBox(
+            height: 30,
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Add();
+            },
+            child: Text(
+              "ADD BUTTON",
+              style: const TextStyle(
+                color: Color.fromARGB(255, 10, 1, 53),
+                fontSize: 18,
+              ),
             ),
-            DropdownButtonFormField(
-                style: TextStyle(color: Colors.white),
-                dropdownColor: Colors.greenAccent,
-                decoration: InputDecoration(
-                    fillColor: const Color.fromARGB(255, 54, 3, 116),
-                    filled: true,
-                    labelText: "Select Subcategory",
-                    labelStyle: TextStyle(color: Colors.yellowAccent)),
-                value: selectedSub,
-                items: subcategories.map((sub) {
-                  return DropdownMenuItem(
-                    child: Text(
-                      sub['subcategory_name'],
-                      style: TextStyle(),
-                    ),
-                    value: sub['subcategory_id'].toString(),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    selectedSub = value;
-                  });
-                }),
-            SizedBox(
-              height: 20,
-            ),
-            TextFormField(
-              style: TextStyle(color: Colors.white),
-              controller: nameController,
-              keyboardType: TextInputType.name,
-              decoration: InputDecoration(
-                  hintText: "Enter Product Name",
-                  hintStyle:
-                      TextStyle(color: const Color.fromARGB(255, 248, 240, 10)),
-                  border: OutlineInputBorder(),
-                  filled: true,
-                  fillColor: const Color.fromARGB(255, 54, 3, 116)),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            TextFormField(
-              style: TextStyle(color: Colors.white),
-              controller: codeController,
-              keyboardType: TextInputType.name,
-              decoration: InputDecoration(
-                  hintText: "Enter Product Code",
-                  hintStyle:
-                      TextStyle(color: const Color.fromARGB(255, 248, 240, 10)),
-                  border: OutlineInputBorder(),
-                  filled: true,
-                  fillColor: const Color.fromARGB(255, 54, 3, 116)),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            TextFormField(
-              style: TextStyle(color: Colors.white),
-              controller: priceController,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                  hintText: "Enter Product Price",
-                  hintStyle:
-                      TextStyle(color: const Color.fromARGB(255, 248, 240, 10)),
-                  border: OutlineInputBorder(),
-                  filled: true,
-                  fillColor: const Color.fromARGB(255, 54, 3, 116)),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            TextFormField(
-              style: TextStyle(color: Colors.white),
-              controller: descriptionController,
-              keyboardType: TextInputType.multiline,
-              decoration: InputDecoration(
-                  hintText: "Enter Product Description",
-                  hintStyle:
-                      TextStyle(color: const Color.fromARGB(255, 248, 240, 10)),
-                  border: OutlineInputBorder(),
-                  filled: true,
-                  fillColor: const Color.fromARGB(255, 54, 3, 116)),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            ElevatedButton(
-                onPressed: () {
-                  if (eid == 0) {
-                    submit();
-                  } else {
-                    update();
-                  }
-                },
-                child: Text("Submit")),
-            SizedBox(
-              height: 50,
-            ),
-            ListView.builder(
-              itemCount: products.length,
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                final data = products[index];
-                return ListTile(
-                  leading: Text((index + 1).toString()),
-                  title: Text(data['products_name']),
-                  subtitle: Text(data['tbl_subcategory']['subcategory_name']),
-                  trailing: SizedBox(
-                    width: 80,
-                    child: Row(
-                      children: [
-                        IconButton(
-                          onPressed: () {
-                            setState(() {
-                              eid = data['product_id'];
-                              nameController.text = data['product_name'];
-                              codeController.text = data['product_code'];
-                              priceController.text = data['product_price'];
-                              descriptionController.text =
-                                  data['product_description'];
-                              selectedCat = data['tbl_category']['category_id']
-                                  .toString();
-                              selectedSub = data['tbl_subcategory']
-                                      ['subcategory_id']
-                                  .toString();
-                            });
-                          },
-                          icon: Icon(Icons.edit),
-                          color: const Color.fromARGB(255, 27, 1, 69),
-                        ),
-                        IconButton(
-                          onPressed: () {
-                            delete(data['product_id']);
-                          },
-                          icon: Icon(Icons.delete),
-                          color: const Color.fromARGB(255, 250, 34, 10),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            )
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

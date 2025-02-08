@@ -30,6 +30,10 @@ class _AttributeState extends State<Attribute> {
       ));
       attributeController.clear();
       fetchattribute();
+      setState(() {
+        selectedCat = null;
+        selectedSub = null;
+      });
     } catch (e) {
       print("Error Attribute: $e");
     }
@@ -43,7 +47,9 @@ class _AttributeState extends State<Attribute> {
         backgroundColor: const Color.fromARGB(255, 54, 3, 116),
       ));
       fetchattribute();
-    } catch (e) {}
+    } catch (e) {
+      print("Error : $e");
+    }
   }
 
   int eid = 0;
@@ -78,7 +84,9 @@ class _AttributeState extends State<Attribute> {
       setState(() {
         attributes = response;
       });
-    } catch (e) {}
+    } catch (e) {
+      print("Error: $e");
+    }
   }
 
   Future<void> fetchsubcategory(String id) async {
@@ -89,7 +97,9 @@ class _AttributeState extends State<Attribute> {
       setState(() {
         subcategories = response;
       });
-    } catch (e) {}
+    } catch (e) {
+      print("Error: $e");
+    }
   }
 
   Future<void> fetchcategory() async {

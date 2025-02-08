@@ -75,15 +75,19 @@ class _CategoryState extends State<Category> {
         backgroundColor: const Color.fromARGB(255, 54, 3, 116),
       ));
       fetchCategory();
-    } catch (e) {}
+    } catch (e) {
+      print("Error: $e");
+    }
   }
 
   int eid = 0;
 
   Future<void> update() async {
     try {
+      String? url = await photoUpload(categoryController.text);
       await supabase.from('tbl_category').update({
         'category_name': categoryController.text,
+        'category_photo': url,
       }).eq('category_id', eid);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Updated"),
@@ -105,7 +109,9 @@ class _CategoryState extends State<Category> {
       setState(() {
         categories = response;
       });
-    } catch (e) {}
+    } catch (e) {
+      print("Error: $e");
+    }
   }
 
   @override

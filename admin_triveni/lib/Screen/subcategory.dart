@@ -26,6 +26,9 @@ class _SubcategoryState extends State<Subcategory> {
         backgroundColor: const Color.fromARGB(255, 54, 3, 116),
       ));
       subcategoryController.clear();
+      setState(() {
+        selectedCat = null;
+      });
       fetchsubcategory();
     } catch (e) {
       print("Error subcategory: $e");
@@ -40,7 +43,9 @@ class _SubcategoryState extends State<Subcategory> {
         backgroundColor: const Color.fromARGB(255, 54, 3, 116),
       ));
       fetchsubcategory();
-    } catch (e) {}
+    } catch (e) {
+      print("Error: $e");
+    }
   }
 
   int eid = 0;
@@ -73,7 +78,9 @@ class _SubcategoryState extends State<Subcategory> {
       setState(() {
         subcategories = response;
       });
-    } catch (e) {}
+    } catch (e) {
+      print("Error: $e");
+    }
   }
 
   Future<void> fetchcategory() async {

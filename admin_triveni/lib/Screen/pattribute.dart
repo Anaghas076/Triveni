@@ -27,6 +27,9 @@ class _PattributeState extends State<Pattribute> {
       ));
       pattributeController.clear();
       fetchpattribute();
+      setState(() {
+        selectedAtt = null;
+      });
     } catch (e) {
       print("Error pattribute: $e");
     }
