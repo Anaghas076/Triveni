@@ -1,3 +1,5 @@
+import 'package:artisan_triveni/Screen/loginpage.dart';
+import 'package:artisan_triveni/main.dart';
 import 'package:flutter/material.dart';
 
 class Registerpage extends StatefulWidget {
@@ -8,6 +10,59 @@ class Registerpage extends StatefulWidget {
 }
 
 class _RegisterpageState extends State<Registerpage> {
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController addressController = TextEditingController();
+  final TextEditingController contactController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController confirmController = TextEditingController();
+  final TextEditingController proofController = TextEditingController();
+  final TextEditingController photoController = TextEditingController();
+
+  Future<void> register() async {
+    try {
+      String name = nameController.text;
+      String address = addressController.text;
+      String contact = contactController.text;
+      String email = emailController.text;
+      String password = passwordController.text;
+      String proof = proofController.text;
+      String photo = photoController.text;
+      print("email:$email");
+      print("password:$password");
+
+      await supabase.from('tbl_artisan').insert({
+        'artisan_name': name,
+        'artisan_address': address,
+        'artisan_contact': contact,
+        'artisan_email': email,
+        'artisan_password': password,
+        'artisan_proof': proof,
+        'artisan_photo': photo,
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Successfully registed!!!!"),
+        backgroundColor: const Color.fromARGB(255, 54, 3, 116),
+      ));
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => LoginPage(),
+          ));
+      nameController.clear();
+      addressController.clear();
+      contactController.clear();
+      emailController.clear();
+      passwordController.clear();
+      confirmController.clear();
+      proofController.clear();
+      photoController.clear();
+    } catch (e) {
+      print("Error artisan: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,7 +82,7 @@ class _RegisterpageState extends State<Registerpage> {
                 size: 70,
               ),
               TextFormField(
-                // controller: genderController,
+                controller: photoController,
                 style: TextStyle(
                     color: const Color.fromARGB(255, 3, 1, 68),
                     fontWeight: FontWeight.bold),
@@ -52,7 +107,7 @@ class _RegisterpageState extends State<Registerpage> {
                 height: 10,
               ),
               TextFormField(
-                // controller: genderController,
+                controller: nameController,
                 style: TextStyle(
                     color: const Color.fromARGB(255, 3, 1, 68),
                     fontWeight: FontWeight.bold),
@@ -77,7 +132,7 @@ class _RegisterpageState extends State<Registerpage> {
                 height: 10,
               ),
               TextFormField(
-                // controller: addressController,
+                controller: addressController,
                 style: TextStyle(
                     color: const Color.fromARGB(255, 3, 1, 68),
                     fontWeight: FontWeight.bold),
@@ -102,7 +157,7 @@ class _RegisterpageState extends State<Registerpage> {
                 height: 10,
               ),
               TextFormField(
-                // controller: contactController,
+                controller: contactController,
                 style: TextStyle(
                     color: const Color.fromARGB(255, 3, 1, 68),
                     fontWeight: FontWeight.bold),
@@ -127,7 +182,7 @@ class _RegisterpageState extends State<Registerpage> {
                 height: 10,
               ),
               TextFormField(
-                //  controller: emailController,
+                controller: emailController,
                 style: TextStyle(
                     color: const Color.fromARGB(255, 3, 1, 68),
                     fontWeight: FontWeight.bold),
@@ -152,7 +207,7 @@ class _RegisterpageState extends State<Registerpage> {
                 height: 10,
               ),
               TextFormField(
-                // controller: passwordController,
+                controller: passwordController,
                 keyboardType: TextInputType.visiblePassword,
                 style: TextStyle(
                     color: const Color.fromARGB(255, 3, 1, 68),
@@ -183,7 +238,7 @@ class _RegisterpageState extends State<Registerpage> {
                 height: 10,
               ),
               TextFormField(
-                //  controller: confirmController,
+                controller: confirmController,
                 keyboardType: TextInputType.visiblePassword,
                 style: TextStyle(
                     color: const Color.fromARGB(255, 3, 1, 68),
@@ -214,7 +269,7 @@ class _RegisterpageState extends State<Registerpage> {
                 height: 10,
               ),
               TextFormField(
-                // controller: genderController,
+                controller: proofController,
                 style: TextStyle(
                     color: const Color.fromARGB(255, 3, 1, 68),
                     fontWeight: FontWeight.bold),
@@ -240,7 +295,7 @@ class _RegisterpageState extends State<Registerpage> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  //register();
+                  register();
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromARGB(255, 23, 2, 62),

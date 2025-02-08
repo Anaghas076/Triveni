@@ -1,4 +1,8 @@
+import 'package:artisan_triveni/Screen/homepage.dart';
+import 'package:artisan_triveni/Screen/registerpage.dart';
+import 'package:artisan_triveni/main.dart';
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -8,13 +12,34 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  Future<void> login() async {
+    try {
+      String email = emailController.text;
+      String password = passwordController.text;
+      await supabase.auth.signInWithPassword(
+        email: email,
+        password: password,
+      );
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Homepage(),
+          ));
+      print("Login Successfull");
+    } catch (e) {
+      print("Error During login: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
         child: Container(
           width: 400,
-          height: 350,
+          height: 380,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15),
           ),
@@ -30,7 +55,7 @@ class _LoginPageState extends State<LoginPage> {
                 height: 20,
               ),
               TextFormField(
-                //  controller: emailController,
+                controller: emailController,
                 style: TextStyle(
                     color: const Color.fromARGB(255, 3, 1, 68),
                     fontWeight: FontWeight.bold),
@@ -55,7 +80,7 @@ class _LoginPageState extends State<LoginPage> {
                 height: 20,
               ),
               TextFormField(
-                // controller: passwordController,
+                controller: passwordController,
                 keyboardType: TextInputType.visiblePassword,
                 style: TextStyle(
                     color: const Color.fromARGB(255, 3, 1, 68),
@@ -88,6 +113,11 @@ class _LoginPageState extends State<LoginPage> {
               ElevatedButton(
                 onPressed: () {
                   //login();
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Homepage(),
+                      ));
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromARGB(255, 23, 2, 62),
@@ -102,6 +132,39 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                 ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Don't have an account? ",
+                    style: const TextStyle(
+                      color: Color.fromARGB(255, 12, 15, 15),
+                      fontSize: 15,
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              Registerpage(), // Replace with your Register Page
+                        ),
+                      );
+                    },
+                    child: Text(
+                      "Register",
+                      style: const TextStyle(
+                        color: Color.fromARGB(255, 15, 2, 100),
+                        fontSize: 15,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
