@@ -4,17 +4,18 @@ import 'package:admin_triveni/main.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
-class Addbutton extends StatefulWidget {
-  const Addbutton({super.key});
+class AddPrpduct extends StatefulWidget {
+  const AddPrpduct({super.key});
 
   @override
-  State<Addbutton> createState() => _AddbuttonState();
+  State<AddPrpduct> createState() => _AddPrpductState();
 }
 
-class _AddbuttonState extends State<Addbutton> {
+class _AddPrpductState extends State<AddPrpduct> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController codeController = TextEditingController();
   final TextEditingController priceController = TextEditingController();
+  final TextEditingController typeController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
 
   List<Map<String, dynamic>> products = [];
@@ -61,18 +62,21 @@ class _AddbuttonState extends State<Addbutton> {
       String name = nameController.text;
       String code = codeController.text;
       String price = priceController.text;
+      String type = typeController.text;
       String description = descriptionController.text;
       String? url = await photoUpload(name);
 
       print(name);
       print(code);
       print(price);
+      print(type);
       print(description);
 
       await supabase.from('tbl_product').insert({
         'product_name': name,
         'product_code': code,
         'product_price': price,
+        'product_type': type,
         'product_photo': url,
         'product_description': description,
         'subcategory_id': selectedSub,
@@ -84,6 +88,7 @@ class _AddbuttonState extends State<Addbutton> {
       nameController.clear();
       codeController.clear();
       priceController.clear();
+      typeController.clear();
       descriptionController.clear();
       fetchproduct();
       setState(() {
@@ -92,6 +97,38 @@ class _AddbuttonState extends State<Addbutton> {
       });
     } catch (e) {
       print("Error Product: $e");
+    }
+  }
+
+  int eid = 0;
+
+  Future<void> update() async {
+    try {
+      String? url = await photoUpload(nameController.text);
+      await supabase.from('tbl_product').update({
+        'product_name': nameController.text,
+        'product_code': codeController.text,
+        'product_price': priceController.text,
+        'product_type': typeController.text,
+        'product_description': descriptionController.text,
+        'product_photo': url,
+        'subcategory_id': selectedSub,
+      }).eq('product_id', eid);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Updated"),
+        backgroundColor: const Color.fromARGB(255, 54, 3, 116),
+      ));
+      fetchproduct();
+      nameController.clear();
+      codeController.clear();
+      priceController.clear();
+      typeController.clear();
+      descriptionController.clear();
+      setState(() {
+        eid = 0;
+      });
+    } catch (e) {
+      print("Error updating data: $e");
     }
   }
 
@@ -157,11 +194,20 @@ class _AddbuttonState extends State<Addbutton> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: const Color.fromARGB(255, 54, 3, 116),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Navigator.pop(context);
           },
+        ),
+        title: Text(
+          "Add Product",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
       body: Form(
@@ -305,6 +351,21 @@ class _AddbuttonState extends State<Addbutton> {
             ),
             TextFormField(
               style: TextStyle(color: Colors.white),
+              controller: typeController,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                  hintText: "Enter Product Type",
+                  hintStyle:
+                      TextStyle(color: const Color.fromARGB(255, 248, 240, 10)),
+                  border: OutlineInputBorder(),
+                  filled: true,
+                  fillColor: const Color.fromARGB(255, 54, 3, 116)),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            TextFormField(
+              style: TextStyle(color: Colors.white),
               controller: descriptionController,
               keyboardType: TextInputType.multiline,
               decoration: InputDecoration(
@@ -318,45 +379,66 @@ class _AddbuttonState extends State<Addbutton> {
             SizedBox(
               height: 20,
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                    onPressed: () {
-                      submit();
-                    },
-                    child: Text("Submit")),
-              ],
-            ),
-            SizedBox(
-              height: 50,
-            ),
-            ListView.builder(
-              itemCount: products.length,
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                final data = products[index];
-                return ListTile(
-                  leading: Text((index + 1).toString()),
-                  title: Text(data['product_name'] ?? ''),
-                  subtitle: Text(data['tbl_subcategory']['subcategory_name']),
-                  trailing: SizedBox(
-                    width: 80,
-                    child: Row(
-                      children: [
-                        IconButton(
-                          onPressed: () {
-                            delete(data['product_id']);
-                          },
-                          icon: Icon(Icons.delete),
-                          color: const Color.fromARGB(255, 250, 34, 10),
+            //  Row(
+            // mainAxisAlignment: MainAxisAlignment.center,
+            //children: [
+            ElevatedButton(
+                onPressed: () {
+                  // if (eid == 0) {
+                  submit();
+                  // } else {
+                  // update();
+                  // }
+                },
+                child: Text("Submit")),
+            //  ],
+            //  ),
+            Expanded(
+              child: DataTable(
+                columns: [
+                  DataColumn(label: Text("SNo.")),
+                  DataColumn(label: Text("Name")),
+                  // DataColumn(label: Text("Category")),
+                  DataColumn(label: Text("Subcategory")),
+                  DataColumn(label: Text("Price")),
+                  DataColumn(label: Text("Type")),
+                  DataColumn(label: Text("Description")),
+                  DataColumn(label: Text("Action")),
+                ],
+                rows: List.generate(
+                  products.length,
+                  (index) {
+                    var data = products[index];
+                    return DataRow(
+                      cells: [
+                        DataCell(Text((index + 1).toString())),
+                        DataCell(Text(data['product_name']?.toString() ?? '')),
+                        //  DataCell(
+                        // Text(data['tbl_category']?['category_name']?.toString() ?? '')),
+                        DataCell(Text(data['tbl_subcategory']
+                                    ?['subcategory_name']
+                                ?.toString() ??
+                            '')),
+                        DataCell(Text(data['product_price']?.toString() ?? '')),
+                        DataCell(Text(data['product_type']?.toString() ?? '')),
+                        DataCell(Text(
+                            data['product_description']?.toString() ?? '')),
+                        DataCell(
+                          IconButton(
+                            onPressed: () {
+                              delete(
+                                  data['product_id']); // Use correct product_id
+                            },
+                            icon: Icon(Icons.delete),
+                            color: const Color.fromARGB(255, 250, 34, 10),
+                          ),
                         ),
                       ],
-                    ),
-                  ),
-                );
-              },
-            )
+                    );
+                  },
+                ),
+              ),
+            ),
           ],
         ),
       ),

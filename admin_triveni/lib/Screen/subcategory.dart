@@ -64,6 +64,7 @@ class _SubcategoryState extends State<Subcategory> {
       fetchsubcategory();
       subcategoryController.clear();
       setState(() {
+        selectedCat = null;
         eid = 0;
       });
     } catch (e) {

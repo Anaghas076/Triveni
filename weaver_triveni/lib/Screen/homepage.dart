@@ -33,6 +33,7 @@ class _HomepageState extends State<Homepage> {
           ),
         ],
       ),
+      //bottomNavigationBar: BottomNavigationBar(items: items),
       body: Center(
         child: Text(
           'Flutter Basics',

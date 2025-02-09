@@ -28,8 +28,6 @@ class _RegisterpageState extends State<Registerpage> {
       String password = passwordController.text;
       String proof = proofController.text;
       String photo = photoController.text;
-      print("email:$email");
-      print("password:$password");
 
       await supabase.from('tbl_artisan').insert({
         'artisan_name': name,
@@ -143,7 +141,7 @@ class _RegisterpageState extends State<Registerpage> {
                         color: const Color.fromARGB(255, 10, 10, 10),
                       )),
                   prefixIcon: Icon(
-                    Icons.streetview,
+                    Icons.location_on,
                     color: const Color.fromARGB(255, 7, 2, 54),
                   ),
                   hintText: " Address",

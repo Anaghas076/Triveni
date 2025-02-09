@@ -52,30 +52,30 @@ class _AttributeState extends State<Attribute> {
     }
   }
 
-  int eid = 0;
+  //int eid = 0;
 
-  Future<void> update() async {
-    try {
-      await supabase.from('tbl_attribute').update({
-        'attribute_name': attributeController.text,
-        //'category_id': selectedCat,
-        //'subcategory_id': selectedSub,
-      }).eq('attribute_id', eid);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("Updated"),
-        backgroundColor: const Color.fromARGB(255, 54, 3, 116),
-      ));
-      // fetchcategory();
-      // fetchsubcategory();
-      fetchattribute();
-      attributeController.clear();
-      setState(() {
-        eid = 0;
-      });
-    } catch (e) {
-      print("Error updating data: $e");
-    }
-  }
+  //Future<void> update() async {
+  // try {
+  // await supabase.from('tbl_attribute').update({
+  // 'attribute_name': attributeController.text,
+  //'category_id': selectedCat,
+  //'subcategory_id': selectedSub,
+  //}).eq('attribute_id', eid);
+  //ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  //content: Text("Updated"),
+  // backgroundColor: const Color.fromARGB(255, 54, 3, 116),
+  // ));
+  // fetchcategory();
+  // fetchsubcategory();
+  //fetchattribute();
+  //attributeController.clear();
+  //setState(() {
+  //eid = 0;
+  //});
+  //} catch (e) {
+  // print("Error updating data: $e");
+  // }
+  // }
 
   Future<void> fetchattribute() async {
     try {
@@ -201,11 +201,11 @@ class _AttributeState extends State<Attribute> {
             ),
             ElevatedButton(
                 onPressed: () {
-                  if (eid == 0) {
-                    submit();
-                  } else {
-                    update();
-                  }
+                  //  if (eid == 0) {
+                  submit();
+                  //   } else {
+                  //update();
+                  // }
                 },
                 child: Text("Submit")),
             SizedBox(
@@ -220,35 +220,35 @@ class _AttributeState extends State<Attribute> {
                   leading: Text((index + 1).toString()),
                   title: Text(data['attribute_name']),
                   subtitle: Text(data['tbl_subcategory']['subcategory_name']),
-                  trailing: SizedBox(
-                    width: 80,
-                    child: Row(
-                      children: [
-                        IconButton(
-                          onPressed: () {
-                            setState(() {
-                              eid = data['attribute_id'];
-                              attributeController.text = data['attribute_name'];
-                              selectedCat = data['tbl_category']['category_id']
-                                  .toString();
-                              selectedSub = data['tbl_subcategory']
-                                      ['subcategory_id']
-                                  .toString();
-                            });
-                          },
-                          icon: Icon(Icons.edit),
-                          color: const Color.fromARGB(255, 27, 1, 69),
-                        ),
-                        IconButton(
-                          onPressed: () {
-                            delete(data['attribute_id']);
-                          },
-                          icon: Icon(Icons.delete),
-                          color: const Color.fromARGB(255, 250, 34, 10),
-                        ),
-                      ],
-                    ),
+                  trailing: //SizedBox(
+                      // width: 80,
+                      //child: Row(
+                      //children: [
+                      // IconButton(
+                      // onPressed: () {
+                      // setState(() {
+                      //eid = data['attribute_id'];
+                      //attributeController.text = data['attribute_name'];
+                      //selectedCat = data['tbl_category']['category_id']
+                      //  .toString();
+                      //selectedSub = data['tbl_subcategory']
+                      //      ['subcategory_id']
+                      //    .toString();
+                      //});
+                      //},
+                      //  icon: Icon(Icons.edit),
+                      //  color: const Color.fromARGB(255, 27, 1, 69),
+                      // ),
+                      IconButton(
+                    onPressed: () {
+                      delete(data['attribute_id']);
+                    },
+                    icon: Icon(Icons.delete),
+                    color: const Color.fromARGB(255, 250, 34, 10),
+                    // ),
+                    // ],
                   ),
+                  // ),
                 );
               },
             )

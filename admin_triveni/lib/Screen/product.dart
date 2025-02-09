@@ -1,6 +1,6 @@
-import 'package:admin_triveni/Screen/addbutton.dart';
-import 'package:admin_triveni/main.dart';
+import 'package:admin_triveni/Screen/addproduct.dart';
 import 'package:flutter/material.dart';
+import 'package:admin_triveni/main.dart';
 
 class Product extends StatefulWidget {
   const Product({super.key});
@@ -10,34 +10,12 @@ class Product extends StatefulWidget {
 }
 
 class _ProductState extends State<Product> {
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController codeController = TextEditingController();
-  final TextEditingController priceController = TextEditingController();
-  final TextEditingController descriptionController = TextEditingController();
-
   List<Map<String, dynamic>> products = [];
-  List<Map<String, dynamic>> subcategories = [];
-  List<Map<String, dynamic>> categories = [];
-
-  String? selectedCat;
-  String? selectedSub;
-
-  Future<void> Add() async {
-    try {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => Addbutton(),
-          ));
-    } catch (e) {
-      print("Error: $e");
-    }
-  }
 
   Future<void> fetchproduct() async {
     try {
       final response =
-          await supabase.from('tbl_product').select(" * ,tbl_subcategory(*)");
+          await supabase.from('tbl_product').select("*, tbl_subcategory(*)");
       setState(() {
         products = response;
       });
@@ -46,27 +24,10 @@ class _ProductState extends State<Product> {
     }
   }
 
-  Future<void> fetchsubcategory(String id) async {
+  Future<void> delete(int id) async {
     try {
-      print("Subcategory");
-      final response =
-          await supabase.from('tbl_subcategory').select().eq('category_id', id);
-      setState(() {
-        subcategories = response;
-      });
-    } catch (e) {
-      print("Error: $e");
-    }
-  }
-
-  Future<void> fetchcategory() async {
-    try {
-      print("Category");
-      final response = await supabase.from('tbl_category').select();
-      print(response);
-      setState(() {
-        categories = response;
-      });
+      await supabase.from('tbl_product').delete().eq('product_id', id);
+      fetchproduct();
     } catch (e) {
       print("Error: $e");
     }
@@ -74,50 +35,56 @@ class _ProductState extends State<Product> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    fetchcategory();
-    //fetchsubcategory(String id);
     fetchproduct();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      child: ListView(
-        padding: EdgeInsets.all(20),
-        children: [
-          ListView.builder(
-            itemCount: products.length,
-            shrinkWrap: true,
-            itemBuilder: (context, index) {
-              final data = products[index];
-              return ListTile(
-                leading: Text((index + 1).toString()),
-                title: Text(data['product_name'] ?? ''),
-                subtitle: Text(data['tbl_subcategory']['subcategory_name']),
-                trailing: SizedBox(
-                  width: 80,
-                ),
-              );
-            },
-          ),
-          SizedBox(
-            height: 30,
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Add();
-            },
-            child: Text(
-              "ADD BUTTON",
-              style: const TextStyle(
-                color: Color.fromARGB(255, 10, 1, 53),
-                fontSize: 18,
-              ),
-            ),
-          ),
+    return Scaffold(
+      body: DataTable(
+        columns: [
+          DataColumn(label: Text("SNo.")),
+          DataColumn(label: Text("Name")),
+          // DataColumn(label: Text("Category")),
+          DataColumn(label: Text("Subcategory")),
+          DataColumn(label: Text("Price")),
+          DataColumn(label: Text("Type")),
+          DataColumn(label: Text("Description")),
         ],
+        rows: List.generate(products.length, (index) {
+          var data = products[index];
+          return DataRow(cells: [
+            DataCell(Text((index + 1).toString())),
+            DataCell(Text(data['product_name']?.toString() ?? '')),
+            //  DataCell(
+            // Text(data['tbl_category']?['category_name']?.toString() ?? '')),
+            DataCell(Text(
+                data['tbl_subcategory']?['subcategory_name']?.toString() ??
+                    '')),
+            DataCell(Text(data['product_price']?.toString() ?? '')),
+            DataCell(Text(data['product_type']?.toString() ?? '')),
+            DataCell(Text(data['product_description']?.toString() ?? '')),
+          ]);
+        }),
+      ),
+      floatingActionButton: Align(
+        alignment: Alignment.bottomRight,
+        child: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => AddPrpduct(),
+              ),
+            );
+          },
+          child: Icon(
+            Icons.add,
+            color: Colors.white,
+          ),
+          backgroundColor: const Color.fromARGB(255, 3, 1, 68),
+        ),
       ),
     );
   }

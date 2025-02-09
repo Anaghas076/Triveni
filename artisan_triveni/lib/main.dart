@@ -1,6 +1,4 @@
-import 'package:artisan_triveni/Screen/homepage.dart';
-import 'package:artisan_triveni/Screen/loginpage.dart';
-import 'package:artisan_triveni/Screen/registerpage.dart';
+import 'package:artisan_triveni/Screen/design.dart';
 
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -23,6 +21,6 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: Homepage());
+    return const MaterialApp(home: Design());
   }
 }

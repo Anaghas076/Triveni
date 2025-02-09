@@ -2,7 +2,6 @@ import 'package:artisan_triveni/Screen/homepage.dart';
 import 'package:artisan_triveni/Screen/registerpage.dart';
 import 'package:artisan_triveni/main.dart';
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
