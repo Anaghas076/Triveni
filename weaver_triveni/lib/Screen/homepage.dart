@@ -1,3 +1,4 @@
+import 'package:weaver_triveni/Screen/loginpage.dart';
 import 'package:flutter/material.dart';
 
 class Homepage extends StatefulWidget {
@@ -13,32 +14,42 @@ class _HomepageState extends State<Homepage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 3, 1, 68),
+        toolbarHeight: 80,
         leading: IconButton(
-          icon: Icon(Icons.menu),
+          icon: Icon(
+            Icons.menu,
+            color: Colors.yellow,
+            size: 30,
+          ),
           onPressed: () {
-            Navigator.pushReplacement(
+            Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => Card(),
+                  builder: (context) => LoginPage(),
                 ));
           },
         ),
-        title: Text("TRIVENI"),
-        titleTextStyle: TextStyle(
-            color: Colors.white, fontSize: 25, fontWeight: FontWeight.bold),
-        actions: [
-          Icon(
-            Icons.shopping_cart,
-            color: const Color.fromARGB(255, 242, 195, 6),
-          ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: const Color.fromARGB(255, 3, 1, 68),
+        // Set the selected index
+        selectedItemColor:
+            const Color.fromARGB(255, 241, 233, 7), // Color of selected icon
+        unselectedItemColor: Colors.white, // Color of unselected icons
+        type: BottomNavigationBarType.fixed, // Ensure all icons are visible
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.category), label: "Categories"),
+          BottomNavigationBarItem(icon: Icon(Icons.local_mall), label: "Order"),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
         ],
       ),
-      //bottomNavigationBar: BottomNavigationBar(items: items),
       body: Center(
         child: Text(
-          'Flutter Basics',
+          'Welcome to Triveni',
           style: TextStyle(
-            color: Colors.blue,
+            color: const Color.fromARGB(255, 3, 1, 68),
             fontSize: 30,
             fontWeight: FontWeight.bold,
             fontStyle: FontStyle.italic,

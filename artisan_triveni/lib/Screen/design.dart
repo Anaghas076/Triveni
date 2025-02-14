@@ -84,20 +84,18 @@ class _DesignState extends State<Design> {
         backgroundColor: const Color.fromARGB(255, 3, 1, 68),
         toolbarHeight: 80,
         leading: IconButton(
-          icon: Row(
-            children: [
-              Icon(
-                Icons.arrow_back,
-                color: Colors.yellow,
-                size: 30,
-              ),
-              Text("My Cart",
-                  style: TextStyle(color: Colors.white, fontSize: 12)),
-            ],
-          ),
+          icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Navigator.pop(context);
           },
+        ),
+        title: Text(
+          "Add Design",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
       body: Form(

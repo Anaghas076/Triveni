@@ -12,11 +12,20 @@ class _CartState extends State<Cart> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          backgroundColor: const Color.fromARGB(255, 3, 1, 68),
           leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+            icon: Icon(Icons.arrow_back, color: Colors.white),
             onPressed: () {
               Navigator.pop(context);
             },
+          ),
+          title: Text(
+            "My Cart",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
         body: Center(

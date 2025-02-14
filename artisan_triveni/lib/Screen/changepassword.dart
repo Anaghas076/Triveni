@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class Addexpense extends StatefulWidget {
-  const Addexpense({super.key});
+class ChangePassword extends StatefulWidget {
+  const ChangePassword({super.key});
 
   @override
-  State<Addexpense> createState() => _AddexpenseState();
+  State<ChangePassword> createState() => _ChangePasswordState();
 }
 
-class _AddexpenseState extends State<Addexpense> {
+class _ChangePasswordState extends State<ChangePassword> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,7 +20,7 @@ class _AddexpenseState extends State<Addexpense> {
           },
         ),
         title: Text(
-          "Add Expense",
+          "Change Password",
           style: TextStyle(
             color: Colors.white,
             fontSize: 18,
@@ -29,7 +29,7 @@ class _AddexpenseState extends State<Addexpense> {
         ),
       ),
       body: Center(
-        child: Text("Expense"),
+        child: Text("ChangePassword"),
       ),
     );
   }

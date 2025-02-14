@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:user_triveni/Screen/account.dart';
 import 'package:user_triveni/Screen/cart.dart';
+import 'package:user_triveni/Screen/myorder.dart';
+import 'package:user_triveni/Screen/profile.dart';
+import 'package:user_triveni/Screen/search.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -9,6 +13,23 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
+  int selectedIndex = 0;
+
+  // List of pages for bottom navigation
+  final List<Widget> pageContent = [
+    Homepage(), // New HomeScreen widget
+    Profile(), // Dummy category page
+    Order(),
+    Search(),
+  ];
+
+  // Function to change the page when bottom navigation is clicked
+  void _onItemTapped(int index) {
+    setState(() {
+      selectedIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,37 +68,30 @@ class _HomepageState extends State<Homepage> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => Cart(),
+                    builder: (context) => Account(),
                   ));
             },
           ),
         ],
       ),
+      //body: pageContent[selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: const Color.fromARGB(255, 3, 1, 68),
-        // Set the selected index
-        selectedItemColor:
-            const Color.fromARGB(255, 241, 233, 7), // Color of selected icon
-        unselectedItemColor: Colors.white, // Color of unselected icons
+        // Set the selected index// Color of unselected icons
         type: BottomNavigationBarType.fixed, // Ensure all icons are visible
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
           BottomNavigationBarItem(
-              icon: Icon(Icons.category), label: "Categories"),
-          BottomNavigationBarItem(icon: Icon(Icons.local_mall), label: "Order"),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
+              icon: Icon(Icons.person), label: "My Account"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.shopping_bag), label: "My Orders"),
+          BottomNavigationBarItem(icon: Icon(Icons.wallet), label: "Wallet"),
         ],
-      ),
-      body: Center(
-        child: Text(
-          'Welcome to Triveni',
-          style: TextStyle(
-            color: const Color.fromARGB(255, 3, 1, 68),
-            fontSize: 30,
-            fontWeight: FontWeight.bold,
-            fontStyle: FontStyle.italic,
-          ),
-        ),
+        selectedItemColor:
+            const Color.fromARGB(255, 241, 233, 7), // Color of selected icon
+        unselectedItemColor: Colors.white,
+        currentIndex: selectedIndex,
+        onTap: _onItemTapped,
       ),
     );
   }

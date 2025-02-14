@@ -1,4 +1,5 @@
-import 'package:artisan_triveni/Screen/loginpage.dart';
+import 'package:artisan_triveni/Screen/homepage.dart';
+
 import 'package:artisan_triveni/main.dart';
 import 'package:flutter/material.dart';
 
@@ -46,7 +47,7 @@ class _RegisterpageState extends State<Registerpage> {
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => LoginPage(),
+            builder: (context) => Homepage(),
           ));
       nameController.clear();
       addressController.clear();
