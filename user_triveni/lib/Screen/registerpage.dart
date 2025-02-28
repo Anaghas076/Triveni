@@ -1,6 +1,8 @@
 import 'package:user_triveni/Screen/homepage.dart';
 import 'package:user_triveni/main.dart';
 import 'package:flutter/material.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 
 class Registerpage extends StatefulWidget {
   const Registerpage({super.key});
@@ -16,7 +18,34 @@ class _RegisterpageState extends State<Registerpage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmController = TextEditingController();
-  final TextEditingController photoController = TextEditingController();
+
+  File? _image;
+  final ImagePicker _picker = ImagePicker();
+
+  // Function to pick an image
+  Future<void> _pickImage() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _image = File(pickedFile.path);
+      });
+    }
+  }
+
+  Future<String?> _uploadImage(String userId) async {
+    try {
+      final fileName = 'user_$userId';
+
+      await supabase.storage.from('user').upload(fileName, _image!);
+
+      // Get public URL of the uploaded image
+      final imageUrl = supabase.storage.from('user').getPublicUrl(fileName);
+      return imageUrl;
+    } catch (e) {
+      print('Image upload failed: $e');
+      return null;
+    }
+  }
 
   Future<void> register() async {
     try {
@@ -25,21 +54,26 @@ class _RegisterpageState extends State<Registerpage> {
       String contact = contactController.text;
       String email = emailController.text;
       String password = passwordController.text;
-      String photo = photoController.text;
 
+      final response =
+          await supabase.auth.signUp(password: password, email: email);
+      String userId = response.user!.id;
+
+      String? imageUrl = await _uploadImage(userId);
       await supabase.from('tbl_user').insert({
         'user_name': name,
         'user_address': address,
         'user_contact': contact,
         'user_email': email,
         'user_password': password,
-        'user_photo': photo,
+        'user_photo': imageUrl,
       });
 
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Successfully registed!!!!"),
-        backgroundColor: const Color.fromARGB(255, 54, 3, 116),
+        backgroundColor: const Color.fromARGB(255, 3, 1, 68),
       ));
+
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -51,8 +85,7 @@ class _RegisterpageState extends State<Registerpage> {
       emailController.clear();
       passwordController.clear();
       confirmController.clear();
-
-      photoController.clear();
+      print("Register Successfully");
     } catch (e) {
       print("Error user: $e");
     }
@@ -63,43 +96,34 @@ class _RegisterpageState extends State<Registerpage> {
     return Scaffold(
       body: Center(
         child: Container(
-          width: 400,
-          height: 680,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(15),
-          ),
+              borderRadius: BorderRadius.circular(25),
+              border: Border.all(
+                color: const Color.fromARGB(255, 3, 1, 68),
+                width: 3,
+              )),
+          width: 340,
+          height: 650,
+          margin: EdgeInsets.only(top: 50),
           child: ListView(
             padding: EdgeInsets.all(20),
             children: [
-              Icon(
-                Icons.person,
-                color: const Color.fromARGB(255, 3, 1, 68),
-                size: 70,
-              ),
-              TextFormField(
-                controller: photoController,
-                style: TextStyle(
-                    color: const Color.fromARGB(255, 3, 1, 68),
-                    fontWeight: FontWeight.bold),
-                decoration: InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      borderSide: BorderSide(
-                        color: const Color.fromARGB(255, 10, 10, 10),
-                      )),
-                  prefixIcon: Icon(
-                    Icons.email_sharp,
-                    color: const Color.fromARGB(255, 7, 2, 54),
+              Center(
+                child: GestureDetector(
+                  onTap: _pickImage,
+                  child: CircleAvatar(
+                    radius: 50,
+                    backgroundColor: const Color.fromARGB(255, 3, 1, 68),
+                    backgroundImage: _image != null ? FileImage(_image!) : null,
+                    child: _image == null
+                        ? const Icon(Icons.camera_alt,
+                            color: Colors.white, size: 30)
+                        : null,
                   ),
-                  hintText: " Profile",
-                  hintStyle: TextStyle(
-                      color: const Color.fromARGB(255, 8, 8, 8),
-                      fontWeight: FontWeight.bold),
-                  border: OutlineInputBorder(),
                 ),
               ),
               SizedBox(
-                height: 10,
+                height: 20,
               ),
               TextFormField(
                 controller: nameController,
@@ -111,6 +135,7 @@ class _RegisterpageState extends State<Registerpage> {
                       borderRadius: BorderRadius.circular(30),
                       borderSide: BorderSide(
                         color: const Color.fromARGB(255, 10, 10, 10),
+                        width: 3,
                       )),
                   prefixIcon: Icon(
                     Icons.person,
@@ -136,6 +161,7 @@ class _RegisterpageState extends State<Registerpage> {
                       borderRadius: BorderRadius.circular(30),
                       borderSide: BorderSide(
                         color: const Color.fromARGB(255, 10, 10, 10),
+                        width: 3,
                       )),
                   prefixIcon: Icon(
                     Icons.location_on,
@@ -161,6 +187,7 @@ class _RegisterpageState extends State<Registerpage> {
                       borderRadius: BorderRadius.circular(30),
                       borderSide: BorderSide(
                         color: const Color.fromARGB(255, 10, 10, 10),
+                        width: 3,
                       )),
                   prefixIcon: Icon(
                     Icons.phone,
@@ -186,6 +213,7 @@ class _RegisterpageState extends State<Registerpage> {
                       borderRadius: BorderRadius.circular(30),
                       borderSide: BorderSide(
                         color: const Color.fromARGB(255, 10, 10, 10),
+                        width: 3,
                       )),
                   prefixIcon: Icon(
                     Icons.email_sharp,
@@ -212,6 +240,7 @@ class _RegisterpageState extends State<Registerpage> {
                       borderRadius: BorderRadius.circular(30),
                       borderSide: BorderSide(
                         color: const Color.fromARGB(255, 10, 10, 10),
+                        width: 3,
                       )),
                   prefixIcon: Icon(
                     Icons.password_outlined,
@@ -243,6 +272,7 @@ class _RegisterpageState extends State<Registerpage> {
                       borderRadius: BorderRadius.circular(30),
                       borderSide: BorderSide(
                         color: const Color.fromARGB(255, 10, 10, 10),
+                        width: 3,
                       )),
                   prefixIcon: Icon(
                     Icons.lock,

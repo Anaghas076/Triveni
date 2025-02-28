@@ -17,10 +17,13 @@ class _LoginPageState extends State<LoginPage> {
     try {
       String email = emailController.text;
       String password = passwordController.text;
+      print(email);
+      print(password);
       await supabase.auth.signInWithPassword(
         email: email,
         password: password,
       );
+
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -35,15 +38,21 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       body: Center(
         child: Container(
-          width: 400,
-          height: 380,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(15),
-          ),
+              borderRadius: BorderRadius.circular(25),
+              border: Border.all(
+                color: const Color.fromARGB(255, 3, 1, 68),
+                width: 3,
+              )),
+          width: 340,
+          height: 440,
+          margin: EdgeInsets.only(top: 50),
           child: ListView(
-            padding: EdgeInsets.all(20),
+            shrinkWrap: true,
+            padding: EdgeInsets.all(40),
             children: [
               Icon(
                 Icons.people_alt,
@@ -51,7 +60,7 @@ class _LoginPageState extends State<LoginPage> {
                 size: 80,
               ),
               SizedBox(
-                height: 20,
+                height: 30,
               ),
               TextFormField(
                 controller: emailController,
@@ -62,7 +71,8 @@ class _LoginPageState extends State<LoginPage> {
                   enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30),
                       borderSide: BorderSide(
-                        color: const Color.fromARGB(255, 10, 10, 10),
+                        color: const Color.fromARGB(255, 3, 1, 68),
+                        width: 3,
                       )),
                   prefixIcon: Icon(
                     Icons.email_sharp,
@@ -70,28 +80,31 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   hintText: "Email Address",
                   hintStyle: TextStyle(
-                      color: const Color.fromARGB(255, 8, 8, 8),
-                      fontWeight: FontWeight.bold),
+                    color: const Color.fromARGB(255, 3, 1, 68),
+                    fontWeight: FontWeight.w900,
+                  ),
                   border: OutlineInputBorder(),
                 ),
               ),
               SizedBox(
-                height: 20,
+                height: 30,
               ),
               TextFormField(
                 controller: passwordController,
                 keyboardType: TextInputType.visiblePassword,
                 style: TextStyle(
-                    color: const Color.fromARGB(255, 3, 1, 68),
-                    fontWeight: FontWeight.bold),
+                  color: const Color.fromARGB(255, 3, 1, 68),
+                  fontWeight: FontWeight.w900,
+                ),
                 decoration: InputDecoration(
                   enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(30),
                       borderSide: BorderSide(
-                        color: const Color.fromARGB(255, 10, 10, 10),
+                        color: const Color.fromARGB(255, 3, 1, 68),
+                        width: 3,
                       )),
                   prefixIcon: Icon(
-                    Icons.password,
+                    Icons.password_outlined,
                     color: const Color.fromARGB(255, 7, 2, 54),
                   ),
                   suffixIcon: Icon(
@@ -100,7 +113,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   hintText: "Password",
                   hintStyle: TextStyle(
-                    color: const Color.fromARGB(255, 10, 10, 10),
+                    color: const Color.fromARGB(255, 3, 1, 68),
                     fontWeight: FontWeight.bold,
                   ),
                   border: OutlineInputBorder(),
@@ -111,15 +124,10 @@ class _LoginPageState extends State<LoginPage> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  //login();
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => Homepage(),
-                      ));
+                  login();
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 23, 2, 62),
+                  backgroundColor: const Color.fromARGB(255, 3, 1, 68),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(15),
@@ -141,9 +149,9 @@ class _LoginPageState extends State<LoginPage> {
                   Text(
                     "Don't have an account? ",
                     style: const TextStyle(
-                      color: Color.fromARGB(255, 12, 15, 15),
-                      fontSize: 15,
-                    ),
+                        color: Color.fromARGB(255, 12, 15, 15),
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold),
                   ),
                   TextButton(
                     onPressed: () {
@@ -160,6 +168,7 @@ class _LoginPageState extends State<LoginPage> {
                       style: const TextStyle(
                         color: Color.fromARGB(255, 15, 2, 100),
                         fontSize: 15,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),

@@ -124,11 +124,11 @@ class _SubcategoryState extends State<Subcategory> {
                 value: selectedCat,
                 items: categories.map((cat) {
                   return DropdownMenuItem(
+                    value: cat['category_id'].toString(),
                     child: Text(
                       cat['category_name'],
                       style: TextStyle(),
                     ),
-                    value: cat['category_id'].toString(),
                   );
                 }).toList(),
                 onChanged: (value) {

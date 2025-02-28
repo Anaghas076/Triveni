@@ -2,7 +2,8 @@ import 'package:admin_triveni/main.dart';
 import 'package:flutter/material.dart';
 
 class Pattribute extends StatefulWidget {
-  const Pattribute({super.key});
+  final int productid;
+  const Pattribute({super.key, required this.productid});
 
   @override
   State<Pattribute> createState() => _PattributeState();
@@ -20,6 +21,7 @@ class _PattributeState extends State<Pattribute> {
       await supabase.from('tbl_pattribute').insert({
         'pattribute_name': pattribute,
         'attribute_id': selectedAtt,
+        'product_id': widget.productid
       });
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Inserted"),
@@ -37,8 +39,10 @@ class _PattributeState extends State<Pattribute> {
 
   Future<void> fetchpattribute() async {
     try {
-      final response =
-          await supabase.from('tbl_pattribute').select(" * ,tbl_attribute(*)");
+      final response = await supabase
+          .from('tbl_pattribute')
+          .select(" * ,tbl_attribute(*)")
+          .eq('product_id', widget.productid);
       setState(() {
         pattributes = response;
       });
@@ -48,7 +52,16 @@ class _PattributeState extends State<Pattribute> {
   Future<void> fetchattribute() async {
     try {
       print("Attribute");
-      final response = await supabase.from('tbl_attribute').select();
+      final pdt = await supabase
+          .from('tbl_product')
+          .select()
+          .eq('product_id', widget.productid)
+          .single();
+      int subid = pdt['subcategory_id'];
+      final response = await supabase
+          .from('tbl_attribute')
+          .select()
+          .eq('subcategory_id', subid);
       print(response);
       setState(() {
         attributes = response;
@@ -103,6 +116,15 @@ class _PattributeState extends State<Pattribute> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: const Color.fromARGB(255, 3, 1, 68),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
       body: Form(
         child: ListView(
           padding: EdgeInsets.all(20),
@@ -119,11 +141,11 @@ class _PattributeState extends State<Pattribute> {
                 value: selectedAtt,
                 items: attributes.map((att) {
                   return DropdownMenuItem(
+                    value: att['attribute_id'].toString(),
                     child: Text(
                       att['attribute_name'],
                       style: TextStyle(),
                     ),
-                    value: att['attribute_id'].toString(),
                   );
                 }).toList(),
                 onChanged: (value) {

@@ -12,7 +12,7 @@ class _ComplaintState extends State<Complaint> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 54, 3, 116),
+        backgroundColor: const Color.fromARGB(255, 3, 1, 68),
         leading: IconButton(
             onPressed: () {
               Navigator.pop(context);

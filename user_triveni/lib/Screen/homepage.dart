@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:user_triveni/Screen/account.dart';
-import 'package:user_triveni/Screen/cart.dart';
+
+import 'package:user_triveni/Screen/homecontent.dart';
 import 'package:user_triveni/Screen/myorder.dart';
 import 'package:user_triveni/Screen/profile.dart';
 import 'package:user_triveni/Screen/search.dart';
+
+import 'package:user_triveni/Screen/wallet.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -17,18 +19,11 @@ class _HomepageState extends State<Homepage> {
 
   // List of pages for bottom navigation
   final List<Widget> pageContent = [
-    Homepage(), // New HomeScreen widget
+    Homecontent(), // New HomeScreen widget
     Profile(), // Dummy category page
     Order(),
-    Search(),
+    Wallet(),
   ];
-
-  // Function to change the page when bottom navigation is clicked
-  void _onItemTapped(int index) {
-    setState(() {
-      selectedIndex = index;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +31,9 @@ class _HomepageState extends State<Homepage> {
       appBar: AppBar(
         toolbarHeight: 80,
         backgroundColor: const Color.fromARGB(255, 3, 1, 68),
+        leading: CircleAvatar(
+          backgroundImage: AssetImage("asset/Logo.jpeg"),
+        ),
         title: TextFormField(
           style: const TextStyle(
               color: Color.fromARGB(255, 240, 240, 242),
@@ -68,13 +66,13 @@ class _HomepageState extends State<Homepage> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => Account(),
+                    builder: (context) => Search(),
                   ));
             },
           ),
         ],
       ),
-      //body: pageContent[selectedIndex],
+      body: pageContent[selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: const Color.fromARGB(255, 3, 1, 68),
         // Set the selected index// Color of unselected icons
@@ -82,7 +80,7 @@ class _HomepageState extends State<Homepage> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
           BottomNavigationBarItem(
-              icon: Icon(Icons.person), label: "My Account"),
+              icon: Icon(Icons.person), label: "My Profile"),
           BottomNavigationBarItem(
               icon: Icon(Icons.shopping_bag), label: "My Orders"),
           BottomNavigationBarItem(icon: Icon(Icons.wallet), label: "Wallet"),
@@ -91,7 +89,11 @@ class _HomepageState extends State<Homepage> {
             const Color.fromARGB(255, 241, 233, 7), // Color of selected icon
         unselectedItemColor: Colors.white,
         currentIndex: selectedIndex,
-        onTap: _onItemTapped,
+        onTap: (value) {
+          setState(() {
+            selectedIndex = value;
+          });
+        },
       ),
     );
   }

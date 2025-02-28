@@ -1,14 +1,18 @@
-import 'package:admin_triveni/Screen/acceptedlist.dart';
-import 'package:admin_triveni/Screen/account.dart';
+import 'package:admin_triveni/Screen/aacceptedlist.dart';
+
+import 'package:admin_triveni/Screen/arejectedlist.dart';
+
 import 'package:admin_triveni/Screen/attribute.dart';
 import 'package:admin_triveni/Screen/booking.dart';
 import 'package:admin_triveni/Screen/category.dart';
 import 'package:admin_triveni/Screen/complaint.dart';
 import 'package:admin_triveni/Screen/dashboard.dart';
-import 'package:admin_triveni/Screen/pattribute.dart';
-import 'package:admin_triveni/Screen/product.dart';
-import 'package:admin_triveni/Screen/rejectedlist.dart';
+
 import 'package:admin_triveni/Screen/subcategory.dart';
+import 'package:admin_triveni/Screen/userlist.dart';
+import 'package:admin_triveni/Screen/viewproduct.dart';
+import 'package:admin_triveni/Screen/wacceptedlist.dart';
+import 'package:admin_triveni/Screen/wrejectedlist.dart';
 import 'package:flutter/material.dart';
 
 class Homepage extends StatefulWidget {
@@ -23,53 +27,57 @@ class _HomepageState extends State<Homepage> {
 //start
   List<String> pageName = [
     'Dashboard',
-    'Account',
     'Category',
     'Subcategory',
     'Attribute',
-    'Pattribute',
     'Product',
     'Booking',
     'Complaint',
-    'AcceptedList',
-    'RejectedList',
+    'UserList',
+    'WAcceptedList',
+    'WrejectedList',
+    'AAcceptedList',
+    'ArejectedList',
   ];
 
   List<IconData> pageIcon = [
-    Icons.home,
-    Icons.supervised_user_circle,
-    Icons.category_outlined,
-    Icons.category_rounded,
-    Icons.subdirectory_arrow_left,
-    Icons.subdirectory_arrow_right,
-    Icons.present_to_all_sharp,
-    Icons.online_prediction_sharp,
-    Icons.sync_problem,
     Icons.person_add_alt_sharp,
-    Icons.person_remove_sharp,
+    Icons.person_add_alt_sharp,
+    Icons.person_add_alt_sharp,
+    Icons.person_add_alt_sharp,
+    Icons.person_add_alt_sharp,
+    Icons.person_add_alt_sharp,
+    Icons.person_add_alt_sharp,
+    Icons.person_add_alt_sharp,
+    Icons.person_add_alt_sharp,
+    Icons.person_add_alt_sharp,
+    Icons.person_add_alt_sharp,
+    Icons.person_add_alt_sharp,
   ];
 
   List<Widget> pageContent = [
     Dashboard(),
-    Account(),
     Category(),
     Subcategory(),
     Attribute(),
-    Pattribute(),
-    Product(),
+    Viewproduct(),
     Booking(),
     Complaint(),
-    AcceptedList(),
-    RejectedList(),
+    Userlist(),
+    Wacceptedlist(),
+    Wrejectectedlist(),
+    Aacceptedlist(),
+    Arejectedlist(),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 54, 3, 116),
+        backgroundColor: Colors.white,
         title: Text('Admin Dashboard'),
-        titleTextStyle: TextStyle(color: Colors.yellowAccent, fontSize: 32),
+        titleTextStyle: TextStyle(
+            color: const Color.fromARGB(255, 54, 3, 116), fontSize: 32),
       ),
       body: Row(
         children: [
@@ -77,7 +85,7 @@ class _HomepageState extends State<Homepage> {
             flex: 1,
             child: Container(
               // decoration: BoxDecoration(
-              color: Colors.yellowAccent, //side bar
+              color: Colors.white, //side bar
               // shape: BoxShape.rectangle, ),
               child: ListView.builder(
                 itemCount: pageName.length,

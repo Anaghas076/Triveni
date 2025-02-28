@@ -142,11 +142,11 @@ class _AttributeState extends State<Attribute> {
                 value: selectedCat,
                 items: categories.map((cat) {
                   return DropdownMenuItem(
+                    value: cat['category_id'].toString(),
                     child: Text(
                       cat['category_name'],
                       style: TextStyle(),
                     ),
-                    value: cat['category_id'].toString(),
                   );
                 }).toList(),
                 onChanged: (value) {
@@ -169,11 +169,11 @@ class _AttributeState extends State<Attribute> {
                 value: selectedSub,
                 items: subcategories.map((sub) {
                   return DropdownMenuItem(
+                    value: sub['subcategory_id'].toString(),
                     child: Text(
                       sub['subcategory_name'],
                       style: TextStyle(),
                     ),
-                    value: sub['subcategory_id'].toString(),
                   );
                 }).toList(),
                 onChanged: (value) {

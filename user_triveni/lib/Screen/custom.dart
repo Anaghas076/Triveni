@@ -36,7 +36,7 @@ class _CustomState extends State<Custom> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 54, 3, 116),
+        backgroundColor: const Color.fromARGB(255, 3, 1, 68),
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
@@ -52,8 +52,69 @@ class _CustomState extends State<Custom> {
           ),
         ),
       ),
-      body: Center(
-        child: Text("customization"),
+      body: Container(
+        decoration: BoxDecoration(color: Colors.white),
+        child: Column(
+          children: [
+            TextFormField(
+              controller: designController,
+              style: TextStyle(
+                  color: const Color.fromARGB(255, 3, 1, 68),
+                  fontWeight: FontWeight.bold),
+              decoration: InputDecoration(
+                enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: BorderSide(
+                      color: const Color.fromARGB(255, 10, 10, 10),
+                    )),
+                prefixIcon: Icon(
+                  Icons.image,
+                  color: const Color.fromARGB(255, 7, 2, 54),
+                ),
+                hintText: " Design",
+                hintStyle: TextStyle(
+                    color: const Color.fromARGB(255, 8, 8, 8),
+                    fontWeight: FontWeight.bold),
+                border: OutlineInputBorder(),
+              ),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            TextFormField(
+              controller: descriptionController,
+              keyboardType: TextInputType.multiline,
+              maxLines: 5,
+              style: TextStyle(
+                  color: const Color.fromARGB(255, 3, 1, 68),
+                  fontWeight: FontWeight.bold),
+              decoration: InputDecoration(
+                enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: BorderSide(
+                      color: const Color.fromARGB(255, 10, 10, 10),
+                    )),
+                prefixIcon: Icon(
+                  Icons.description,
+                  color: const Color.fromARGB(255, 7, 2, 54),
+                ),
+                hintText: " Description",
+                hintStyle: TextStyle(
+                    color: const Color.fromARGB(255, 8, 8, 8),
+                    fontWeight: FontWeight.bold),
+                border: OutlineInputBorder(),
+              ),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            ElevatedButton(
+                onPressed: () {
+                  submit();
+                },
+                child: Text("Submit"))
+          ],
+        ),
       ),
     );
   }

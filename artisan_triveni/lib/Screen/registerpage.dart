@@ -1,7 +1,8 @@
 import 'package:artisan_triveni/Screen/homepage.dart';
-
 import 'package:artisan_triveni/main.dart';
 import 'package:flutter/material.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 
 class Registerpage extends StatefulWidget {
   const Registerpage({super.key});
@@ -17,8 +18,34 @@ class _RegisterpageState extends State<Registerpage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmController = TextEditingController();
-  final TextEditingController proofController = TextEditingController();
-  final TextEditingController photoController = TextEditingController();
+
+  File? _image;
+  final ImagePicker _picker = ImagePicker();
+
+  // Function to pick an image
+  Future<void> _pickImage() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _image = File(pickedFile.path);
+      });
+    }
+  }
+
+  Future<String?> _uploadImage(String artisanId) async {
+    try {
+      final fileName = 'artisan_$artisanId';
+
+      await supabase.storage.from('artisan').upload(fileName, _image!);
+
+      // Get public URL of the uploaded image
+      final imageUrl = supabase.storage.from('artisan').getPublicUrl(fileName);
+      return imageUrl;
+    } catch (e) {
+      print('Image upload failed: $e');
+      return null;
+    }
+  }
 
   Future<void> register() async {
     try {
@@ -27,22 +54,24 @@ class _RegisterpageState extends State<Registerpage> {
       String contact = contactController.text;
       String email = emailController.text;
       String password = passwordController.text;
-      String proof = proofController.text;
-      String photo = photoController.text;
 
+      final response =
+          await supabase.auth.signUp(password: password, email: email);
+      String artisanId = response.user!.id;
+
+      String? imageUrl = await _uploadImage(artisanId);
       await supabase.from('tbl_artisan').insert({
         'artisan_name': name,
         'artisan_address': address,
         'artisan_contact': contact,
         'artisan_email': email,
         'artisan_password': password,
-        'artisan_proof': proof,
-        'artisan_photo': photo,
+        'artisan_photo': imageUrl,
       });
 
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Successfully registed!!!!"),
-        backgroundColor: const Color.fromARGB(255, 54, 3, 116),
+        backgroundColor: const Color.fromARGB(255, 3, 1, 68),
       ));
       Navigator.pushReplacement(
           context,
@@ -55,8 +84,6 @@ class _RegisterpageState extends State<Registerpage> {
       emailController.clear();
       passwordController.clear();
       confirmController.clear();
-      proofController.clear();
-      photoController.clear();
     } catch (e) {
       print("Error artisan: $e");
     }
@@ -75,35 +102,22 @@ class _RegisterpageState extends State<Registerpage> {
           child: ListView(
             padding: EdgeInsets.all(20),
             children: [
-              Icon(
-                Icons.person,
-                color: const Color.fromARGB(255, 3, 1, 68),
-                size: 70,
-              ),
-              TextFormField(
-                controller: photoController,
-                style: TextStyle(
-                    color: const Color.fromARGB(255, 3, 1, 68),
-                    fontWeight: FontWeight.bold),
-                decoration: InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      borderSide: BorderSide(
-                        color: const Color.fromARGB(255, 10, 10, 10),
-                      )),
-                  prefixIcon: Icon(
-                    Icons.email_sharp,
-                    color: const Color.fromARGB(255, 7, 2, 54),
+              Center(
+                child: GestureDetector(
+                  onTap: _pickImage,
+                  child: CircleAvatar(
+                    radius: 50,
+                    backgroundColor: const Color.fromARGB(255, 3, 1, 68),
+                    backgroundImage: _image != null ? FileImage(_image!) : null,
+                    child: _image == null
+                        ? const Icon(Icons.camera_alt,
+                            color: Colors.white, size: 30)
+                        : null,
                   ),
-                  hintText: " Profile",
-                  hintStyle: TextStyle(
-                      color: const Color.fromARGB(255, 8, 8, 8),
-                      fontWeight: FontWeight.bold),
-                  border: OutlineInputBorder(),
                 ),
               ),
               SizedBox(
-                height: 10,
+                height: 20,
               ),
               TextFormField(
                 controller: nameController,
@@ -261,31 +275,6 @@ class _RegisterpageState extends State<Registerpage> {
                     color: const Color.fromARGB(255, 10, 10, 10),
                     fontWeight: FontWeight.bold,
                   ),
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              TextFormField(
-                controller: proofController,
-                style: TextStyle(
-                    color: const Color.fromARGB(255, 3, 1, 68),
-                    fontWeight: FontWeight.bold),
-                decoration: InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      borderSide: BorderSide(
-                        color: const Color.fromARGB(255, 10, 10, 10),
-                      )),
-                  prefixIcon: Icon(
-                    Icons.email_sharp,
-                    color: const Color.fromARGB(255, 7, 2, 54),
-                  ),
-                  hintText: " Proof",
-                  hintStyle: TextStyle(
-                      color: const Color.fromARGB(255, 8, 8, 8),
-                      fontWeight: FontWeight.bold),
                   border: OutlineInputBorder(),
                 ),
               ),

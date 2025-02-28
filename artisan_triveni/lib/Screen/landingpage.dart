@@ -1,5 +1,6 @@
+import 'package:artisan_triveni/Screen/loginpage.dart';
+import 'package:artisan_triveni/Screen/registerpage.dart';
 import 'package:flutter/material.dart';
-import 'package:admin_triveni/Screen/loginpage.dart';
 
 class Landingpage extends StatefulWidget {
   const Landingpage({super.key});
@@ -12,36 +13,22 @@ class _LandingpageState extends State<Landingpage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 54, 3, 116),
+      backgroundColor: const Color.fromARGB(255, 3, 1, 68),
       body: Center(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Padding(
-              padding: const EdgeInsets.all(50.0),
-              child: Text(
-                "ONLINE KERALA TRADITIONAL WEAR APP",
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 25,
-                    fontWeight: FontWeight.bold),
-              ),
-            ),
             SizedBox(
-              height: 10,
-            ),
-            Image.asset(
-              "asset/Logo.jpg",
-              width: 100,
               height: 100,
             ),
             SizedBox(
-              height: 40,
+              height: 20,
             ),
             Text(
               "TRIVENI",
               style: TextStyle(
                   color: Colors.white,
-                  fontSize: 50,
+                  fontSize: 40,
                   fontWeight: FontWeight.bold),
             ),
             SizedBox(
@@ -51,7 +38,7 @@ class _LandingpageState extends State<Landingpage> {
               "Handloom with heritage,fashion with soul",
               style: TextStyle(
                   color: Colors.white,
-                  fontSize: 20,
+                  fontSize: 17,
                   fontWeight: FontWeight.bold),
             ),
             SizedBox(
@@ -67,14 +54,42 @@ class _LandingpageState extends State<Landingpage> {
                 );
               },
               child: Text(
-                "GET STARTRD",
+                "GET STARTED",
                 style: TextStyle(
-                    backgroundColor: Colors.white,
                     color: const Color.fromARGB(255, 3, 1, 68),
                     fontSize: 18,
                     fontWeight: FontWeight.bold),
               ),
             ),
+            SizedBox(
+              height: 30,
+            ),
+            Text("Don't have an account?",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                )),
+            SizedBox(
+              height: 20,
+            ),
+            TextButton(
+                onPressed: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Registerpage(),
+                    ),
+                  );
+                },
+                child: Text("Register Here",
+                    style: TextStyle(
+                      decoration: TextDecoration.underline,
+                      decorationColor: Colors.white,
+                      // decorationThickness: 1.0,
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    )))
           ],
         ),
       ),

@@ -28,6 +28,8 @@ class _LoginPageState extends State<LoginPage> {
           ));
       print("Login Successfull");
     } catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Error Login')));
       print("Error During login: $e");
     }
   }
@@ -35,137 +37,92 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      //backgroundColor: const Color.fromARGB(255, 3, 1, 68),
       body: Center(
         child: Container(
-          width: 400,
-          height: 380,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(15),
-          ),
-          child: ListView(
-            padding: EdgeInsets.all(20),
-            children: [
-              Icon(
-                Icons.people_alt,
-                color: const Color.fromARGB(255, 3, 1, 68),
-                size: 80,
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              TextFormField(
-                controller: emailController,
-                style: TextStyle(
-                    color: const Color.fromARGB(255, 3, 1, 68),
-                    fontWeight: FontWeight.bold),
-                decoration: InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      borderSide: BorderSide(
-                        color: const Color.fromARGB(255, 10, 10, 10),
-                      )),
-                  prefixIcon: Icon(
-                    Icons.email_sharp,
-                    color: const Color.fromARGB(255, 7, 2, 54),
+          width: 650,
+          height: 650,
+          child: Padding(
+            padding: const EdgeInsets.all(50.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(
+                  height: 200,
+                  width: 200,
+                  child: CircleAvatar(
+                    backgroundImage: AssetImage("asset/Logo.jpeg"),
                   ),
-                  hintText: "Email Address",
-                  hintStyle: TextStyle(
-                      color: const Color.fromARGB(255, 8, 8, 8),
+                ),
+                SizedBox(
+                  height: 30,
+                ),
+                Text(
+                  "TRIVENI",
+                  style: TextStyle(
+                      color: const Color.fromARGB(255, 3, 1, 68),
+                      fontSize: 40,
                       fontWeight: FontWeight.bold),
-                  border: OutlineInputBorder(),
                 ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              TextFormField(
-                controller: passwordController,
-                keyboardType: TextInputType.visiblePassword,
-                style: TextStyle(
-                    color: const Color.fromARGB(255, 3, 1, 68),
-                    fontWeight: FontWeight.bold),
-                decoration: InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      borderSide: BorderSide(
-                        color: const Color.fromARGB(255, 10, 10, 10),
-                      )),
-                  prefixIcon: Icon(
-                    Icons.password,
-                    color: const Color.fromARGB(255, 7, 2, 54),
-                  ),
-                  suffixIcon: Icon(
-                    Icons.visibility_off,
-                    color: const Color.fromARGB(255, 7, 2, 54),
-                  ),
-                  hintText: "Password",
-                  hintStyle: TextStyle(
-                    color: const Color.fromARGB(255, 10, 10, 10),
-                    fontWeight: FontWeight.bold,
-                  ),
-                  border: OutlineInputBorder(),
+                SizedBox(
+                  height: 30,
                 ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  //login();
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => Homepage(),
-                      ));
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 23, 2, 62),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(15),
-                  child: Text(
-                    "LOGIN",
-                    style: const TextStyle(
-                      color: Color.fromARGB(255, 236, 235, 235),
-                      fontSize: 18,
+                SizedBox(
+                  width: 200,
+                  height: 80,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 3, 1, 68),
                     ),
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "Don't have an account? ",
-                    style: const TextStyle(
-                      color: Color.fromARGB(255, 12, 15, 15),
-                      fontSize: 15,
-                    ),
-                  ),
-                  TextButton(
                     onPressed: () {
-                      Navigator.push(
+                      Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>
-                              Registerpage(), // Replace with your Register Page
+                          builder: (context) => LoginPage(),
                         ),
                       );
                     },
                     child: Text(
-                      "Register",
-                      style: const TextStyle(
-                        color: Color.fromARGB(255, 15, 2, 100),
-                        fontSize: 15,
-                      ),
+                      "GET STARTED",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold),
                     ),
                   ),
-                ],
-              ),
-            ],
+                ),
+                SizedBox(
+                  height: 40,
+                ),
+                Text("Don't have an account?",
+                    style: TextStyle(
+                      color: const Color.fromARGB(255, 3, 1, 68),
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    )),
+                SizedBox(
+                  height: 30,
+                ),
+                TextButton(
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Registerpage(),
+                        ),
+                      );
+                    },
+                    child: Text("Register Here",
+                        style: TextStyle(
+                          decoration: TextDecoration.underline,
+                          decorationColor: const Color.fromARGB(255, 3, 1, 68),
+                          // decorationThickness: 1.0,
+                          color: const Color.fromARGB(255, 3, 1, 68),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 25,
+                        )))
+              ],
+            ),
           ),
         ),
       ),

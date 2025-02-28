@@ -1,17 +1,18 @@
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:admin_triveni/Screen/pattribute.dart';
 import 'package:admin_triveni/main.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
-class AddPrpduct extends StatefulWidget {
-  const AddPrpduct({super.key});
+class AddProduct extends StatefulWidget {
+  const AddProduct({super.key});
 
   @override
-  State<AddPrpduct> createState() => _AddPrpductState();
+  State<AddProduct> createState() => _AddProductState();
 }
 
-class _AddPrpductState extends State<AddPrpduct> {
+class _AddProductState extends State<AddProduct> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController codeController = TextEditingController();
   final TextEditingController priceController = TextEditingController();
@@ -83,7 +84,7 @@ class _AddPrpductState extends State<AddPrpduct> {
       });
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Inserted"),
-        backgroundColor: const Color.fromARGB(255, 54, 3, 116),
+        backgroundColor: const Color.fromARGB(255, 3, 1, 68),
       ));
       nameController.clear();
       codeController.clear();
@@ -116,7 +117,7 @@ class _AddPrpductState extends State<AddPrpduct> {
       }).eq('product_id', eid);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Updated"),
-        backgroundColor: const Color.fromARGB(255, 54, 3, 116),
+        backgroundColor: const Color.fromARGB(255, 3, 1, 68),
       ));
       fetchproduct();
       nameController.clear();
@@ -137,7 +138,7 @@ class _AddPrpductState extends State<AddPrpduct> {
       await supabase.from('tbl_product').delete().eq('product_id', id);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Deleted"),
-        backgroundColor: const Color.fromARGB(255, 54, 3, 116),
+        backgroundColor: const Color.fromARGB(255, 3, 1, 68),
       ));
       fetchproduct();
     } catch (e) {}
@@ -194,211 +195,192 @@ class _AddPrpductState extends State<AddPrpduct> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 54, 3, 116),
+        backgroundColor: const Color.fromARGB(255, 3, 1, 68),
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
-        title: Text(
-          "Add Product",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
       ),
-      body: Form(
-        child: ListView(
-          padding: EdgeInsets.all(20),
+      body: SingleChildScrollView(
+        child: Column(
           children: [
-            Center(
-              //pickimage code start...
-              child: SizedBox(
-                height: 100,
-                width: 100,
-                child: pickedImage == null
-                    ? GestureDetector(
-                        onTap: handleImagePick,
-                        child: Icon(
-                          Icons.add_a_photo,
-                          color: Color.fromARGB(255, 19, 1, 83),
-                          size: 50,
+            Form(
+              child: ListView(
+                padding: EdgeInsets.all(20),
+                shrinkWrap: true,
+                physics:
+                    NeverScrollableScrollPhysics(), // Prevent double scroll
+                children: [
+                  Center(
+                    child: SizedBox(
+                      height: 100,
+                      width: 100,
+                      child: pickedImage == null
+                          ? GestureDetector(
+                              onTap: handleImagePick,
+                              child: Icon(
+                                Icons.add_a_photo,
+                                color: const Color.fromARGB(255, 3, 1, 68),
+                                size: 50,
+                              ),
+                            )
+                          : GestureDetector(
+                              onTap: handleImagePick,
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(100),
+                                child: pickedImage!.bytes != null
+                                    ? Image.memory(
+                                        Uint8List.fromList(pickedImage!.bytes!),
+                                        fit: BoxFit.cover,
+                                      )
+                                    : (pickedImage!.path != null
+                                        ? Image.file(
+                                            File(pickedImage!.path!),
+                                            fit: BoxFit.cover,
+                                          )
+                                        : SizedBox()),
+                              ),
+                            ),
+                    ),
+                  ),
+                  SizedBox(height: 30),
+                  DropdownButtonFormField(
+                    style: TextStyle(color: Colors.white),
+                    dropdownColor: Colors.green,
+                    decoration: InputDecoration(
+                      fillColor: const Color.fromARGB(255, 3, 1, 68),
+                      filled: true,
+                      labelText: "Select category",
+                      labelStyle: TextStyle(color: Colors.yellowAccent),
+                    ),
+                    value: selectedCat,
+                    items: categories.map((cat) {
+                      return DropdownMenuItem(
+                        value: cat['category_id'].toString(),
+                        child: Text(
+                          cat['category_name'],
+                          style: TextStyle(color: Colors.white),
                         ),
-                      )
-                    : GestureDetector(
-                        onTap: handleImagePick,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(100),
-                          child: pickedImage!.bytes != null
-                              ? Image.memory(
-                                  Uint8List.fromList(
-                                      pickedImage!.bytes!), // For web
-                                  fit: BoxFit.cover,
-                                )
-                              : Image.file(
-                                  File(
-                                      pickedImage!.path!), // For mobile/desktop
-                                  fit: BoxFit.cover,
-                                ),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      fetchsubcategory(value!);
+                      setState(() {
+                        selectedCat = value;
+                      });
+                    },
+                  ),
+                  SizedBox(height: 20),
+                  DropdownButtonFormField(
+                    style: TextStyle(color: Colors.white),
+                    dropdownColor: Colors.greenAccent,
+                    decoration: InputDecoration(
+                      fillColor: const Color.fromARGB(255, 3, 1, 68),
+                      filled: true,
+                      labelText: "Select Subcategory",
+                      labelStyle: TextStyle(color: Colors.yellowAccent),
+                    ),
+                    value: selectedSub,
+                    items: subcategories.map((sub) {
+                      return DropdownMenuItem(
+                        value: sub['subcategory_id'].toString(),
+                        child: Text(
+                          sub['subcategory_name'],
+                          style: TextStyle(color: Colors.white),
                         ),
-                      ),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      setState(() {
+                        selectedSub = value;
+                      });
+                    },
+                  ),
+                  SizedBox(height: 20),
+                  TextFormField(
+                    style: TextStyle(color: Colors.white),
+                    controller: nameController,
+                    keyboardType: TextInputType.name,
+                    decoration: InputDecoration(
+                      hintText: "Enter Product Name",
+                      hintStyle: TextStyle(color: Colors.yellowAccent),
+                      border: OutlineInputBorder(),
+                      filled: true,
+                      fillColor: const Color.fromARGB(255, 3, 1, 68),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  TextFormField(
+                    style: TextStyle(color: Colors.white),
+                    controller: codeController,
+                    keyboardType: TextInputType.text,
+                    decoration: InputDecoration(
+                      hintText: "Enter Product Code",
+                      hintStyle: TextStyle(color: Colors.yellowAccent),
+                      border: OutlineInputBorder(),
+                      filled: true,
+                      fillColor: const Color.fromARGB(255, 3, 1, 68),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  TextFormField(
+                    style: TextStyle(color: Colors.white),
+                    controller: priceController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      hintText: "Enter Product Price",
+                      hintStyle: TextStyle(color: Colors.yellowAccent),
+                      border: OutlineInputBorder(),
+                      filled: true,
+                      fillColor: const Color.fromARGB(255, 3, 1, 68),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  TextFormField(
+                    style: TextStyle(color: Colors.white),
+                    controller: typeController,
+                    keyboardType: TextInputType.text,
+                    decoration: InputDecoration(
+                      hintText: "Enter Product Type",
+                      hintStyle: TextStyle(color: Colors.yellowAccent),
+                      border: OutlineInputBorder(),
+                      filled: true,
+                      fillColor: const Color.fromARGB(255, 3, 1, 68),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  TextFormField(
+                    style: TextStyle(color: Colors.white),
+                    controller: descriptionController,
+                    keyboardType: TextInputType.multiline,
+                    maxLines: 3,
+                    decoration: InputDecoration(
+                      hintText: "Enter Product Description",
+                      hintStyle: TextStyle(color: Colors.yellowAccent),
+                      border: OutlineInputBorder(),
+                      filled: true,
+                      fillColor: const Color.fromARGB(255, 3, 1, 68),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {
+                      submit();
+                    },
+                    child: Text("Submit"),
+                  ),
+                ],
               ),
-            ), //pickimage code ending
-            SizedBox(
-              height: 30,
             ),
-            DropdownButtonFormField(
-                style: TextStyle(color: Colors.white),
-                dropdownColor: Colors.green,
-                decoration: InputDecoration(
-                  fillColor: const Color.fromARGB(255, 54, 3, 116),
-                  filled: true,
-                  labelText: "Select category",
-                  labelStyle: TextStyle(color: Colors.yellowAccent),
-                ),
-                value: selectedCat,
-                items: categories.map((cat) {
-                  return DropdownMenuItem(
-                    child: Text(
-                      cat['category_name'],
-                      style: TextStyle(),
-                    ),
-                    value: cat['category_id'].toString(),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  fetchsubcategory(value!);
-                  setState(() {
-                    selectedCat = value;
-                  });
-                }),
-            SizedBox(
-              height: 20,
-            ),
-            DropdownButtonFormField(
-                style: TextStyle(color: Colors.white),
-                dropdownColor: Colors.greenAccent,
-                decoration: InputDecoration(
-                    fillColor: const Color.fromARGB(255, 54, 3, 116),
-                    filled: true,
-                    labelText: "Select Subcategory",
-                    labelStyle: TextStyle(color: Colors.yellowAccent)),
-                value: selectedSub,
-                items: subcategories.map((sub) {
-                  return DropdownMenuItem(
-                    child: Text(
-                      sub['subcategory_name'],
-                      style: TextStyle(),
-                    ),
-                    value: sub['subcategory_id'].toString(),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    selectedSub = value;
-                  });
-                }),
-            SizedBox(
-              height: 20,
-            ),
-            TextFormField(
-              style: TextStyle(color: Colors.white),
-              controller: nameController,
-              keyboardType: TextInputType.name,
-              decoration: InputDecoration(
-                  hintText: "Enter Product Name",
-                  hintStyle:
-                      TextStyle(color: const Color.fromARGB(255, 248, 240, 10)),
-                  border: OutlineInputBorder(),
-                  filled: true,
-                  fillColor: const Color.fromARGB(255, 54, 3, 116)),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            TextFormField(
-              style: TextStyle(color: Colors.white),
-              controller: codeController,
-              keyboardType: TextInputType.name,
-              decoration: InputDecoration(
-                  hintText: "Enter Product Code",
-                  hintStyle:
-                      TextStyle(color: const Color.fromARGB(255, 248, 240, 10)),
-                  border: OutlineInputBorder(),
-                  filled: true,
-                  fillColor: const Color.fromARGB(255, 54, 3, 116)),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            TextFormField(
-              style: TextStyle(color: Colors.white),
-              controller: priceController,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                  hintText: "Enter Product Price",
-                  hintStyle:
-                      TextStyle(color: const Color.fromARGB(255, 248, 240, 10)),
-                  border: OutlineInputBorder(),
-                  filled: true,
-                  fillColor: const Color.fromARGB(255, 54, 3, 116)),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            TextFormField(
-              style: TextStyle(color: Colors.white),
-              controller: typeController,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                  hintText: "Enter Product Type",
-                  hintStyle:
-                      TextStyle(color: const Color.fromARGB(255, 248, 240, 10)),
-                  border: OutlineInputBorder(),
-                  filled: true,
-                  fillColor: const Color.fromARGB(255, 54, 3, 116)),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            TextFormField(
-              style: TextStyle(color: Colors.white),
-              controller: descriptionController,
-              keyboardType: TextInputType.multiline,
-              decoration: InputDecoration(
-                  hintText: "Enter Product Description",
-                  hintStyle:
-                      TextStyle(color: const Color.fromARGB(255, 248, 240, 10)),
-                  border: OutlineInputBorder(),
-                  filled: true,
-                  fillColor: const Color.fromARGB(255, 54, 3, 116)),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            //  Row(
-            // mainAxisAlignment: MainAxisAlignment.center,
-            //children: [
-            ElevatedButton(
-                onPressed: () {
-                  // if (eid == 0) {
-                  submit();
-                  // } else {
-                  // update();
-                  // }
-                },
-                child: Text("Submit")),
-            //  ],
-            //  ),
-            Expanded(
+            SizedBox(height: 20),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
               child: DataTable(
                 columns: [
                   DataColumn(label: Text("SNo.")),
                   DataColumn(label: Text("Name")),
-                  // DataColumn(label: Text("Category")),
                   DataColumn(label: Text("Subcategory")),
                   DataColumn(label: Text("Price")),
                   DataColumn(label: Text("Type")),
@@ -413,8 +395,6 @@ class _AddPrpductState extends State<AddPrpduct> {
                       cells: [
                         DataCell(Text((index + 1).toString())),
                         DataCell(Text(data['product_name']?.toString() ?? '')),
-                        //  DataCell(
-                        // Text(data['tbl_category']?['category_name']?.toString() ?? '')),
                         DataCell(Text(data['tbl_subcategory']
                                     ?['subcategory_name']
                                 ?.toString() ??
@@ -424,13 +404,29 @@ class _AddPrpductState extends State<AddPrpduct> {
                         DataCell(Text(
                             data['product_description']?.toString() ?? '')),
                         DataCell(
-                          IconButton(
-                            onPressed: () {
-                              delete(
-                                  data['product_id']); // Use correct product_id
-                            },
-                            icon: Icon(Icons.delete),
-                            color: const Color.fromARGB(255, 250, 34, 10),
+                          Row(
+                            children: [
+                              IconButton(
+                                onPressed: () {
+                                  delete(data['product_id']);
+                                },
+                                icon: Icon(Icons.delete),
+                                color: Colors.red,
+                              ),
+                              IconButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => Pattribute(
+                                          productid: data['product_id'],
+                                        ),
+                                      ));
+                                },
+                                icon: Icon(Icons.add),
+                                color: const Color.fromARGB(255, 25, 4, 88),
+                              ),
+                            ],
                           ),
                         ),
                       ],
