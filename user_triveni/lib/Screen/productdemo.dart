@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:user_triveni/Screen/cart.dart';
+import 'package:user_triveni/main.dart';
 
 class Productdemo extends StatefulWidget {
   final Map<String, dynamic> product;
@@ -10,6 +10,63 @@ class Productdemo extends StatefulWidget {
 }
 
 class _ProductdemoState extends State<Productdemo> {
+  Future<void> add(int pid) async {
+    try {
+      final response = await supabase
+          .from('tbl_booking')
+          .select()
+          .eq('user_id', supabase.auth.currentUser!.id)
+          .eq('booking_status', 0)
+          .maybeSingle(); // Use maybeSingle() instead of single()
+
+      if (response == null) {
+        print("No existing booking, creating a new one.");
+        int bookingid = await booking();
+        checkCartProduct(pid, bookingid);
+      } else {
+        int bookingid = response['booking_id'];
+        checkCartProduct(pid, bookingid);
+      }
+    } catch (e) {
+      print("Error checking booking: $e");
+    }
+  }
+
+  Future<int> booking() async {
+    try {
+      final response =
+          await supabase.from('tbl_booking').insert({}).select().single();
+
+      int id = response['booking_id'];
+      return id;
+    } catch (e) {
+      print("Error cart: $e");
+      return 0;
+    }
+  }
+
+  Future<void> checkCartProduct(int pid, int bid) async {
+    try {
+      final response = await supabase
+          .from('tbl_cart')
+          .select()
+          .eq('product_id', pid)
+          .eq('booking_id', bid);
+      if (response.isEmpty) {
+        await supabase
+            .from('tbl_cart')
+            .insert({'booking_id': bid, 'product_id': pid});
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text("Added to Cart")));
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text("Already added to cart")));
+      }
+    } catch (e) {
+      print("Error in Adding:$e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,21 +83,10 @@ class _ProductdemoState extends State<Productdemo> {
         children: [
           Column(
             children: [
-              Container(
-                height: 180,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(15),
-                      topRight: Radius.circular(15)),
-                  image: widget.product['product_photo'],
-                ),
-              ),
-              Container(
-                child: Image.network(
-                  widget.product['product_photo'],
-                  width: 400,
-                  height: 400,
-                ),
+              Image.network(
+                widget.product['product_photo'],
+                width: 200,
+                height: 200,
               ),
               SizedBox(
                 height: 10,
@@ -69,7 +115,7 @@ class _ProductdemoState extends State<Productdemo> {
                     backgroundColor: const Color.fromARGB(255, 3, 1, 68),
                   ),
                   onPressed: () {
-                    //cart();
+                    add(widget.product['product_id']);
                   },
                   child: Text(
                     "Add to Cart",

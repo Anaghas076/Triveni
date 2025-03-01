@@ -13,84 +13,93 @@ class _LandingpageState extends State<Landingpage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 3, 1, 68),
+      backgroundColor: Colors.white,
       body: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(
-              height: 100,
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Text(
-              "TRIVENI",
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 40,
-                  fontWeight: FontWeight.bold),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Text(
-              "Handloom with heritage,fashion with soul",
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 17,
-                  fontWeight: FontWeight.bold),
-            ),
-            SizedBox(
-              height: 50,
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => LoginPage(),
+        child: Container(
+          width: 650,
+          height: 650,
+          child: Padding(
+            padding: const EdgeInsets.all(50.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                SizedBox(
+                  height: 200,
+                  width: 200,
+                  child: CircleAvatar(
+                    backgroundImage: AssetImage("asset/Logo.jpeg"),
                   ),
-                );
-              },
-              child: Text(
-                "GET STARTED",
-                style: TextStyle(
-                    color: const Color.fromARGB(255, 3, 1, 68),
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold),
-              ),
-            ),
-            SizedBox(
-              height: 30,
-            ),
-            Text("Don't have an account?",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                )),
-            SizedBox(
-              height: 20,
-            ),
-            TextButton(
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Registerpage(),
+                ),
+                SizedBox(
+                  height: 30,
+                ),
+                Text(
+                  "TRIVENI",
+                  style: TextStyle(
+                      color: const Color.fromARGB(255, 3, 1, 68),
+                      fontSize: 40,
+                      fontWeight: FontWeight.bold),
+                ),
+                SizedBox(
+                  height: 30,
+                ),
+                SizedBox(
+                  width: 200,
+                  height: 80,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 3, 1, 68),
                     ),
-                  );
-                },
-                child: Text("Register Here",
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => LoginPage(),
+                        ),
+                      );
+                    },
+                    child: Text(
+                      "GET STARTED",
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 40,
+                ),
+                Text("Don't have an account?",
                     style: TextStyle(
-                      decoration: TextDecoration.underline,
-                      decorationColor: Colors.white,
-                      // decorationThickness: 1.0,
-                      color: Colors.white,
+                      color: const Color.fromARGB(255, 3, 1, 68),
                       fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                    )))
-          ],
+                      fontSize: 18,
+                    )),
+                SizedBox(
+                  height: 30,
+                ),
+                TextButton(
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Registerpage(),
+                        ),
+                      );
+                    },
+                    child: Text("Register Here",
+                        style: TextStyle(
+                          decoration: TextDecoration.underline,
+                          decorationColor: const Color.fromARGB(255, 3, 1, 68),
+                          // decorationThickness: 1.0,
+                          color: const Color.fromARGB(255, 3, 1, 68),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 25,
+                        )))
+              ],
+            ),
+          ),
         ),
       ),
     );

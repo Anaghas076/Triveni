@@ -1,3 +1,5 @@
+import 'package:artisan_triveni/Screen/changepassword.dart';
+import 'package:artisan_triveni/Screen/edit.dart';
 import 'package:artisan_triveni/main.dart';
 import 'package:flutter/material.dart';
 
@@ -9,7 +11,7 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
-  Map<String, dynamic> artisans = {};
+  Map<String, dynamic> artisanid = {};
 
   Future<void> fetchartisan() async {
     try {
@@ -19,7 +21,7 @@ class _ProfileState extends State<Profile> {
           .eq('artisan_id', supabase.auth.currentUser!.id)
           .single();
       setState(() {
-        artisans = response;
+        artisanid = response;
       });
     } catch (e) {
       print("Error: $e");
@@ -35,76 +37,123 @@ class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: artisans.isEmpty
-          ? Center(child: CircularProgressIndicator())
-          : GridView.builder(
-              padding: EdgeInsets.all(10),
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 5,
-                crossAxisSpacing: 5,
-                mainAxisSpacing: 5,
-                childAspectRatio: 2, // Adjusted for better proportions
-              ),
-              itemCount: artisans.length,
-              itemBuilder: (context, index) {
-                final data = artisans[index];
-
-                return Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.grey.shade300),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 5,
-                        spreadRadius: 2,
-                      ),
-                    ],
-                  ),
-                  padding: EdgeInsets.all(10),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      CircleAvatar(
-                        radius: 30, // Reduced size for better alignment
-                        backgroundImage:
-                            NetworkImage(data['artisan_photo'] ?? ""),
-                        backgroundColor: Colors.grey.shade200,
-                      ),
-                      SizedBox(width: 18), // Space between image and text
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              data['artisan_name'] ?? " ",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                              ),
-                            ),
-                            Text(
-                              data['artisan_address'] ?? " ",
-                            ),
-                            Text(
-                              data['artisan_contact'] ?? " ",
-                            ),
-                            Text(
-                              data['artisan_email'] ?? " ",
-                            ),
-                            Text(
-                              data['artisan_password'] ?? " ",
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              },
+      body: ListView.builder(
+        padding: EdgeInsets.all(10),
+        itemCount: 1,
+        itemBuilder: (context, index) {
+          return Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.grey.shade300),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 5,
+                  spreadRadius: 2,
+                ),
+              ],
             ),
+            padding: EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                CircleAvatar(
+                  radius: 40,
+                  backgroundImage:
+                      NetworkImage(artisanid['artisan_photo'] ?? ""),
+                  backgroundColor: Colors.grey.shade200,
+                ),
+                SizedBox(height: 20),
+                Text(
+                  artisanid['artisan_name'] ?? "Artisan Name",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: Colors.black87,
+                  ),
+                ),
+                SizedBox(height: 20),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.location_on,
+                      size: 16,
+                      color: Color.fromARGB(255, 54, 3, 116),
+                    ),
+                    SizedBox(width: 6),
+                    Expanded(
+                      child: Text(
+                        artisanid['artisan_address'] ?? "Address unavailable",
+                        style: TextStyle(fontSize: 14, color: Colors.black54),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 20),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.phone,
+                      size: 16,
+                      color: Color.fromARGB(255, 54, 3, 116),
+                    ),
+                    SizedBox(width: 6),
+                    Text(
+                      artisanid['artisan_contact'] ?? "No contact info",
+                      style: TextStyle(fontSize: 14, color: Colors.black54),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 20),
+                Row(
+                  children: [
+                    Icon(
+                      Icons.email,
+                      size: 16,
+                      color: Color.fromARGB(255, 54, 3, 116),
+                    ),
+                    SizedBox(width: 6),
+                    Text(
+                      artisanid['artisan_email'] ?? "No email",
+                      style: TextStyle(fontSize: 14, color: Colors.black54),
+                    ),
+                  ],
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  children: [
+                    ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => Edit(),
+                              ));
+                        },
+                        child: Text("Edit")),
+                    SizedBox(
+                      width: 50,
+                    ),
+                    ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ChangePassword(),
+                              ));
+                        },
+                        child: Text("Change password")),
+                  ],
+                )
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 }

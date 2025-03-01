@@ -102,6 +102,7 @@ class _AddProductState extends State<AddProduct> {
   }
 
   int eid = 0;
+  String selectedType = '';
 
   Future<void> update() async {
     try {
@@ -110,7 +111,7 @@ class _AddProductState extends State<AddProduct> {
         'product_name': nameController.text,
         'product_code': codeController.text,
         'product_price': priceController.text,
-        'product_type': typeController.text,
+        'product_type': selectedType,
         'product_description': descriptionController.text,
         'product_photo': url,
         'subcategory_id': selectedSub,
@@ -338,17 +339,29 @@ class _AddProductState extends State<AddProduct> {
                     ),
                   ),
                   SizedBox(height: 20),
-                  TextFormField(
-                    style: TextStyle(color: Colors.white),
-                    controller: typeController,
-                    keyboardType: TextInputType.text,
-                    decoration: InputDecoration(
-                      hintText: "Enter Product Type",
-                      hintStyle: TextStyle(color: Colors.yellowAccent),
-                      border: OutlineInputBorder(),
-                      filled: true,
-                      fillColor: const Color.fromARGB(255, 3, 1, 68),
-                    ),
+                  Row(
+                    children: [
+                      Radio(
+                        value: "Male",
+                        groupValue: selectedType,
+                        onChanged: (e) {
+                          setState(() {
+                            selectedType = e!;
+                          });
+                        },
+                      ),
+                      const Text("Male"),
+                      Radio(
+                        value: "Female",
+                        groupValue: selectedType,
+                        onChanged: (e) {
+                          setState(() {
+                            selectedType = e!;
+                          });
+                        },
+                      ),
+                      const Text("Female"),
+                    ],
                   ),
                   SizedBox(height: 20),
                   TextFormField(

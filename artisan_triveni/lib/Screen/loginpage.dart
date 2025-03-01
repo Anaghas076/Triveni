@@ -17,10 +17,13 @@ class _LoginPageState extends State<LoginPage> {
     try {
       String email = emailController.text;
       String password = passwordController.text;
+      print(email);
+      print(password);
       await supabase.auth.signInWithPassword(
         email: email,
         password: password,
       );
+
       Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -28,8 +31,6 @@ class _LoginPageState extends State<LoginPage> {
           ));
       print("Login Successfull");
     } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Error Login')));
       print("Error During login: $e");
     }
   }
@@ -37,92 +38,143 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //backgroundColor: const Color.fromARGB(255, 3, 1, 68),
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       body: Center(
         child: Container(
-          width: 650,
-          height: 650,
-          child: Padding(
-            padding: const EdgeInsets.all(50.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                SizedBox(
-                  height: 200,
-                  width: 200,
-                  child: CircleAvatar(
-                    backgroundImage: AssetImage("asset/Logo.jpeg"),
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(25),
+              border: Border.all(
+                color: const Color.fromARGB(255, 3, 1, 68),
+                width: 3,
+              )),
+          width: 340,
+          height: 440,
+          margin: EdgeInsets.only(top: 50),
+          child: ListView(
+            shrinkWrap: true,
+            padding: EdgeInsets.all(40),
+            children: [
+              Icon(
+                Icons.people_alt,
+                color: const Color.fromARGB(255, 3, 1, 68),
+                size: 80,
+              ),
+              SizedBox(
+                height: 30,
+              ),
+              TextFormField(
+                controller: emailController,
+                style: TextStyle(
+                    color: const Color.fromARGB(255, 3, 1, 68),
+                    fontWeight: FontWeight.bold),
+                decoration: InputDecoration(
+                  enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                      borderSide: BorderSide(
+                        color: const Color.fromARGB(255, 3, 1, 68),
+                        width: 3,
+                      )),
+                  prefixIcon: Icon(
+                    Icons.email_sharp,
+                    color: const Color.fromARGB(255, 7, 2, 54),
+                  ),
+                  hintText: "Email Address",
+                  hintStyle: TextStyle(
+                    color: const Color.fromARGB(255, 3, 1, 68),
+                    fontWeight: FontWeight.w900,
+                  ),
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              SizedBox(
+                height: 30,
+              ),
+              TextFormField(
+                controller: passwordController,
+                keyboardType: TextInputType.visiblePassword,
+                style: TextStyle(
+                  color: const Color.fromARGB(255, 3, 1, 68),
+                  fontWeight: FontWeight.w900,
+                ),
+                decoration: InputDecoration(
+                  enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                      borderSide: BorderSide(
+                        color: const Color.fromARGB(255, 3, 1, 68),
+                        width: 3,
+                      )),
+                  prefixIcon: Icon(
+                    Icons.password_outlined,
+                    color: const Color.fromARGB(255, 7, 2, 54),
+                  ),
+                  suffixIcon: Icon(
+                    Icons.visibility_off,
+                    color: const Color.fromARGB(255, 7, 2, 54),
+                  ),
+                  hintText: "Password",
+                  hintStyle: TextStyle(
+                    color: const Color.fromARGB(255, 3, 1, 68),
+                    fontWeight: FontWeight.bold,
+                  ),
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  login();
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 3, 1, 68),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(15),
+                  child: Text(
+                    "LOGIN",
+                    style: const TextStyle(
+                      color: Color.fromARGB(255, 236, 235, 235),
+                      fontSize: 18,
+                    ),
                   ),
                 ),
-                SizedBox(
-                  height: 30,
-                ),
-                Text(
-                  "TRIVENI",
-                  style: TextStyle(
-                      color: const Color.fromARGB(255, 3, 1, 68),
-                      fontSize: 40,
-                      fontWeight: FontWeight.bold),
-                ),
-                SizedBox(
-                  height: 30,
-                ),
-                SizedBox(
-                  width: 200,
-                  height: 80,
-                  child: ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 3, 1, 68),
-                    ),
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Don't have an account? ",
+                    style: const TextStyle(
+                        color: Color.fromARGB(255, 12, 15, 15),
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  TextButton(
                     onPressed: () {
-                      Navigator.pushReplacement(
+                      Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => LoginPage(),
+                          builder: (context) =>
+                              Registerpage(), // Replace with your Register Page
                         ),
                       );
                     },
                     child: Text(
-                      "GET STARTED",
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold),
+                      "Register",
+                      style: const TextStyle(
+                        color: Color.fromARGB(255, 15, 2, 100),
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(
-                  height: 40,
-                ),
-                Text("Don't have an account?",
-                    style: TextStyle(
-                      color: const Color.fromARGB(255, 3, 1, 68),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                    )),
-                SizedBox(
-                  height: 30,
-                ),
-                TextButton(
-                    onPressed: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => Registerpage(),
-                        ),
-                      );
-                    },
-                    child: Text("Register Here",
-                        style: TextStyle(
-                          decoration: TextDecoration.underline,
-                          decorationColor: const Color.fromARGB(255, 3, 1, 68),
-                          // decorationThickness: 1.0,
-                          color: const Color.fromARGB(255, 3, 1, 68),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 25,
-                        )))
-              ],
-            ),
+                ],
+              ),
+            ],
           ),
         ),
       ),

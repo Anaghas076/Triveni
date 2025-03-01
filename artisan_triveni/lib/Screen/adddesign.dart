@@ -105,6 +105,15 @@ class _AddDesignState extends State<AddDesign> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: const Color.fromARGB(255, 3, 1, 68),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
       body: Form(
         child: ListView(
           padding: EdgeInsets.all(20),

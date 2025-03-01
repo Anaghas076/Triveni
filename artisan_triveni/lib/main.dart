@@ -1,4 +1,4 @@
-import 'package:artisan_triveni/Screen/homepage.dart';
+import 'package:artisan_triveni/Screen/landingpage.dart';
 import 'package:artisan_triveni/Screen/loginpage.dart';
 
 import 'package:flutter/material.dart';
@@ -21,6 +21,6 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: Homepage());
+    return const MaterialApp(home: Landingpage());
   }
 }
