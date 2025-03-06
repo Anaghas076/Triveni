@@ -37,7 +37,7 @@ class _HomecontentState extends State<Homecontent> {
                       fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  "Arav Ravi",
+                  "Vami Raj",
                   style: TextStyle(
                       color: const Color.fromARGB(255, 3, 1, 68),
                       fontSize: 18,

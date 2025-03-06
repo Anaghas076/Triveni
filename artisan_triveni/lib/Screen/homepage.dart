@@ -1,6 +1,7 @@
-import 'package:artisan_triveni/Screen/account.dart';
 import 'package:artisan_triveni/Screen/adddesign.dart';
+
 import 'package:artisan_triveni/Screen/homecontent.dart';
+
 import 'package:artisan_triveni/Screen/loginpage.dart';
 import 'package:artisan_triveni/Screen/order.dart';
 import 'package:artisan_triveni/Screen/profile.dart';
@@ -18,7 +19,7 @@ class _HomepageState extends State<Homepage> {
 
   // List of pages for bottom navigation
   final List<Widget> pageContent = [
-    HomeContent(), // New HomeScreen widget
+    Homecontent(), // New HomeScreen widget
     Profile(), // Dummy category page
     Order(),
     AddDesign(),

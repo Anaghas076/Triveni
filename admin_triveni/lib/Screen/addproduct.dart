@@ -70,14 +70,14 @@ class _AddProductState extends State<AddProduct> {
       print(name);
       print(code);
       print(price);
-      print(type);
+      print(selectedType);
       print(description);
 
       await supabase.from('tbl_product').insert({
         'product_name': name,
         'product_code': code,
         'product_price': price,
-        'product_type': type,
+        'product_type': selectedType,
         'product_photo': url,
         'product_description': description,
         'subcategory_id': selectedSub,
@@ -342,7 +342,7 @@ class _AddProductState extends State<AddProduct> {
                   Row(
                     children: [
                       Radio(
-                        value: "Male",
+                        value: "Predesigned",
                         groupValue: selectedType,
                         onChanged: (e) {
                           setState(() {
@@ -350,9 +350,12 @@ class _AddProductState extends State<AddProduct> {
                           });
                         },
                       ),
-                      const Text("Male"),
+                      const Text(
+                        "Predesigned",
+                        style: TextStyle(color: Colors.white),
+                      ),
                       Radio(
-                        value: "Female",
+                        value: "Customized",
                         groupValue: selectedType,
                         onChanged: (e) {
                           setState(() {
@@ -360,7 +363,10 @@ class _AddProductState extends State<AddProduct> {
                           });
                         },
                       ),
-                      const Text("Female"),
+                      const Text(
+                        "Customized",
+                        style: TextStyle(color: Colors.white),
+                      ),
                     ],
                   ),
                   SizedBox(height: 20),

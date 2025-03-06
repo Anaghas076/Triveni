@@ -134,7 +134,7 @@ class _RegisterpageState extends State<Registerpage> {
                     Icons.person,
                     color: const Color.fromARGB(255, 7, 2, 54),
                   ),
-                  hintText: " weavername",
+                  hintText: " Username",
                   hintStyle: TextStyle(
                       color: const Color.fromARGB(255, 8, 8, 8),
                       fontWeight: FontWeight.bold),

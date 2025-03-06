@@ -9,15 +9,11 @@ class Userlist extends StatefulWidget {
 }
 
 class _UserlistState extends State<Userlist> {
-  Map<String, dynamic> users = {};
+  List<Map<String, dynamic>> users = [];
 
   Future<void> fetchuser() async {
     try {
-      final response = await supabase
-          .from('tbl_user')
-          .select()
-          .eq('user_id', supabase.auth.currentUser!.id)
-          .single();
+      final response = await supabase.from('tbl_user').select();
       setState(() {
         users = response;
       });
