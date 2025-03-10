@@ -1,6 +1,6 @@
 import 'package:admin_triveni/Screen/aacceptedlist.dart';
-
 import 'package:admin_triveni/Screen/arejectedlist.dart';
+import 'package:admin_triveni/Screen/artisanlist.dart';
 
 import 'package:admin_triveni/Screen/attribute.dart';
 import 'package:admin_triveni/Screen/booking.dart';
@@ -12,6 +12,7 @@ import 'package:admin_triveni/Screen/subcategory.dart';
 import 'package:admin_triveni/Screen/userlist.dart';
 import 'package:admin_triveni/Screen/viewproduct.dart';
 import 'package:admin_triveni/Screen/wacceptedlist.dart';
+import 'package:admin_triveni/Screen/weaverlist.dart';
 import 'package:admin_triveni/Screen/wrejectedlist.dart';
 import 'package:flutter/material.dart';
 
@@ -34,13 +35,17 @@ class _HomepageState extends State<Homepage> {
     'Booking',
     'Complaint',
     'UserList',
-    'WAcceptedList',
+    'WeaverList',
+    'ArtisanList',
+    'WacceptedList',
     'WrejectedList',
-    'AAcceptedList',
+    'AacceptedList',
     'ArejectedList',
   ];
 
   List<IconData> pageIcon = [
+    Icons.person_add_alt_sharp,
+    Icons.person_add_alt_sharp,
     Icons.person_add_alt_sharp,
     Icons.person_add_alt_sharp,
     Icons.person_add_alt_sharp,
@@ -64,6 +69,8 @@ class _HomepageState extends State<Homepage> {
     Booking(),
     Complaint(),
     Userlist(),
+    Weaverlist(),
+    Artisanlist(),
     Wacceptedlist(),
     Wrejectectedlist(),
     Aacceptedlist(),

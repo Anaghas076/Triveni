@@ -104,6 +104,21 @@ class _AddExpenseState extends State<Addexpense> {
             SizedBox(
               height: 20,
             ),
+            TextFormField(
+              style: TextStyle(color: Colors.white),
+              controller: expenseController,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                  hintText: "Expense",
+                  hintStyle:
+                      TextStyle(color: const Color.fromARGB(255, 248, 240, 10)),
+                  border: OutlineInputBorder(),
+                  filled: true,
+                  fillColor: const Color.fromARGB(255, 54, 3, 116)),
+            ),
+            SizedBox(
+              height: 20,
+            ),
             ElevatedButton(
                 onPressed: () {
                   if (eid == 0) {

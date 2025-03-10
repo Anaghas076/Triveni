@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:user_triveni/Screen/Cart.dart';
+import 'package:user_triveni/Screen/Demo.dart';
 
 class Homecontent extends StatelessWidget {
   const Homecontent({super.key});
@@ -98,7 +98,7 @@ class Homecontent extends StatelessWidget {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => Cart(),
+                              builder: (context) => Demo(),
                             ));
                       },
                       child: Card(
@@ -117,9 +117,16 @@ class Homecontent extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            Text("Shirt and Dhoti"),
-                            Text("Golden and Golden Border Dhoti"),
-                            Text("Fabric:Cotton"),
+                            Text("Daksha Combo"),
+                            // Text(data['product_code']),
+
+                            Text(
+                              "Predesigned",
+                              style: TextStyle(
+                                  color: Colors.green,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            Text("1500"),
                           ],
                         ),
                       ),
@@ -131,7 +138,7 @@ class Homecontent extends StatelessWidget {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => Cart(),
+                              builder: (context) => Demo(),
                             ));
                       },
                       child: GestureDetector(
@@ -139,7 +146,7 @@ class Homecontent extends StatelessWidget {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => Cart(),
+                                builder: (context) => Demo(),
                               ));
                         },
                         child: Card(
@@ -158,9 +165,16 @@ class Homecontent extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              Text("Salwar Set"),
-                              Text("Golden and Golden Border Dhoti"),
-                              Text("Fabric:Cotton"),
+                              Text("Daksha Combo"),
+                              // Text(data['product_code']),
+
+                              Text(
+                                "Predesigned",
+                                style: TextStyle(
+                                    color: Colors.green,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              Text("1500"),
                             ],
                           ),
                         ),
@@ -180,7 +194,7 @@ class Homecontent extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => Cart(),
+                          builder: (context) => Demo(),
                         ));
                   },
                   child: Card(
@@ -199,9 +213,15 @@ class Homecontent extends StatelessWidget {
                             ),
                           ),
                         ),
-                        Text("Salwar Set"),
-                        Text("Golden and Golden Border Dhoti"),
-                        Text("Fabric:Cotton"),
+                        Text("Daksha Combo"),
+                        // Text(data['product_code']),
+
+                        Text(
+                          "Predesigned",
+                          style: TextStyle(
+                              color: Colors.green, fontWeight: FontWeight.bold),
+                        ),
+                        Text("1500"),
                       ],
                     ),
                   ),
@@ -213,7 +233,7 @@ class Homecontent extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => Cart(),
+                          builder: (context) => Demo(),
                         ));
                   },
                   child: Card(
@@ -232,9 +252,15 @@ class Homecontent extends StatelessWidget {
                             ),
                           ),
                         ),
-                        Text("Shirt and Dhoti"),
-                        Text("Violet shirt and Golden Border Dhoti"),
-                        Text("Fabric:Cotton"),
+                        Text("Daksha Combo"),
+                        // Text(data['product_code']),
+
+                        Text(
+                          "Predesigned",
+                          style: TextStyle(
+                              color: Colors.green, fontWeight: FontWeight.bold),
+                        ),
+                        Text("1500"),
                       ],
                     ),
                   ),
@@ -251,78 +277,7 @@ class Homecontent extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => Cart(),
-                        ));
-                  },
-                  child: Card(
-                    color: Colors.grey[200],
-                    child: Column(
-                      children: [
-                        Container(
-                          height: 200,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(15),
-                                topRight: Radius.circular(15)),
-                            image: DecorationImage(
-                              image: AssetImage("asset/Women_1.jpg"),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                        Text("Shirt and Dhoti"),
-                        Text("Golden and Golden Border Dhoti"),
-                        Text("Fabric:Cotton"),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              Expanded(
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => Cart(),
-                        ));
-                  },
-                  child: Card(
-                    color: Colors.grey[200],
-                    child: Column(
-                      children: [
-                        Container(
-                          height: 200,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(15),
-                                topRight: Radius.circular(15)),
-                            image: DecorationImage(
-                              image: AssetImage("asset/Women_1.jpg"),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                        Text("Salwar Set"),
-                        Text("Violet shirt and Golden Border Dhoti"),
-                        Text("Fabric:Cotton"),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Expanded(
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => Cart(),
+                          builder: (context) => Demo(),
                         ));
                   },
                   child: Card(
@@ -337,14 +292,20 @@ class Homecontent extends StatelessWidget {
                                 topLeft: Radius.circular(15),
                                 topRight: Radius.circular(15)),
                             image: DecorationImage(
-                              image: AssetImage("asset/Women_1.jpg"),
+                              image: AssetImage("asset/Set_1.jpg"),
                               fit: BoxFit.cover,
                             ),
                           ),
                         ),
-                        Text("Salwar Set"),
-                        Text("Golden and Golden Border Dhoti"),
-                        Text("Fabric:Cotton"),
+                        Text("Daksha Set"),
+                        // Text(data['product_code']),
+
+                        Text(
+                          "Customizable",
+                          style: TextStyle(
+                              color: Colors.green, fontWeight: FontWeight.bold),
+                        ),
+                        Text("1500"),
                       ],
                     ),
                   ),
@@ -356,7 +317,7 @@ class Homecontent extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => Cart(),
+                          builder: (context) => Demo(),
                         ));
                   },
                   child: Card(
@@ -370,14 +331,104 @@ class Homecontent extends StatelessWidget {
                                 topLeft: Radius.circular(15),
                                 topRight: Radius.circular(15)),
                             image: DecorationImage(
-                              image: AssetImage("asset/Women_1.jpg"),
+                              image: AssetImage("asset/Set_2.jpg"),
                               fit: BoxFit.cover,
                             ),
                           ),
                         ),
-                        Text("Shirt and Dhoti"),
-                        Text("Violet shirt and Golden Border Dhoti"),
-                        Text("Fabric:Cotton"),
+                        Text("Daksha Set"),
+                        // Text(data['product_code']),
+
+                        Text(
+                          "Predesigned",
+                          style: TextStyle(
+                              color: Colors.green, fontWeight: FontWeight.bold),
+                        ),
+                        Text("1500"),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Demo(),
+                        ));
+                  },
+                  child: Card(
+                    //shape top left and right
+                    color: Colors.grey[200],
+                    child: Column(
+                      children: [
+                        Container(
+                          height: 200,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(15),
+                                topRight: Radius.circular(15)),
+                            image: DecorationImage(
+                              image: AssetImage("asset/Women_3.jpg"),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        Text("Daksha Set"),
+                        // Text(data['product_code']),
+
+                        Text(
+                          "Predesigned",
+                          style: TextStyle(
+                              color: Colors.green, fontWeight: FontWeight.bold),
+                        ),
+                        Text("1500"),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Demo(),
+                        ));
+                  },
+                  child: Card(
+                    color: Colors.grey[200],
+                    child: Column(
+                      children: [
+                        Container(
+                          height: 200,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(15),
+                                topRight: Radius.circular(15)),
+                            image: DecorationImage(
+                              image: AssetImage("asset/Women_4.jpg"),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        Text("Daksha Set"),
+                        // Text(data['product_code']),
+
+                        Text(
+                          "Predesigned",
+                          style: TextStyle(
+                              color: Colors.green, fontWeight: FontWeight.bold),
+                        ),
+                        Text("1500"),
                       ],
                     ),
                   ),

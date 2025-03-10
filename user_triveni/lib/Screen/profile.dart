@@ -85,7 +85,10 @@ class _ProfileState extends State<Profile> {
                     Expanded(
                       child: Text(
                         userid['user_address'] ?? "Address unavailable",
-                        style: TextStyle(fontSize: 14, color: Colors.black54),
+                        style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.black87,
+                            fontWeight: FontWeight.bold),
                       ),
                     ),
                   ],
@@ -101,7 +104,10 @@ class _ProfileState extends State<Profile> {
                     SizedBox(width: 6),
                     Text(
                       userid['user_contact'] ?? "No contact info",
-                      style: TextStyle(fontSize: 14, color: Colors.black54),
+                      style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.black87,
+                          fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
@@ -116,7 +122,10 @@ class _ProfileState extends State<Profile> {
                     SizedBox(width: 6),
                     Text(
                       userid['user_email'] ?? "No email",
-                      style: TextStyle(fontSize: 14, color: Colors.black54),
+                      style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.black87,
+                          fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),

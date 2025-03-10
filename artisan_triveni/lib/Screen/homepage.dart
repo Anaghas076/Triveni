@@ -1,10 +1,9 @@
-import 'package:artisan_triveni/Screen/adddesign.dart';
-
 import 'package:artisan_triveni/Screen/homecontent.dart';
 
 import 'package:artisan_triveni/Screen/loginpage.dart';
-import 'package:artisan_triveni/Screen/order.dart';
+
 import 'package:artisan_triveni/Screen/profile.dart';
+import 'package:artisan_triveni/Screen/viewdesign.dart';
 import 'package:flutter/material.dart';
 
 class Homepage extends StatefulWidget {
@@ -21,8 +20,8 @@ class _HomepageState extends State<Homepage> {
   final List<Widget> pageContent = [
     Homecontent(), // New HomeScreen widget
     Profile(), // Dummy category page
-    Order(),
-    AddDesign(),
+    LoginPage(),
+    Viewdesign(),
   ];
 
   @override
@@ -31,18 +30,21 @@ class _HomepageState extends State<Homepage> {
       appBar: AppBar(
         toolbarHeight: 80,
         backgroundColor: const Color.fromARGB(255, 3, 1, 68),
-        leading: IconButton(
-          icon: Icon(
-            Icons.menu,
-            color: Colors.yellow,
+        title: ListTile(
+          leading: CircleAvatar(
+            radius: 33,
+            backgroundImage: AssetImage("asset/Logo.jpeg"),
           ),
-          onPressed: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => LoginPage(),
-                ));
-          },
+          title: Text(
+            "TRIVENI",
+            style: TextStyle(
+                color: Colors.white, fontWeight: FontWeight.bold, fontSize: 25),
+          ),
+          subtitle: Text(
+            "Handloom with heritage, fashion with soul",
+            style: TextStyle(
+                color: Colors.white, fontWeight: FontWeight.bold, fontSize: 10),
+          ),
         ),
       ),
       body: pageContent[selectedIndex],

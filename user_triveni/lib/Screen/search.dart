@@ -33,33 +33,33 @@ class _SearchState extends State<Search> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 80,
-        backgroundColor: const Color.fromARGB(255, 3, 1, 68),
-        title: TextFormField(
-          controller: SearchController(),
-          style: const TextStyle(
-              color: Color.fromARGB(255, 240, 240, 242),
-              fontWeight: FontWeight.bold),
-          decoration: InputDecoration(
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(30),
-              borderSide: const BorderSide(
-                color: Colors.white,
-              ),
-            ),
-            prefixIcon: const Icon(
-              Icons.search,
-              color: Colors.white,
-            ),
-            hintText: "Search",
-            hintStyle: const TextStyle(
-              color: Colors.white,
-            ),
-            border: const OutlineInputBorder(),
-          ),
-        ),
-      ),
+      // appBar: AppBar(
+      //   toolbarHeight: 80,
+      //   backgroundColor: const Color.fromARGB(255, 3, 1, 68),
+      //   title: TextFormField(
+      //     controller: SearchController(),
+      //     style: const TextStyle(
+      //         color: Color.fromARGB(255, 240, 240, 242),
+      //         fontWeight: FontWeight.bold),
+      //     decoration: InputDecoration(
+      //       enabledBorder: OutlineInputBorder(
+      //         borderRadius: BorderRadius.circular(30),
+      //         borderSide: const BorderSide(
+      //           color: Colors.white,
+      //         ),
+      //       ),
+      //       prefixIcon: const Icon(
+      //         Icons.search,
+      //         color: Colors.white,
+      //       ),
+      //       hintText: "Search",
+      //       hintStyle: const TextStyle(
+      //         color: Colors.white,
+      //       ),
+      //       border: const OutlineInputBorder(),
+      //     ),
+      //   ),
+      // ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: GridView.builder(

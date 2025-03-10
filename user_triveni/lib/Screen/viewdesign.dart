@@ -1,6 +1,5 @@
-import 'package:artisan_triveni/Screen/adddesign.dart';
-import 'package:artisan_triveni/main.dart';
 import 'package:flutter/material.dart';
+import 'package:user_triveni/main.dart';
 
 class Viewdesign extends StatefulWidget {
   const Viewdesign({super.key});
@@ -72,24 +71,6 @@ class _ViewdesignState extends State<Viewdesign> {
             );
           },
           itemCount: designs.length,
-        ),
-      ),
-      floatingActionButton: Align(
-        alignment: Alignment.bottomRight,
-        child: FloatingActionButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => AddDesign(),
-              ),
-            );
-          },
-          backgroundColor: const Color.fromARGB(255, 3, 1, 68),
-          child: Icon(
-            Icons.add,
-            color: Colors.white,
-          ),
         ),
       ),
     );

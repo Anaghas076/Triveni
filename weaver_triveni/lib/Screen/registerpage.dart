@@ -1,4 +1,5 @@
 import 'package:weaver_triveni/Screen/homepage.dart';
+
 import 'package:weaver_triveni/main.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
@@ -84,6 +85,9 @@ class _RegisterpageState extends State<Registerpage> {
       emailController.clear();
       passwordController.clear();
       confirmController.clear();
+      setState(() {
+        _image = null;
+      });
     } catch (e) {
       print("Error weaver: $e");
     }
@@ -94,11 +98,15 @@ class _RegisterpageState extends State<Registerpage> {
     return Scaffold(
       body: Center(
         child: Container(
-          width: 400,
-          height: 680,
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(15),
-          ),
+              borderRadius: BorderRadius.circular(25),
+              border: Border.all(
+                color: const Color.fromARGB(255, 3, 1, 68),
+                width: 3,
+              )),
+          width: 340,
+          height: 650,
+          margin: EdgeInsets.only(top: 50),
           child: ListView(
             padding: EdgeInsets.all(20),
             children: [

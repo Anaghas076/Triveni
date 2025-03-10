@@ -143,7 +143,7 @@ class _ProfileState extends State<Profile> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => ChangePassword(),
+                                builder: (context) => Changepassword(),
                               ));
                         },
                         child: Text("Change password")),

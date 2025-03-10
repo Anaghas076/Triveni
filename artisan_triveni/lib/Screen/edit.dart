@@ -70,92 +70,112 @@ class _EditState extends State<Edit> {
           ),
         ),
       ),
-      body: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          children: [
-            TextFormField(
-              controller: nameController,
-              style: TextStyle(
+      body: Center(
+        child: Container(
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(25),
+              border: Border.all(
+                color: const Color.fromARGB(255, 3, 1, 68),
+                width: 3,
+              )),
+          width: 350,
+          height: 400,
+          child: Padding(
+            padding: EdgeInsets.all(16),
+            child: Column(
+              children: [
+                Icon(
+                  Icons.edit,
                   color: const Color.fromARGB(255, 3, 1, 68),
-                  fontWeight: FontWeight.bold),
-              decoration: InputDecoration(
-                enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    borderSide: BorderSide(
-                      color: const Color.fromARGB(255, 10, 10, 10),
-                    )),
-                prefixIcon: Icon(
-                  Icons.person,
-                  color: const Color.fromARGB(255, 7, 2, 54),
+                  size: 80,
                 ),
-                hintText: " Username",
-                hintStyle: TextStyle(
-                    color: const Color.fromARGB(255, 8, 8, 8),
-                    fontWeight: FontWeight.bold),
-                border: OutlineInputBorder(),
-              ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            TextFormField(
-              controller: addressController,
-              style: TextStyle(
-                  color: const Color.fromARGB(255, 3, 1, 68),
-                  fontWeight: FontWeight.bold),
-              decoration: InputDecoration(
-                enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    borderSide: BorderSide(
-                      color: const Color.fromARGB(255, 10, 10, 10),
-                    )),
-                prefixIcon: Icon(
-                  Icons.location_on,
-                  color: const Color.fromARGB(255, 7, 2, 54),
+                SizedBox(
+                  height: 30,
                 ),
-                hintText: " Address",
-                hintStyle: TextStyle(
-                    color: const Color.fromARGB(255, 8, 8, 8),
-                    fontWeight: FontWeight.bold),
-                border: OutlineInputBorder(),
-              ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            TextFormField(
-              controller: contactController,
-              style: TextStyle(
-                  color: const Color.fromARGB(255, 3, 1, 68),
-                  fontWeight: FontWeight.bold),
-              decoration: InputDecoration(
-                enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    borderSide: BorderSide(
-                      color: const Color.fromARGB(255, 10, 10, 10),
-                    )),
-                prefixIcon: Icon(
-                  Icons.phone,
-                  color: const Color.fromARGB(255, 7, 2, 54),
+                TextFormField(
+                  controller: nameController,
+                  style: TextStyle(
+                      color: const Color.fromARGB(255, 3, 1, 68),
+                      fontWeight: FontWeight.bold),
+                  decoration: InputDecoration(
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: BorderSide(
+                          color: const Color.fromARGB(255, 10, 10, 10),
+                        )),
+                    prefixIcon: Icon(
+                      Icons.person,
+                      color: const Color.fromARGB(255, 7, 2, 54),
+                    ),
+                    hintText: " Artisan Name",
+                    hintStyle: TextStyle(
+                        color: const Color.fromARGB(255, 8, 8, 8),
+                        fontWeight: FontWeight.bold),
+                    border: OutlineInputBorder(),
+                  ),
                 ),
-                hintText: " Contact number",
-                hintStyle: TextStyle(
-                    color: const Color.fromARGB(255, 8, 8, 8),
-                    fontWeight: FontWeight.bold),
-                border: OutlineInputBorder(),
-              ),
+                SizedBox(
+                  height: 10,
+                ),
+                TextFormField(
+                  controller: addressController,
+                  style: TextStyle(
+                      color: const Color.fromARGB(255, 3, 1, 68),
+                      fontWeight: FontWeight.bold),
+                  decoration: InputDecoration(
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: BorderSide(
+                          color: const Color.fromARGB(255, 10, 10, 10),
+                        )),
+                    prefixIcon: Icon(
+                      Icons.location_on,
+                      color: const Color.fromARGB(255, 7, 2, 54),
+                    ),
+                    hintText: " Address",
+                    hintStyle: TextStyle(
+                        color: const Color.fromARGB(255, 8, 8, 8),
+                        fontWeight: FontWeight.bold),
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                TextFormField(
+                  controller: contactController,
+                  style: TextStyle(
+                      color: const Color.fromARGB(255, 3, 1, 68),
+                      fontWeight: FontWeight.bold),
+                  decoration: InputDecoration(
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: BorderSide(
+                          color: const Color.fromARGB(255, 10, 10, 10),
+                        )),
+                    prefixIcon: Icon(
+                      Icons.phone,
+                      color: const Color.fromARGB(255, 7, 2, 54),
+                    ),
+                    hintText: " Contact number",
+                    hintStyle: TextStyle(
+                        color: const Color.fromARGB(255, 8, 8, 8),
+                        fontWeight: FontWeight.bold),
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    update();
+                  },
+                  child: Text("Update"),
+                ),
+              ],
             ),
-            SizedBox(
-              height: 10,
-            ),
-            ElevatedButton(
-              onPressed: () {
-                update();
-              },
-              child: Text("Update"),
-            ),
-          ],
+          ),
         ),
       ),
     );

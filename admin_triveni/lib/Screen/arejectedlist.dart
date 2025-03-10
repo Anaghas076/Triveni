@@ -5,15 +5,16 @@ class Arejectedlist extends StatefulWidget {
   const Arejectedlist({super.key});
 
   @override
-  State<Arejectedlist> createState() => _ArejectedlistState();
+  State<Arejectedlist> createState() => _WrejectectedlistState();
 }
 
-class _ArejectedlistState extends State<Arejectedlist> {
+class _WrejectectedlistState extends State<Arejectedlist> {
   List<Map<String, dynamic>> artisans = [];
 
   Future<void> fetchartisan() async {
     try {
-      final response = await supabase.from('tbl_artisan').select();
+      final response =
+          await supabase.from('tbl_artisan').select().eq('artisan_status', 2);
       setState(() {
         artisans = response;
       });

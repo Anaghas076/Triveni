@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-class AcceptedList extends StatelessWidget {
-  const AcceptedList({super.key});
+class Weaverlist extends StatelessWidget {
+  const Weaverlist({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Text("AcceptedList"),
+        child: Text("Weaverlist"),
       ),
     );
   }

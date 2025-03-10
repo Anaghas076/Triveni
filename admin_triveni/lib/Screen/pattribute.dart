@@ -96,6 +96,9 @@ class _PattributeState extends State<Pattribute> {
       ));
       fetchattribute();
       fetchpattribute();
+      setState(() {
+        selectedAtt = null;
+      });
       pattributeController.clear();
       setState(() {
         eid = 0;

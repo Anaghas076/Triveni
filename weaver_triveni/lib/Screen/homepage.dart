@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:weaver_triveni/Screen/account.dart';
+
 import 'package:weaver_triveni/Screen/homecontent.dart';
 
 import 'package:weaver_triveni/Screen/loginpage.dart';
 import 'package:weaver_triveni/Screen/order.dart';
+import 'package:weaver_triveni/Screen/profile.dart';
 import 'package:weaver_triveni/Screen/setting.dart';
 
 class Homepage extends StatefulWidget {
@@ -19,7 +20,7 @@ class _HomepageState extends State<Homepage> {
   // List of pages for bottom navigation
   final List<Widget> pageContent = [
     Homecontent(), // New HomeScreen widget
-    Account(), // Dummy category page
+    Profile(), // Dummy category page
     Order(),
     Setting(),
   ];

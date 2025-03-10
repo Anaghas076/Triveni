@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:user_triveni/Screen/cart.dart';
 
 import 'package:user_triveni/Screen/homecontent.dart';
 import 'package:user_triveni/Screen/myorder.dart';
 import 'package:user_triveni/Screen/profile.dart';
 import 'package:user_triveni/Screen/search.dart';
-
-import 'package:user_triveni/Screen/wallet.dart';
+import 'package:user_triveni/Screen/viewdesign.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -21,8 +21,8 @@ class _HomepageState extends State<Homepage> {
   final List<Widget> pageContent = [
     Homecontent(), // New HomeScreen widget
     Profile(), // Dummy category page
-    MyOrder(),
-    Wallet(),
+    Viewdesign(),
+    Search(),
   ];
 
   @override
@@ -66,7 +66,7 @@ class _HomepageState extends State<Homepage> {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => Search(),
+                    builder: (context) => Cart(),
                   ));
             },
           ),

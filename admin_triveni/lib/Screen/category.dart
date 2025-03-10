@@ -61,6 +61,9 @@ class _CategoryState extends State<Category> {
         backgroundColor: const Color.fromARGB(255, 54, 3, 116),
       ));
       categoryController.clear();
+      setState(() {
+        pickedImage = null;
+      });
       fetchCategory();
     } catch (e) {
       print("Error Category: $e");

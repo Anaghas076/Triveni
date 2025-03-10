@@ -352,7 +352,9 @@ class _AddProductState extends State<AddProduct> {
                       ),
                       const Text(
                         "Predesigned",
-                        style: TextStyle(color: Colors.white),
+                        style: TextStyle(
+                          color: Color.fromARGB(255, 19, 1, 83),
+                        ),
                       ),
                       Radio(
                         value: "Customized",
@@ -365,7 +367,9 @@ class _AddProductState extends State<AddProduct> {
                       ),
                       const Text(
                         "Customized",
-                        style: TextStyle(color: Colors.white),
+                        style: TextStyle(
+                          color: Color.fromARGB(255, 19, 1, 83),
+                        ),
                       ),
                     ],
                   ),
