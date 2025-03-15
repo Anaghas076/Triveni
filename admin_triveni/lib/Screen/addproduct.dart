@@ -63,7 +63,7 @@ class _AddProductState extends State<AddProduct> {
       String name = nameController.text;
       String code = codeController.text;
       String price = priceController.text;
-      String type = typeController.text;
+      // String type = typeController.text;
       String description = descriptionController.text;
       String? url = await photoUpload(name);
 
@@ -357,7 +357,7 @@ class _AddProductState extends State<AddProduct> {
                         ),
                       ),
                       Radio(
-                        value: "Customized",
+                        value: "Customizable",
                         groupValue: selectedType,
                         onChanged: (e) {
                           setState(() {
@@ -366,7 +366,7 @@ class _AddProductState extends State<AddProduct> {
                         },
                       ),
                       const Text(
-                        "Customized",
+                        "Customizable",
                         style: TextStyle(
                           color: Color.fromARGB(255, 19, 1, 83),
                         ),

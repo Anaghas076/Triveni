@@ -1,3 +1,4 @@
+import 'package:artisan_triveni/Screen/addexpense.dart';
 import 'package:artisan_triveni/Screen/homecontent.dart';
 
 import 'package:artisan_triveni/Screen/loginpage.dart';
@@ -20,7 +21,7 @@ class _HomepageState extends State<Homepage> {
   final List<Widget> pageContent = [
     Homecontent(), // New HomeScreen widget
     Profile(), // Dummy category page
-    LoginPage(),
+    Addexpense(),
     Viewdesign(),
   ];
 

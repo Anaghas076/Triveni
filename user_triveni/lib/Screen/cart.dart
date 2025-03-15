@@ -29,8 +29,8 @@ class _CartState extends State<Cart> {
     try {
       await supabase.from('tbl_cart').delete().eq('cart_id', id);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("Deleted"),
-        backgroundColor: const Color.fromARGB(255, 54, 3, 116),
+        content: Text("Removed"),
+        backgroundColor: Color.fromARGB(255, 3, 1, 68),
       ));
       fetchCartItems();
     } catch (e) {
@@ -71,7 +71,7 @@ class _CartState extends State<Cart> {
               itemBuilder: (context, index) {
                 final data = cartItems[index];
                 final product = data['tbl_product'] ?? {}; // Handle null cases
-
+                int qty = data['cart_quantity'];
                 return Card(
                   margin: EdgeInsets.symmetric(horizontal: 15, vertical: 8),
                   shape: RoundedRectangleBorder(
@@ -112,7 +112,7 @@ class _CartState extends State<Cart> {
                                       fontSize: 16,
                                     ),
                                   ),
-                                  SizedBox(height: 5),
+                                  SizedBox(height: 10),
                                   Text(
                                     "Price: ₹${product['product_price'] ?? '0'}",
                                     style: TextStyle(
@@ -121,12 +121,41 @@ class _CartState extends State<Cart> {
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  SizedBox(height: 5),
-                                  Text(
-                                    data['cart_quantity'].toString(),
-                                    style: TextStyle(fontSize: 14),
+                                  SizedBox(height: 10),
+                                  Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 50,
+                                        height: 20,
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            //sub();
+                                          },
+                                          child: Text("-"),
+                                        ),
+                                      ),
+                                      SizedBox(width: 5),
+                                      Text(
+                                        qty.toString(),
+                                        style: TextStyle(fontSize: 14),
+                                      ),
+                                      SizedBox(width: 5),
+                                      SizedBox(
+                                        width: 50,
+                                        height: 20,
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            //add();
+                                            setState(() {
+                                              qty++;
+                                            });
+                                          },
+                                          child: Text("+"),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  SizedBox(height: 5),
+                                  SizedBox(height: 10),
                                   Text(
                                     "Total: 1000",
                                     style: TextStyle(

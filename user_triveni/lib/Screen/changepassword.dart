@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:user_triveni/main.dart';
 
 class Changepassword extends StatefulWidget {
   const Changepassword({super.key});
@@ -8,6 +9,27 @@ class Changepassword extends StatefulWidget {
 }
 
 class _ChangepasswordState extends State<Changepassword> {
+  final TextEditingController newController = TextEditingController();
+  final TextEditingController oldController = TextEditingController();
+  final TextEditingController confirmController = TextEditingController();
+
+  Future<void> change() async {
+    try {
+      await supabase.from('tbl_user').update({
+        'user_password': newController.text,
+      }).eq('user_id', supabase.auth.currentUser!.id);
+
+      Navigator.pop(context, true); // Return true to refresh profile
+    } catch (e) {
+      print("Error updating profile: $e");
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,7 +51,112 @@ class _ChangepasswordState extends State<Changepassword> {
         ),
       ),
       body: Center(
-        child: Text("Change password"),
+        child: Container(
+          decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(25),
+              border: Border.all(
+                color: const Color.fromARGB(255, 3, 1, 68),
+                width: 3,
+              )),
+          width: 350,
+          height: 400,
+          child: Padding(
+            padding: EdgeInsets.all(16),
+            child: Column(
+              children: [
+                Icon(
+                  Icons.lock,
+                  color: const Color.fromARGB(255, 3, 1, 68),
+                  size: 80,
+                ),
+                SizedBox(
+                  height: 30,
+                ),
+                TextFormField(
+                  controller: oldController,
+                  style: TextStyle(
+                      color: const Color.fromARGB(255, 3, 1, 68),
+                      fontWeight: FontWeight.bold),
+                  decoration: InputDecoration(
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: BorderSide(
+                          color: const Color.fromARGB(255, 10, 10, 10),
+                        )),
+                    prefixIcon: Icon(
+                      Icons.lock,
+                      color: const Color.fromARGB(255, 7, 2, 54),
+                    ),
+                    hintText: "Old Password",
+                    hintStyle: TextStyle(
+                        color: const Color.fromARGB(255, 8, 8, 8),
+                        fontWeight: FontWeight.bold),
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                TextFormField(
+                  controller: newController,
+                  style: TextStyle(
+                      color: const Color.fromARGB(255, 3, 1, 68),
+                      fontWeight: FontWeight.bold),
+                  decoration: InputDecoration(
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: BorderSide(
+                          color: const Color.fromARGB(255, 10, 10, 10),
+                        )),
+                    prefixIcon: Icon(
+                      Icons.lock,
+                      color: const Color.fromARGB(255, 7, 2, 54),
+                    ),
+                    hintText: " New Password",
+                    hintStyle: TextStyle(
+                        color: const Color.fromARGB(255, 8, 8, 8),
+                        fontWeight: FontWeight.bold),
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                TextFormField(
+                  controller: confirmController,
+                  style: TextStyle(
+                      color: const Color.fromARGB(255, 3, 1, 68),
+                      fontWeight: FontWeight.bold),
+                  decoration: InputDecoration(
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: BorderSide(
+                          color: const Color.fromARGB(255, 10, 10, 10),
+                        )),
+                    prefixIcon: Icon(
+                      Icons.lock,
+                      color: const Color.fromARGB(255, 7, 2, 54),
+                    ),
+                    hintText: " Confirm Password",
+                    hintStyle: TextStyle(
+                        color: const Color.fromARGB(255, 8, 8, 8),
+                        fontWeight: FontWeight.bold),
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    change();
+                  },
+                  child: Text("Change"),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

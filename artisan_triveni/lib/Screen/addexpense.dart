@@ -1,32 +1,52 @@
 import 'package:artisan_triveni/main.dart';
+
 import 'package:flutter/material.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 
 class Addexpense extends StatefulWidget {
   const Addexpense({super.key});
 
   @override
-  State<Addexpense> createState() => _AddExpenseState();
+  State<Addexpense> createState() => _AddexpenseState();
 }
 
-class _AddExpenseState extends State<Addexpense> {
-  final TextEditingController expenseController = TextEditingController();
-  List<Map<String, dynamic>> expenses = [];
+class _AddexpenseState extends State<Addexpense> {
+  final TextEditingController amountController = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
+
+  List<Map<String, dynamic>> daily = [];
 
   Future<void> submit() async {
     try {
-      String expense = expenseController.text;
-
+      String name = nameController.text;
+      String amount = amountController.text;
       await supabase.from('tbl_daily').insert({
-        'daily_amount': expense,
+        'daily_name': name,
+        'daily_amount': amount,
+        'daily_type': "EXPENSE",
+        'artisan_id': supabase.auth.currentUser!.id,
       });
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Inserted"),
         backgroundColor: const Color.fromARGB(255, 54, 3, 116),
       ));
-      expenseController.clear();
-      fetchExpense();
+      amountController.clear();
+      nameController.clear();
+      fetchexpense();
     } catch (e) {
-      print("Error Category: $e");
+      print("Error daily: $e");
+    }
+  }
+
+  Future<void> fetchexpense() async {
+    try {
+      final response = await supabase.from('tbl_daily').select();
+      setState(() {
+        daily = response;
+      });
+    } catch (e) {
+      print("Error: $e");
     }
   }
 
@@ -37,39 +57,7 @@ class _AddExpenseState extends State<Addexpense> {
         content: Text("Deleted"),
         backgroundColor: const Color.fromARGB(255, 54, 3, 116),
       ));
-      fetchExpense();
-    } catch (e) {
-      print("Error: $e");
-    }
-  }
-
-  int eid = 0;
-
-  Future<void> update() async {
-    try {
-      await supabase.from('tbl_daily').update({
-        'daily_amount': expenseController.text,
-      }).eq('daily_id', eid);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("Updated"),
-        backgroundColor: const Color.fromARGB(255, 54, 3, 116),
-      ));
-      fetchExpense();
-      expenseController.clear();
-      setState(() {
-        eid = 0;
-      });
-    } catch (e) {
-      print("Error updating data: $e");
-    }
-  }
-
-  Future<void> fetchExpense() async {
-    try {
-      final response = await supabase.from('tbl_daily').select();
-      setState(() {
-        expenses = response;
-      });
+      fetchexpense();
     } catch (e) {
       print("Error: $e");
     }
@@ -79,94 +67,122 @@ class _AddExpenseState extends State<Addexpense> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    fetchExpense();
+    fetchexpense();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: const Color.fromARGB(255, 3, 1, 68),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        title: Text(
+          "Add Expense",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
       body: Form(
-        child: ListView(
-          padding: EdgeInsets.all(20),
+        child: Column(
           children: [
             TextFormField(
-              style: TextStyle(color: Colors.white),
-              controller: expenseController,
-              keyboardType: TextInputType.number,
+              controller: nameController,
+              keyboardType: TextInputType.name,
+              style: TextStyle(
+                  color: const Color.fromARGB(255, 3, 1, 68),
+                  fontWeight: FontWeight.bold),
               decoration: InputDecoration(
-                  hintText: "Expense",
-                  hintStyle:
-                      TextStyle(color: const Color.fromARGB(255, 248, 240, 10)),
-                  border: OutlineInputBorder(),
-                  filled: true,
-                  fillColor: const Color.fromARGB(255, 54, 3, 116)),
+                enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: BorderSide(
+                      color: const Color.fromARGB(255, 10, 10, 10),
+                    )),
+                prefixIcon: Icon(
+                  Icons.description,
+                  color: const Color.fromARGB(255, 7, 2, 54),
+                ),
+                hintText: " Name",
+                hintStyle: TextStyle(
+                    color: const Color.fromARGB(255, 8, 8, 8),
+                    fontWeight: FontWeight.bold),
+                border: OutlineInputBorder(),
+              ),
             ),
             SizedBox(
-              height: 20,
+              height: 10,
             ),
             TextFormField(
-              style: TextStyle(color: Colors.white),
-              controller: expenseController,
+              controller: amountController,
               keyboardType: TextInputType.number,
+              style: TextStyle(
+                  color: const Color.fromARGB(255, 3, 1, 68),
+                  fontWeight: FontWeight.bold),
               decoration: InputDecoration(
-                  hintText: "Expense",
-                  hintStyle:
-                      TextStyle(color: const Color.fromARGB(255, 248, 240, 10)),
-                  border: OutlineInputBorder(),
-                  filled: true,
-                  fillColor: const Color.fromARGB(255, 54, 3, 116)),
+                enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(30),
+                    borderSide: BorderSide(
+                      color: const Color.fromARGB(255, 10, 10, 10),
+                    )),
+                prefixIcon: Icon(
+                  Icons.description,
+                  color: const Color.fromARGB(255, 7, 2, 54),
+                ),
+                hintText: " Amount",
+                hintStyle: TextStyle(
+                    color: const Color.fromARGB(255, 8, 8, 8),
+                    fontWeight: FontWeight.bold),
+                border: OutlineInputBorder(),
+              ),
             ),
             SizedBox(
-              height: 20,
+              height: 10,
             ),
             ElevatedButton(
                 onPressed: () {
-                  if (eid == 0) {
-                    submit();
-                  } else {
-                    update();
-                  }
+                  submit();
                 },
                 child: Text("Submit")),
-            SizedBox(
-              height: 50,
-            ),
-            ListView.builder(
-              itemCount: expenses.length,
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                final data = expenses[index];
-                return ListTile(
-                  leading: Text((index + 1).toString()),
-                  title: Text(data['daily_amount'] ?? ""),
-                  trailing: SizedBox(
-                    width: 80,
-                    child: Row(
-                      children: [
-                        IconButton(
-                          onPressed: () {
-                            setState(() {
-                              eid = data['category_id'];
-                              expenseController.text =
-                                  data['category_name'] ?? "";
-                            });
-                          },
-                          icon: Icon(Icons.edit),
-                          color: const Color.fromARGB(255, 27, 1, 69),
-                        ),
-                        IconButton(
-                          onPressed: () {
-                            delete(data['category_id']);
-                          },
-                          icon: Icon(Icons.delete),
-                          color: const Color.fromARGB(255, 250, 34, 10),
-                        ),
-                      ],
+            SizedBox(height: 10),
+            Expanded(
+              // Wrap ListView.builder inside Expanded
+              child: daily.isEmpty
+                  ? Center(child: Text("No expenses added"))
+                  : ListView.builder(
+                      itemCount: daily.length,
+                      itemBuilder: (context, index) {
+                        final data = daily[index];
+                        return ListTile(
+                          leading: Text((index + 1).toString()),
+                          title: Text(
+                            data['daily_name'] ?? "No Name",
+                            style: TextStyle(
+                              color: const Color.fromARGB(255, 3, 1, 68),
+                            ),
+                          ),
+                          subtitle: Text(
+                            data['daily_amount'] ?? "No amount",
+                            style: TextStyle(
+                              color: const Color.fromARGB(255, 3, 1, 68),
+                            ),
+                          ),
+                          trailing: IconButton(
+                            onPressed: () {
+                              delete(data['daily_id']);
+                            },
+                            icon: Icon(Icons.delete, color: Colors.red),
+                          ),
+                        );
+                      },
                     ),
-                  ),
-                );
-              },
-            )
+            ),
           ],
         ),
       ),

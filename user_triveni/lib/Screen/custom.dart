@@ -139,11 +139,20 @@ class _CustomState extends State<Custom> {
             SizedBox(
               height: 15,
             ),
-            ElevatedButton(
-                onPressed: () {
-                  submit();
-                },
-                child: Text("Submit"))
+            SizedBox(
+              height: 50,
+              child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color.fromARGB(255, 3, 1, 68),
+                  ),
+                  onPressed: () {
+                    submit();
+                  },
+                  child: Text(
+                    "Submit",
+                    style: TextStyle(color: Colors.white),
+                  )),
+            )
           ],
         ),
       ),

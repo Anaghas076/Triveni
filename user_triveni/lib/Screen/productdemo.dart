@@ -56,11 +56,15 @@ class _ProductdemoState extends State<Productdemo> {
         await supabase
             .from('tbl_cart')
             .insert({'booking_id': bid, 'product_id': pid});
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text("Added to Cart")));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("Added to Cart"),
+          backgroundColor: const Color.fromARGB(255, 3, 1, 68),
+        ));
       } else {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text("Already added to cart")));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("Already added to cart"),
+          backgroundColor: const Color.fromARGB(255, 3, 1, 68),
+        ));
       }
     } catch (e) {
       print("Error in Adding:$e");
