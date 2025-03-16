@@ -1,3 +1,4 @@
+import 'package:artisan_triveni/Component/formvalidation.dart';
 import 'package:artisan_triveni/main.dart';
 
 import 'package:flutter/material.dart';
@@ -102,6 +103,7 @@ class _AddDesignState extends State<AddDesign> {
     fetchdesign();
   }
 
+  final formkey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -122,99 +124,108 @@ class _AddDesignState extends State<AddDesign> {
           ),
         ),
       ),
-      body: Form(
-        child: ListView(
-          padding: EdgeInsets.all(20),
-          children: [
-            Center(
-              child: GestureDetector(
-                onTap: _pickImage,
-                child: CircleAvatar(
-                  radius: 50,
-                  backgroundColor: const Color.fromARGB(255, 3, 1, 68),
-                  backgroundImage: _image != null ? FileImage(_image!) : null,
-                  child: _image == null
-                      ? const Icon(Icons.camera_alt,
-                          color: Colors.white, size: 30)
-                      : null,
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            TextFormField(
-              controller: nameController,
-              style: TextStyle(
-                  color: const Color.fromARGB(255, 3, 1, 68),
-                  fontWeight: FontWeight.bold),
-              decoration: InputDecoration(
-                enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    borderSide: BorderSide(
-                      color: const Color.fromARGB(255, 10, 10, 10),
-                    )),
-                prefixIcon: Icon(
-                  Icons.description,
-                  color: const Color.fromARGB(255, 7, 2, 54),
-                ),
-                hintText: " Name",
-                hintStyle: TextStyle(
-                    color: const Color.fromARGB(255, 8, 8, 8),
-                    fontWeight: FontWeight.bold),
-                border: OutlineInputBorder(),
-              ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            ElevatedButton(
-                onPressed: () {
-                  submit();
-                },
-                child: Text("Submit")),
-            SizedBox(
-              height: 50,
-            ),
-            Container(
-              decoration: BoxDecoration(
-                  //color: const Color.fromARGB(255, 54, 3, 116),
+      body: ListView(
+        padding: EdgeInsets.all(20),
+        children: [
+          Form(
+            key: formkey,
+            child: Column(
+              children: [
+                Center(
+                  child: GestureDetector(
+                    onTap: _pickImage,
+                    child: CircleAvatar(
+                      radius: 50,
+                      backgroundColor: const Color.fromARGB(255, 3, 1, 68),
+                      backgroundImage:
+                          _image != null ? FileImage(_image!) : null,
+                      child: _image == null
+                          ? const Icon(Icons.camera_alt,
+                              color: Colors.white, size: 30)
+                          : null,
+                    ),
                   ),
-              child: ListView.builder(
-                itemCount: designs.length,
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  final data = designs[index];
-                  return ListTile(
-                    leading: CircleAvatar(
-                      backgroundImage: NetworkImage(data['design_photo'] ?? ""),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                TextFormField(
+                  validator: (value) => FormValidation.validateName(value),
+                  controller: nameController,
+                  style: TextStyle(
+                      color: const Color.fromARGB(255, 3, 1, 68),
+                      fontWeight: FontWeight.bold),
+                  decoration: InputDecoration(
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: BorderSide(
+                          color: const Color.fromARGB(255, 10, 10, 10),
+                        )),
+                    prefixIcon: Icon(
+                      Icons.description,
+                      color: const Color.fromARGB(255, 7, 2, 54),
                     ),
-                    title: Text(
-                      data['design_name'] ?? "",
-                      style: TextStyle(
-                        color: const Color.fromARGB(255, 3, 1, 68),
-                      ),
+                    hintText: " Name",
+                    hintStyle: TextStyle(
+                        color: const Color.fromARGB(255, 8, 8, 8),
+                        fontWeight: FontWeight.bold),
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+              ],
+            ),
+          ),
+          ElevatedButton(
+              onPressed: () {
+                if (formkey.currentState!.validate()) {
+                  submit();
+                }
+              },
+              child: Text("Submit")),
+          SizedBox(
+            height: 50,
+          ),
+          Container(
+            decoration: BoxDecoration(
+                //color: const Color.fromARGB(255, 54, 3, 116),
+                ),
+            child: ListView.builder(
+              itemCount: designs.length,
+              shrinkWrap: true,
+              itemBuilder: (context, index) {
+                final data = designs[index];
+                return ListTile(
+                  leading: CircleAvatar(
+                    backgroundImage: NetworkImage(data['design_photo'] ?? ""),
+                  ),
+                  title: Text(
+                    data['design_name'] ?? "",
+                    style: TextStyle(
+                      color: const Color.fromARGB(255, 3, 1, 68),
                     ),
-                    trailing: SizedBox(
-                      width: 100,
-                      child: Row(
-                        children: [
-                          IconButton(
-                            onPressed: () {
-                              delete(data['design_id'] ?? "");
-                            },
-                            icon: Icon(Icons.delete),
-                            color: const Color.fromARGB(255, 250, 34, 10),
-                          ),
-                        ],
-                      ),
+                  ),
+                  trailing: SizedBox(
+                    width: 100,
+                    child: Row(
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            delete(data['design_id'] ?? "");
+                          },
+                          icon: Icon(Icons.delete),
+                          color: const Color.fromARGB(255, 250, 34, 10),
+                        ),
+                      ],
                     ),
-                  );
-                },
-              ),
-            )
-          ],
-        ),
+                  ),
+                );
+              },
+            ),
+          )
+        ],
       ),
     );
   }

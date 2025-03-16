@@ -13,7 +13,8 @@ class _ArtisanlistState extends State<Artisanlist> {
 
   Future<void> fetchartisan() async {
     try {
-      final response = await supabase.from('tbl_artisan').select();
+      final response =
+          await supabase.from('tbl_artisan').select().eq('artisan_status', 0);
       setState(() {
         artisans = response;
       });

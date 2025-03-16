@@ -1,3 +1,4 @@
+import 'package:admin_triveni/Components/formvalidation.dart';
 import 'package:admin_triveni/main.dart';
 import 'package:flutter/material.dart';
 
@@ -105,14 +106,17 @@ class _SubcategoryState extends State<Subcategory> {
     fetchcategory();
   }
 
+  final formkey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Form(
+        key: formkey,
         child: ListView(
           padding: EdgeInsets.all(20),
           children: [
             DropdownButtonFormField(
+                validator: (value) => FormValidation.validateDropdown(value),
                 style: TextStyle(color: Colors.white),
                 dropdownColor: Colors.green,
                 decoration: InputDecoration(
@@ -140,6 +144,7 @@ class _SubcategoryState extends State<Subcategory> {
               height: 20,
             ),
             TextFormField(
+              validator: (value) => FormValidation.validateSubategory(value),
               style: TextStyle(color: Colors.white),
               controller: subcategoryController,
               keyboardType: TextInputType.name,
@@ -156,10 +161,12 @@ class _SubcategoryState extends State<Subcategory> {
             ),
             ElevatedButton(
                 onPressed: () {
-                  if (eid == 0) {
-                    submit();
-                  } else {
-                    update();
+                  if (formkey.currentState!.validate()) {
+                    if (eid == 0) {
+                      submit();
+                    } else {
+                      update();
+                    }
                   }
                 },
                 child: Text("Submit")),

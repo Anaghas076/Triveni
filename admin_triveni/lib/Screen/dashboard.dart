@@ -1,3 +1,4 @@
+import 'package:admin_triveni/main.dart';
 import 'package:flutter/material.dart';
 
 class Dashboard extends StatefulWidget {
@@ -8,6 +9,101 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
+  Map<String, dynamic> adminid = {};
+
+  int usercount = 0;
+  int weavercount = 0;
+  int artisancount = 0;
+  int productcount = 0;
+  int designcount = 0;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchUser();
+    fetchWeaver();
+    fetchArtisan();
+    fetchDesign();
+    fetchProduct();
+    fetchAdmin();
+  }
+
+  Future<void> fetchAdmin() async {
+    try {
+      print(supabase.auth.currentUser!.id);
+      final response = await supabase
+          .from('tbl_admin')
+          .select('admin_name')
+          .eq('id', supabase.auth.currentUser!.id)
+          .single();
+
+      print(response);
+      setState(() {
+        adminid = response;
+      });
+    } catch (e) {
+      print("Error fetching admin data: $e");
+    }
+  }
+
+  Future<void> fetchUser() async {
+    try {
+      final response = await supabase.from('tbl_user').count();
+      setState(() {
+        usercount = response;
+      });
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
+  Future<void> fetchProduct() async {
+    try {
+      final response = await supabase.from('tbl_product').count();
+      setState(() {
+        productcount = response;
+      });
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
+  Future<void> fetchArtisan() async {
+    try {
+      final response =
+          await supabase.from('tbl_artisan').count().eq('artisan_status', 1);
+      setState(() {
+        artisancount = response;
+      });
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
+  Future<void> fetchWeaver() async {
+    try {
+      final response =
+          await supabase.from('tbl_weaver').count().eq('weaver_status', 1);
+      setState(() {
+        weavercount = response;
+      });
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
+  Future<void> fetchDesign() async {
+    try {
+      final response = await supabase.from('tbl_design').count();
+      setState(() {
+        designcount = response;
+      });
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,7 +133,7 @@ class _DashboardState extends State<Dashboard> {
                       fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  "10",
+                  weavercount.toString(),
                   style: TextStyle(
                       color: const Color.fromARGB(255, 3, 1, 68),
                       fontSize: 18,
@@ -62,7 +158,7 @@ class _DashboardState extends State<Dashboard> {
                       fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  "10",
+                  artisancount.toString(),
                   style: TextStyle(
                       color: const Color.fromARGB(255, 3, 1, 68),
                       fontSize: 18,
@@ -87,7 +183,7 @@ class _DashboardState extends State<Dashboard> {
                       fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  "10",
+                  usercount.toString(),
                   style: TextStyle(
                       color: const Color.fromARGB(255, 3, 1, 68),
                       fontSize: 18,
@@ -112,7 +208,7 @@ class _DashboardState extends State<Dashboard> {
                       fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  "10",
+                  productcount.toString(),
                   style: TextStyle(
                       color: const Color.fromARGB(255, 3, 1, 68),
                       fontSize: 18,
@@ -137,7 +233,7 @@ class _DashboardState extends State<Dashboard> {
                       fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  "10",
+                  designcount.toString(),
                   style: TextStyle(
                       color: const Color.fromARGB(255, 3, 1, 68),
                       fontSize: 18,
@@ -162,7 +258,7 @@ class _DashboardState extends State<Dashboard> {
                       fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  "Triveni Menon",
+                  adminid['admin_name'] ?? " ",
                   style: TextStyle(
                       color: const Color.fromARGB(255, 3, 1, 68),
                       fontSize: 18,

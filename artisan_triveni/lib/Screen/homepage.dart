@@ -2,9 +2,10 @@ import 'package:artisan_triveni/Screen/addexpense.dart';
 import 'package:artisan_triveni/Screen/homecontent.dart';
 
 import 'package:artisan_triveni/Screen/loginpage.dart';
+import 'package:artisan_triveni/Screen/order.dart';
 
 import 'package:artisan_triveni/Screen/profile.dart';
-import 'package:artisan_triveni/Screen/viewdesign.dart';
+import 'package:artisan_triveni/Screen/setting.dart';
 import 'package:flutter/material.dart';
 
 class Homepage extends StatefulWidget {
@@ -21,8 +22,8 @@ class _HomepageState extends State<Homepage> {
   final List<Widget> pageContent = [
     Homecontent(), // New HomeScreen widget
     Profile(), // Dummy category page
-    Addexpense(),
-    Viewdesign(),
+    Order(),
+    Setting(),
   ];
 
   @override
@@ -60,7 +61,7 @@ class _HomepageState extends State<Homepage> {
           BottomNavigationBarItem(
               icon: Icon(Icons.shopping_bag), label: "My Orders"),
           BottomNavigationBarItem(
-              icon: Icon(Icons.design_services), label: "My Designs"),
+              icon: Icon(Icons.settings), label: "Settings"),
         ],
         selectedItemColor:
             const Color.fromARGB(255, 241, 233, 7), // Color of selected icon

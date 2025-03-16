@@ -17,6 +17,8 @@ class _LoginPageState extends State<LoginPage> {
     try {
       String email = _emailController.text;
       String password = _passwordController.text;
+      print(email);
+      print(password);
       final AuthResponse res = await supabase.auth.signInWithPassword(
         email: email,
         password: password,
@@ -26,6 +28,7 @@ class _LoginPageState extends State<LoginPage> {
           MaterialPageRoute(
             builder: (context) => Homepage(),
           ));
+
       print("SignIn Successfull");
     } catch (e) {
       print("Error During SignIn: $e");

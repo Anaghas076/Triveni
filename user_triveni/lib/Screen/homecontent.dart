@@ -40,7 +40,9 @@ class _HomecontentState extends State<Homecontent> {
             Center(
               child: Text(
                 "Categorized by",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
             SizedBox(height: 10),
@@ -76,7 +78,9 @@ class _HomecontentState extends State<Homecontent> {
                           radius: 40,
                           backgroundImage: NetworkImage(data['category_photo']),
                         ),
-                        SizedBox(height: 8),
+                        SizedBox(
+                          width: 10,
+                        ),
                         Text(data['category_name'],
                             style: TextStyle(fontWeight: FontWeight.bold)),
                       ],

@@ -12,11 +12,30 @@ class Cart extends StatefulWidget {
 
 class _CartState extends State<Cart> {
   List<Map<String, dynamic>> cartItems = [];
+  int bookingid = 0;
 
   Future<void> fetchCartItems() async {
     try {
-      final response =
-          await supabase.from('tbl_cart').select(" *, tbl_product(*)");
+      final user = supabase.auth.currentUser;
+      if (user == null) return;
+
+      // Fetch the user's active booking
+      final booking = await supabase
+          .from('tbl_booking')
+          .select('booking_id')
+          .eq('user_id', user.id)
+          .eq('booking_status', 0)
+          .maybeSingle();
+
+      int bid = booking!['booking_id'];
+      setState(() {
+        bookingid = bid;
+      });
+      final response = await supabase
+          .from('tbl_cart')
+          .select(" *, tbl_product(*)")
+          .eq('booking_id', bid)
+          .order('cart_id', ascending: false);
       setState(() {
         cartItems = response;
       });
@@ -33,6 +52,47 @@ class _CartState extends State<Cart> {
         backgroundColor: Color.fromARGB(255, 3, 1, 68),
       ));
       fetchCartItems();
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
+  Future<void> updateCart(int qty, int cart) async {
+    try {
+      print("hai");
+      print(cart);
+      print(qty);
+      await supabase
+          .from('tbl_cart')
+          .update({'cart_quantity': qty}).eq('cart_id', cart);
+      print("Success");
+      fetchCartItems(); // Refresh the cart after updating
+    } catch (e) {
+      print("Error updating cart quantity: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to update quantity. Please try again.')),
+      );
+    }
+  }
+
+  Future<void> checkout(int bookingId, int status) async {
+    try {
+      await supabase
+          .from('tbl_booking')
+          .update({'booking_status': status}).eq('booking_id', bookingId);
+
+      await supabase
+          .from('tbl_cart')
+          .update({'cart_status': 1}).eq('booking_id', bookingId);
+
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Successfully Ordered"),
+        backgroundColor: const Color.fromARGB(255, 3, 1, 68),
+      ));
+
+      setState(() {
+        cartItems.clear();
+      });
     } catch (e) {
       print("Error: $e");
     }
@@ -72,6 +132,9 @@ class _CartState extends State<Cart> {
                 final data = cartItems[index];
                 final product = data['tbl_product'] ?? {}; // Handle null cases
                 int qty = data['cart_quantity'];
+                int price = product['product_price'];
+                int total = qty * price;
+                print(total);
                 return Card(
                   margin: EdgeInsets.symmetric(horizontal: 15, vertical: 8),
                   shape: RoundedRectangleBorder(
@@ -114,7 +177,7 @@ class _CartState extends State<Cart> {
                                   ),
                                   SizedBox(height: 10),
                                   Text(
-                                    "Price: ₹${product['product_price'] ?? '0'}",
+                                    "Price: ₹${product['product_price'].toString()}",
                                     style: TextStyle(
                                       color: Colors.green,
                                       fontSize: 14,
@@ -128,9 +191,13 @@ class _CartState extends State<Cart> {
                                         width: 50,
                                         height: 20,
                                         child: ElevatedButton(
-                                          onPressed: () {
-                                            //sub();
-                                          },
+                                          onPressed: qty > 1
+                                              ? () {
+                                                  int count = qty - 1;
+                                                  updateCart(
+                                                      count, data['cart_id']);
+                                                }
+                                              : null,
                                           child: Text("-"),
                                         ),
                                       ),
@@ -145,10 +212,8 @@ class _CartState extends State<Cart> {
                                         height: 20,
                                         child: ElevatedButton(
                                           onPressed: () {
-                                            //add();
-                                            setState(() {
-                                              qty++;
-                                            });
+                                            int count = qty + 1;
+                                            updateCart(count, data['cart_id']);
                                           },
                                           child: Text("+"),
                                         ),
@@ -157,7 +222,7 @@ class _CartState extends State<Cart> {
                                   ),
                                   SizedBox(height: 10),
                                   Text(
-                                    "Total: 1000",
+                                    "Total: ${total.toString()}",
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 14,
@@ -215,7 +280,7 @@ class _CartState extends State<Cart> {
                     backgroundColor: const Color.fromARGB(255, 23, 2, 62),
                   ),
                   onPressed: () {
-                    // Checkout();
+                    checkout(bookingid, 1);
                   },
                   child: Text("Checkout",
                       style: TextStyle(

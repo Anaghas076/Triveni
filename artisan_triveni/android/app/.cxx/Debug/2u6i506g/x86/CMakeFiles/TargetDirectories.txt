@@ -1,0 +1,2 @@
+C:/MainProject/Project/artisan_triveni/android/app/.cxx/Debug/2u6i506g/x86/CMakeFiles/edit_cache.dir
+C:/MainProject/Project/artisan_triveni/android/app/.cxx/Debug/2u6i506g/x86/CMakeFiles/rebuild_cache.dir

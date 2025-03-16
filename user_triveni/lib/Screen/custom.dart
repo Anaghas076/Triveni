@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:user_triveni/Component/formvalidation.dart';
+import 'package:user_triveni/Screen/viewdesign.dart';
 import 'package:user_triveni/main.dart';
 
 class Custom extends StatefulWidget {
@@ -59,8 +61,9 @@ class _CustomState extends State<Custom> {
         'cart_id': widget.cartId,
       });
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("Inserted"),
-        backgroundColor: const Color.fromARGB(255, 54, 3, 116),
+        content: Text(
+            "Order update: custom order requires an extra fee, confirmed by the admin before payment."),
+        backgroundColor: const Color.fromARGB(255, 3, 1, 68),
       ));
       setState(() {
         _image = null;
@@ -71,6 +74,7 @@ class _CustomState extends State<Custom> {
     }
   }
 
+  final formkey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,8 +94,24 @@ class _CustomState extends State<Custom> {
             fontWeight: FontWeight.bold,
           ),
         ),
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.image,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Viewdesign(),
+                  ));
+            },
+          ),
+        ],
       ),
       body: Form(
+        key: formkey,
         child: ListView(
           padding: EdgeInsets.all(20),
           children: [
@@ -113,6 +133,7 @@ class _CustomState extends State<Custom> {
               height: 20,
             ),
             TextFormField(
+              validator: (value) => FormValidation.validateDescription(value),
               controller: descriptionController,
               keyboardType: TextInputType.multiline,
               maxLines: 15,
@@ -129,9 +150,11 @@ class _CustomState extends State<Custom> {
                 //   Icons.description,
                 //   color: const Color.fromARGB(255, 7, 2, 54),
                 // ),
-                hintText: " Description",
+                hintText:
+                    " Description \n Work \n Size \n Color \n Other Specific Requests",
+
                 hintStyle: TextStyle(
-                    color: const Color.fromARGB(255, 8, 8, 8),
+                    color: const Color.fromARGB(255, 169, 168, 168),
                     fontWeight: FontWeight.bold),
                 border: OutlineInputBorder(),
               ),
@@ -146,7 +169,9 @@ class _CustomState extends State<Custom> {
                     backgroundColor: Color.fromARGB(255, 3, 1, 68),
                   ),
                   onPressed: () {
-                    submit();
+                    if (formkey.currentState!.validate()) {
+                      submit();
+                    }
                   },
                   child: Text(
                     "Submit",

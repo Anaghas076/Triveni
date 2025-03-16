@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:admin_triveni/Components/formvalidation.dart';
 import 'package:admin_triveni/main.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
@@ -124,10 +125,12 @@ class _CategoryState extends State<Category> {
     fetchCategory();
   }
 
+  final formkey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Form(
+        key: formkey,
         child: ListView(
           padding: EdgeInsets.all(20),
           children: [
@@ -168,6 +171,7 @@ class _CategoryState extends State<Category> {
               height: 30,
             ),
             TextFormField(
+              validator: (value) => FormValidation.validateCategory(value),
               style: TextStyle(color: Colors.white),
               controller: categoryController,
               keyboardType: TextInputType.name,
@@ -184,10 +188,12 @@ class _CategoryState extends State<Category> {
             ),
             ElevatedButton(
                 onPressed: () {
-                  if (eid == 0) {
-                    submit();
-                  } else {
-                    update();
+                  if (formkey.currentState!.validate()) {
+                    if (eid == 0) {
+                      submit();
+                    } else {
+                      update();
+                    }
                   }
                 },
                 child: Text("Submit")),
@@ -199,33 +205,52 @@ class _CategoryState extends State<Category> {
               shrinkWrap: true,
               itemBuilder: (context, index) {
                 final data = categories[index];
-                return ListTile(
-                  leading: Text((index + 1).toString()),
-                  title: Text(data['category_name']),
-                  trailing: SizedBox(
-                    width: 80,
-                    child: Row(
-                      children: [
-                        IconButton(
-                          onPressed: () {
-                            setState(() {
-                              eid = data['category_id'];
-                              categoryController.text = data['category_name'];
-                            });
-                          },
-                          icon: Icon(Icons.edit),
-                          color: const Color.fromARGB(255, 27, 1, 69),
+                return Column(
+                  children: [
+                    ListTile(
+                      leading: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text((index + 1).toString()),
+                          SizedBox(
+                              width: 80), // Spacing between number and image
+                          CircleAvatar(
+                            radius: 30,
+                            backgroundImage:
+                                NetworkImage(data['category_photo']),
+                          ),
+                          SizedBox(width: 80),
+                        ],
+                      ),
+                      title: Text(data['category_name']),
+                      trailing: SizedBox(
+                        width: 80,
+                        child: Row(
+                          children: [
+                            IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  eid = data['category_id'];
+                                  categoryController.text =
+                                      data['category_name'];
+                                });
+                              },
+                              icon: Icon(Icons.edit),
+                              color: const Color.fromARGB(255, 27, 1, 69),
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                delete(data['category_id']);
+                              },
+                              icon: Icon(Icons.delete),
+                              color: const Color.fromARGB(255, 250, 34, 10),
+                            ),
+                          ],
                         ),
-                        IconButton(
-                          onPressed: () {
-                            delete(data['category_id']);
-                          },
-                          icon: Icon(Icons.delete),
-                          color: const Color.fromARGB(255, 250, 34, 10),
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
+                    SizedBox(height: 20), // Spacing between rows
+                  ],
                 );
               },
             )

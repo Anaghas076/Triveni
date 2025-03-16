@@ -1,7 +1,8 @@
+import 'package:flutter/material.dart';
+import 'package:artisan_triveni/Component/formvalidation.dart';
 import 'package:artisan_triveni/Screen/homepage.dart';
 import 'package:artisan_triveni/Screen/registerpage.dart';
 import 'package:artisan_triveni/main.dart';
-import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -35,146 +36,155 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  final formkey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-      body: Center(
-        child: Container(
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(25),
-              border: Border.all(
-                color: const Color.fromARGB(255, 3, 1, 68),
-                width: 3,
-              )),
-          width: 340,
-          height: 440,
-          margin: EdgeInsets.only(top: 50),
-          child: ListView(
-            shrinkWrap: true,
-            padding: EdgeInsets.all(40),
-            children: [
-              Icon(
-                Icons.people_alt,
-                color: const Color.fromARGB(255, 3, 1, 68),
-                size: 80,
-              ),
-              SizedBox(
-                height: 30,
-              ),
-              TextFormField(
-                controller: emailController,
-                style: TextStyle(
-                    color: const Color.fromARGB(255, 3, 1, 68),
-                    fontWeight: FontWeight.bold),
-                decoration: InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      borderSide: BorderSide(
-                        color: const Color.fromARGB(255, 3, 1, 68),
-                        width: 3,
-                      )),
-                  prefixIcon: Icon(
-                    Icons.email_sharp,
-                    color: const Color.fromARGB(255, 7, 2, 54),
+      body: Form(
+        key: formkey,
+        child: Center(
+          child: Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(25),
+                border: Border.all(
+                  color: const Color.fromARGB(255, 3, 1, 68),
+                  width: 3,
+                )),
+            width: 340,
+            height: 440,
+            margin: EdgeInsets.only(top: 50),
+            child: ListView(
+              shrinkWrap: true,
+              padding: EdgeInsets.all(40),
+              children: [
+                Icon(
+                  Icons.people_alt,
+                  color: const Color.fromARGB(255, 3, 1, 68),
+                  size: 80,
+                ),
+                SizedBox(
+                  height: 30,
+                ),
+                TextFormField(
+                  validator: (value) => FormValidation.validateEmail(value),
+                  controller: emailController,
+                  style: TextStyle(
+                      color: const Color.fromARGB(255, 3, 1, 68),
+                      fontWeight: FontWeight.bold),
+                  decoration: InputDecoration(
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: BorderSide(
+                          color: const Color.fromARGB(255, 3, 1, 68),
+                          width: 3,
+                        )),
+                    prefixIcon: Icon(
+                      Icons.email_sharp,
+                      color: const Color.fromARGB(255, 7, 2, 54),
+                    ),
+                    hintText: "Email Address",
+                    hintStyle: TextStyle(
+                      color: const Color.fromARGB(255, 3, 1, 68),
+                      fontWeight: FontWeight.w900,
+                    ),
+                    border: OutlineInputBorder(),
                   ),
-                  hintText: "Email Address",
-                  hintStyle: TextStyle(
+                ),
+                SizedBox(
+                  height: 30,
+                ),
+                TextFormField(
+                  validator: (value) => FormValidation.validatePassword(value),
+                  controller: passwordController,
+                  keyboardType: TextInputType.visiblePassword,
+                  style: TextStyle(
                     color: const Color.fromARGB(255, 3, 1, 68),
                     fontWeight: FontWeight.w900,
                   ),
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              SizedBox(
-                height: 30,
-              ),
-              TextFormField(
-                controller: passwordController,
-                keyboardType: TextInputType.visiblePassword,
-                style: TextStyle(
-                  color: const Color.fromARGB(255, 3, 1, 68),
-                  fontWeight: FontWeight.w900,
-                ),
-                decoration: InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      borderSide: BorderSide(
-                        color: const Color.fromARGB(255, 3, 1, 68),
-                        width: 3,
-                      )),
-                  prefixIcon: Icon(
-                    Icons.password_outlined,
-                    color: const Color.fromARGB(255, 7, 2, 54),
-                  ),
-                  suffixIcon: Icon(
-                    Icons.visibility_off,
-                    color: const Color.fromARGB(255, 7, 2, 54),
-                  ),
-                  hintText: "Password",
-                  hintStyle: TextStyle(
-                    color: const Color.fromARGB(255, 3, 1, 68),
-                    fontWeight: FontWeight.bold,
-                  ),
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  login();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 3, 1, 68),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(15),
-                  child: Text(
-                    "LOGIN",
-                    style: const TextStyle(
-                      color: Color.fromARGB(255, 236, 235, 235),
-                      fontSize: 18,
+                  decoration: InputDecoration(
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: BorderSide(
+                          color: const Color.fromARGB(255, 3, 1, 68),
+                          width: 3,
+                        )),
+                    prefixIcon: Icon(
+                      Icons.password_outlined,
+                      color: const Color.fromARGB(255, 7, 2, 54),
                     ),
+                    suffixIcon: Icon(
+                      Icons.visibility_off,
+                      color: const Color.fromARGB(255, 7, 2, 54),
+                    ),
+                    hintText: "Password",
+                    hintStyle: TextStyle(
+                      color: const Color.fromARGB(255, 3, 1, 68),
+                      fontWeight: FontWeight.bold,
+                    ),
+                    border: OutlineInputBorder(),
                   ),
                 ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "Don't have an account? ",
-                    style: const TextStyle(
-                        color: Color.fromARGB(255, 12, 15, 15),
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold),
+                SizedBox(
+                  height: 20,
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    if (formkey.currentState!.validate()) {
+                      login();
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 3, 1, 68),
                   ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              Registerpage(), // Replace with your Register Page
-                        ),
-                      );
-                    },
+                  child: Padding(
+                    padding: const EdgeInsets.all(15),
                     child: Text(
-                      "Register",
+                      "LOGIN",
                       style: const TextStyle(
-                        color: Color.fromARGB(255, 15, 2, 100),
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
+                        color: Color.fromARGB(255, 236, 235, 235),
+                        fontSize: 18,
                       ),
                     ),
                   ),
-                ],
-              ),
-            ],
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Don't have an account? ",
+                      style: const TextStyle(
+                          color: Color.fromARGB(255, 12, 15, 15),
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                Registerpage(), // Replace with your Register Page
+                          ),
+                        );
+                      },
+                      child: Text(
+                        "Register",
+                        style: const TextStyle(
+                          color: Color.fromARGB(255, 15, 2, 100),
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

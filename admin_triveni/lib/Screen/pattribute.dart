@@ -1,3 +1,4 @@
+import 'package:admin_triveni/Components/formvalidation.dart';
 import 'package:admin_triveni/main.dart';
 import 'package:flutter/material.dart';
 
@@ -116,6 +117,7 @@ class _PattributeState extends State<Pattribute> {
     fetchattribute();
   }
 
+  final formkey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -129,10 +131,12 @@ class _PattributeState extends State<Pattribute> {
         ),
       ),
       body: Form(
+        key: formkey,
         child: ListView(
           padding: EdgeInsets.all(20),
           children: [
             DropdownButtonFormField(
+                validator: (value) => FormValidation.validateDropdown(value),
                 style: TextStyle(color: Colors.white),
                 dropdownColor: Colors.green,
                 decoration: InputDecoration(
@@ -160,6 +164,7 @@ class _PattributeState extends State<Pattribute> {
               height: 20,
             ),
             TextFormField(
+              validator: (value) => FormValidation.validatPattribute(value),
               style: TextStyle(color: Colors.white),
               controller: pattributeController,
               keyboardType: TextInputType.name,
@@ -176,10 +181,12 @@ class _PattributeState extends State<Pattribute> {
             ),
             ElevatedButton(
                 onPressed: () {
-                  if (eid == 0) {
-                    submit();
-                  } else {
-                    update();
+                  if (formkey.currentState!.validate()) {
+                    if (eid == 0) {
+                      submit();
+                    } else {
+                      update();
+                    }
                   }
                 },
                 child: Text("Submit")),

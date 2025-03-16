@@ -14,8 +14,11 @@ class _ViewProductState extends State<Viewproduct> {
 
   Future<void> fetchproduct() async {
     try {
-      final response =
-          await supabase.from('tbl_product').select("*, tbl_subcategory(*)");
+      final response = await supabase
+          .from('tbl_product')
+          .select("*, tbl_subcategory(*)")
+          .order('product_id', ascending: false);
+      ;
       setState(() {
         products = response;
       });
@@ -47,7 +50,7 @@ class _ViewProductState extends State<Viewproduct> {
           crossAxisCount: 4,
           crossAxisSpacing: 10, // Space between columns
           mainAxisSpacing: 10, // Space between rows
-          childAspectRatio: .7, // Adjust card height vs width ratio
+          childAspectRatio: .75, // Adjust card height vs width ratio
         ),
         itemBuilder: (context, index) {
           final data = products[index];
@@ -72,7 +75,7 @@ class _ViewProductState extends State<Viewproduct> {
                 ),
                 Text(data['product_name']),
                 Text(data['product_code']),
-                Text(data['product_price']),
+                Text(data['product_price'].toString()),
                 Text(data['product_type']),
                 Text(data['product_description']),
               ],

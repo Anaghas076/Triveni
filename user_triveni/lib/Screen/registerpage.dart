@@ -1,3 +1,4 @@
+import 'package:user_triveni/Component/formvalidation.dart';
 import 'package:user_triveni/Screen/homepage.dart';
 import 'package:user_triveni/main.dart';
 import 'package:flutter/material.dart';
@@ -91,227 +92,242 @@ class _RegisterpageState extends State<Registerpage> {
     }
   }
 
+  final formkey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Container(
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(25),
-              border: Border.all(
-                color: const Color.fromARGB(255, 3, 1, 68),
-                width: 3,
-              )),
-          width: 340,
-          height: 650,
-          margin: EdgeInsets.only(top: 50),
-          child: ListView(
-            padding: EdgeInsets.all(20),
-            children: [
-              Center(
-                child: GestureDetector(
-                  onTap: _pickImage,
-                  child: CircleAvatar(
-                    radius: 50,
-                    backgroundColor: const Color.fromARGB(255, 3, 1, 68),
-                    backgroundImage: _image != null ? FileImage(_image!) : null,
-                    child: _image == null
-                        ? const Icon(Icons.camera_alt,
-                            color: Colors.white, size: 30)
-                        : null,
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              TextFormField(
-                controller: nameController,
-                style: TextStyle(
-                    color: const Color.fromARGB(255, 3, 1, 68),
-                    fontWeight: FontWeight.bold),
-                decoration: InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      borderSide: BorderSide(
-                        color: const Color.fromARGB(255, 10, 10, 10),
-                        width: 3,
-                      )),
-                  prefixIcon: Icon(
-                    Icons.person,
-                    color: const Color.fromARGB(255, 7, 2, 54),
-                  ),
-                  hintText: " Username",
-                  hintStyle: TextStyle(
-                      color: const Color.fromARGB(255, 8, 8, 8),
-                      fontWeight: FontWeight.bold),
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              TextFormField(
-                controller: addressController,
-                style: TextStyle(
-                    color: const Color.fromARGB(255, 3, 1, 68),
-                    fontWeight: FontWeight.bold),
-                decoration: InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      borderSide: BorderSide(
-                        color: const Color.fromARGB(255, 10, 10, 10),
-                        width: 3,
-                      )),
-                  prefixIcon: Icon(
-                    Icons.location_on,
-                    color: const Color.fromARGB(255, 7, 2, 54),
-                  ),
-                  hintText: " Address",
-                  hintStyle: TextStyle(
-                      color: const Color.fromARGB(255, 8, 8, 8),
-                      fontWeight: FontWeight.bold),
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              TextFormField(
-                controller: contactController,
-                style: TextStyle(
-                    color: const Color.fromARGB(255, 3, 1, 68),
-                    fontWeight: FontWeight.bold),
-                decoration: InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      borderSide: BorderSide(
-                        color: const Color.fromARGB(255, 10, 10, 10),
-                        width: 3,
-                      )),
-                  prefixIcon: Icon(
-                    Icons.phone,
-                    color: const Color.fromARGB(255, 7, 2, 54),
-                  ),
-                  hintText: " Contact number",
-                  hintStyle: TextStyle(
-                      color: const Color.fromARGB(255, 8, 8, 8),
-                      fontWeight: FontWeight.bold),
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              TextFormField(
-                controller: emailController,
-                style: TextStyle(
-                    color: const Color.fromARGB(255, 3, 1, 68),
-                    fontWeight: FontWeight.bold),
-                decoration: InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      borderSide: BorderSide(
-                        color: const Color.fromARGB(255, 10, 10, 10),
-                        width: 3,
-                      )),
-                  prefixIcon: Icon(
-                    Icons.email_sharp,
-                    color: const Color.fromARGB(255, 7, 2, 54),
-                  ),
-                  hintText: "Email Address",
-                  hintStyle: TextStyle(
-                      color: const Color.fromARGB(255, 8, 8, 8),
-                      fontWeight: FontWeight.bold),
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              TextFormField(
-                controller: passwordController,
-                keyboardType: TextInputType.visiblePassword,
-                style: TextStyle(
-                    color: const Color.fromARGB(255, 3, 1, 68),
-                    fontWeight: FontWeight.bold),
-                decoration: InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      borderSide: BorderSide(
-                        color: const Color.fromARGB(255, 10, 10, 10),
-                        width: 3,
-                      )),
-                  prefixIcon: Icon(
-                    Icons.password_outlined,
-                    color: const Color.fromARGB(255, 7, 2, 54),
-                  ),
-                  suffixIcon: Icon(
-                    Icons.visibility_off,
-                    color: const Color.fromARGB(255, 7, 2, 54),
-                  ),
-                  hintText: "Password",
-                  hintStyle: TextStyle(
-                    color: const Color.fromARGB(255, 10, 10, 10),
-                    fontWeight: FontWeight.bold,
-                  ),
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              TextFormField(
-                controller: confirmController,
-                keyboardType: TextInputType.visiblePassword,
-                style: TextStyle(
-                    color: const Color.fromARGB(255, 3, 1, 68),
-                    fontWeight: FontWeight.bold),
-                decoration: InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      borderSide: BorderSide(
-                        color: const Color.fromARGB(255, 10, 10, 10),
-                        width: 3,
-                      )),
-                  prefixIcon: Icon(
-                    Icons.lock,
-                    color: const Color.fromARGB(255, 7, 2, 54),
-                  ),
-                  suffixIcon: Icon(
-                    Icons.visibility_off,
-                    color: const Color.fromARGB(255, 7, 2, 54),
-                  ),
-                  hintText: "Confirm Password",
-                  hintStyle: TextStyle(
-                    color: const Color.fromARGB(255, 10, 10, 10),
-                    fontWeight: FontWeight.bold,
-                  ),
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  register();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 23, 2, 62),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(15),
-                  child: Text(
-                    "REGISTER",
-                    style: const TextStyle(
-                      color: Color.fromARGB(255, 236, 235, 235),
-                      fontSize: 18,
+        child: Form(
+          key: formkey,
+          child: Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(25),
+                border: Border.all(
+                  color: const Color.fromARGB(255, 3, 1, 68),
+                  width: 3,
+                )),
+            width: 340,
+            height: 650,
+            margin: EdgeInsets.only(top: 50),
+            child: ListView(
+              padding: EdgeInsets.all(20),
+              children: [
+                Center(
+                  child: GestureDetector(
+                    onTap: _pickImage,
+                    child: CircleAvatar(
+                      radius: 50,
+                      backgroundColor: const Color.fromARGB(255, 3, 1, 68),
+                      backgroundImage:
+                          _image != null ? FileImage(_image!) : null,
+                      child: _image == null
+                          ? const Icon(Icons.camera_alt,
+                              color: Colors.white, size: 30)
+                          : null,
                     ),
                   ),
                 ),
-              ),
-            ],
+                SizedBox(
+                  height: 20,
+                ),
+                TextFormField(
+                  validator: (value) => FormValidation.validateName(value),
+                  controller: nameController,
+                  style: TextStyle(
+                      color: const Color.fromARGB(255, 3, 1, 68),
+                      fontWeight: FontWeight.bold),
+                  decoration: InputDecoration(
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: BorderSide(
+                          color: const Color.fromARGB(255, 10, 10, 10),
+                          width: 3,
+                        )),
+                    prefixIcon: Icon(
+                      Icons.person,
+                      color: const Color.fromARGB(255, 7, 2, 54),
+                    ),
+                    hintText: " Username",
+                    hintStyle: TextStyle(
+                        color: const Color.fromARGB(255, 8, 8, 8),
+                        fontWeight: FontWeight.bold),
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                TextFormField(
+                  validator: (value) => FormValidation.validateAddress(value),
+                  controller: addressController,
+                  style: TextStyle(
+                      color: const Color.fromARGB(255, 3, 1, 68),
+                      fontWeight: FontWeight.bold),
+                  decoration: InputDecoration(
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: BorderSide(
+                          color: const Color.fromARGB(255, 10, 10, 10),
+                          width: 3,
+                        )),
+                    prefixIcon: Icon(
+                      Icons.location_on,
+                      color: const Color.fromARGB(255, 7, 2, 54),
+                    ),
+                    hintText: " Address",
+                    hintStyle: TextStyle(
+                        color: const Color.fromARGB(255, 8, 8, 8),
+                        fontWeight: FontWeight.bold),
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                TextFormField(
+                  validator: (value) => FormValidation.validateContact(value),
+                  controller: contactController,
+                  style: TextStyle(
+                      color: const Color.fromARGB(255, 3, 1, 68),
+                      fontWeight: FontWeight.bold),
+                  decoration: InputDecoration(
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: BorderSide(
+                          color: const Color.fromARGB(255, 10, 10, 10),
+                          width: 3,
+                        )),
+                    prefixIcon: Icon(
+                      Icons.phone,
+                      color: const Color.fromARGB(255, 7, 2, 54),
+                    ),
+                    hintText: " Contact number",
+                    hintStyle: TextStyle(
+                        color: const Color.fromARGB(255, 8, 8, 8),
+                        fontWeight: FontWeight.bold),
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                TextFormField(
+                  validator: (value) => FormValidation.validateEmail(value),
+                  controller: emailController,
+                  style: TextStyle(
+                      color: const Color.fromARGB(255, 3, 1, 68),
+                      fontWeight: FontWeight.bold),
+                  decoration: InputDecoration(
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: BorderSide(
+                          color: const Color.fromARGB(255, 10, 10, 10),
+                          width: 3,
+                        )),
+                    prefixIcon: Icon(
+                      Icons.email_sharp,
+                      color: const Color.fromARGB(255, 7, 2, 54),
+                    ),
+                    hintText: "Email Address",
+                    hintStyle: TextStyle(
+                        color: const Color.fromARGB(255, 8, 8, 8),
+                        fontWeight: FontWeight.bold),
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                TextFormField(
+                  validator: (value) => FormValidation.validatePassword(value),
+                  controller: passwordController,
+                  keyboardType: TextInputType.visiblePassword,
+                  style: TextStyle(
+                      color: const Color.fromARGB(255, 3, 1, 68),
+                      fontWeight: FontWeight.bold),
+                  decoration: InputDecoration(
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: BorderSide(
+                          color: const Color.fromARGB(255, 10, 10, 10),
+                          width: 3,
+                        )),
+                    prefixIcon: Icon(
+                      Icons.password_outlined,
+                      color: const Color.fromARGB(255, 7, 2, 54),
+                    ),
+                    suffixIcon: Icon(
+                      Icons.visibility_off,
+                      color: const Color.fromARGB(255, 7, 2, 54),
+                    ),
+                    hintText: "Password",
+                    hintStyle: TextStyle(
+                      color: const Color.fromARGB(255, 10, 10, 10),
+                      fontWeight: FontWeight.bold,
+                    ),
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                TextFormField(
+                  validator: (value) => FormValidation.validateConfirmPassword(
+                      value, passwordController.text),
+                  controller: confirmController,
+                  keyboardType: TextInputType.visiblePassword,
+                  style: TextStyle(
+                      color: const Color.fromARGB(255, 3, 1, 68),
+                      fontWeight: FontWeight.bold),
+                  decoration: InputDecoration(
+                    enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: BorderSide(
+                          color: const Color.fromARGB(255, 10, 10, 10),
+                          width: 3,
+                        )),
+                    prefixIcon: Icon(
+                      Icons.lock,
+                      color: const Color.fromARGB(255, 7, 2, 54),
+                    ),
+                    suffixIcon: Icon(
+                      Icons.visibility_off,
+                      color: const Color.fromARGB(255, 7, 2, 54),
+                    ),
+                    hintText: "Confirm Password",
+                    hintStyle: TextStyle(
+                      color: const Color.fromARGB(255, 10, 10, 10),
+                      fontWeight: FontWeight.bold,
+                    ),
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    if (formkey.currentState!.validate()) {
+                      register();
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromARGB(255, 23, 2, 62),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(15),
+                    child: Text(
+                      "REGISTER",
+                      style: const TextStyle(
+                        color: Color.fromARGB(255, 236, 235, 235),
+                        fontSize: 18,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

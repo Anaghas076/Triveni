@@ -1,4 +1,6 @@
+import 'package:admin_triveni/Screen/addproduct.dart';
 import 'package:admin_triveni/Screen/homepage.dart';
+import 'package:admin_triveni/Screen/loginpage.dart';
 
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';

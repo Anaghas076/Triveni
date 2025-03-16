@@ -1,3 +1,4 @@
+import 'package:admin_triveni/Components/formvalidation.dart';
 import 'package:admin_triveni/main.dart';
 import 'package:flutter/material.dart';
 
@@ -123,14 +124,17 @@ class _AttributeState extends State<Attribute> {
     fetchattribute();
   }
 
+  final formkey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Form(
+        key: formkey,
         child: ListView(
           padding: EdgeInsets.all(20),
           children: [
             DropdownButtonFormField(
+                validator: (value) => FormValidation.validateDropdown(value),
                 style: TextStyle(color: Colors.white),
                 dropdownColor: Colors.green,
                 decoration: InputDecoration(
@@ -159,6 +163,7 @@ class _AttributeState extends State<Attribute> {
               height: 20,
             ),
             DropdownButtonFormField(
+                validator: (value) => FormValidation.validateDropdown(value),
                 style: TextStyle(color: Colors.white),
                 dropdownColor: Colors.greenAccent,
                 decoration: InputDecoration(
@@ -185,6 +190,7 @@ class _AttributeState extends State<Attribute> {
               height: 20,
             ),
             TextFormField(
+              validator: (value) => FormValidation.validatAttribute(value),
               style: TextStyle(color: Colors.white),
               controller: attributeController,
               keyboardType: TextInputType.name,
@@ -201,11 +207,13 @@ class _AttributeState extends State<Attribute> {
             ),
             ElevatedButton(
                 onPressed: () {
-                  //  if (eid == 0) {
-                  submit();
-                  //   } else {
-                  //update();
-                  // }
+                  if (formkey.currentState!.validate()) {
+                    //  if (eid == 0) {
+                    submit();
+                    //   } else {
+                    //update();
+                    // }
+                  }
                 },
                 child: Text("Submit")),
             SizedBox(

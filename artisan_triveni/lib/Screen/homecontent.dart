@@ -1,3 +1,4 @@
+import 'package:artisan_triveni/main.dart';
 import 'package:flutter/material.dart';
 
 class Homecontent extends StatefulWidget {
@@ -8,11 +9,100 @@ class Homecontent extends StatefulWidget {
 }
 
 class _HomecontentState extends State<Homecontent> {
+  Map<String, dynamic> artisanid = {};
+  int usercount = 0;
+  int weavercount = 0;
+  int artisancount = 0;
+  int productcount = 0;
+  int designcount = 0;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchUser();
+    fetchWeaver();
+    fetchArtisan();
+    fetchDesign();
+    fetchProduct();
+    fetchName();
+  }
+
+  Future<void> fetchUser() async {
+    try {
+      final response = await supabase.from('tbl_user').count();
+      setState(() {
+        usercount = response;
+      });
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
+  Future<void> fetchProduct() async {
+    try {
+      final response = await supabase.from('tbl_product').count();
+      setState(() {
+        productcount = response;
+      });
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
+  Future<void> fetchArtisan() async {
+    try {
+      final response = await supabase.from('tbl_artisan').count();
+      setState(() {
+        artisancount = response;
+      });
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
+  Future<void> fetchName() async {
+    try {
+      final response = await supabase
+          .from('tbl_artisan')
+          .select('artisan_name')
+          .eq('artisan_id', supabase.auth.currentUser!.id)
+          .single();
+      setState(() {
+        artisanid = response;
+      });
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
+  Future<void> fetchWeaver() async {
+    try {
+      final response = await supabase.from('tbl_weaver').count();
+      setState(() {
+        weavercount = response;
+      });
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
+  Future<void> fetchDesign() async {
+    try {
+      final response = await supabase.from('tbl_design').count();
+      setState(() {
+        designcount = response;
+      });
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(5.0),
       child: GridView(
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
@@ -37,7 +127,7 @@ class _HomecontentState extends State<Homecontent> {
                       fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  "Arav Ravi",
+                  artisanid['artisan_name'] ?? "Artisan Name",
                   style: TextStyle(
                       color: const Color.fromARGB(255, 3, 1, 68),
                       fontSize: 18,
@@ -62,7 +152,7 @@ class _HomecontentState extends State<Homecontent> {
                       fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  "10",
+                  weavercount.toString(),
                   style: TextStyle(
                       color: const Color.fromARGB(255, 3, 1, 68),
                       fontSize: 18,
@@ -87,7 +177,7 @@ class _HomecontentState extends State<Homecontent> {
                       fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  "10",
+                  artisancount.toString(),
                   style: TextStyle(
                       color: const Color.fromARGB(255, 3, 1, 68),
                       fontSize: 18,
@@ -112,7 +202,7 @@ class _HomecontentState extends State<Homecontent> {
                       fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  "10",
+                  usercount.toString(),
                   style: TextStyle(
                       color: const Color.fromARGB(255, 3, 1, 68),
                       fontSize: 18,
@@ -137,7 +227,7 @@ class _HomecontentState extends State<Homecontent> {
                       fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  "10",
+                  productcount.toString(),
                   style: TextStyle(
                       color: const Color.fromARGB(255, 3, 1, 68),
                       fontSize: 18,
@@ -162,7 +252,7 @@ class _HomecontentState extends State<Homecontent> {
                       fontWeight: FontWeight.bold),
                 ),
                 Text(
-                  "10",
+                  designcount.toString(),
                   style: TextStyle(
                       color: const Color.fromARGB(255, 3, 1, 68),
                       fontSize: 18,

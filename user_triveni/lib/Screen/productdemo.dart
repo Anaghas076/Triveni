@@ -95,7 +95,7 @@ class _ProductdemoState extends State<Productdemo> {
               SizedBox(
                 height: 10,
               ),
-              Text(widget.product['product_price']),
+              Text(widget.product['product_price'].toString()),
               SizedBox(
                 height: 10,
               ),
@@ -123,28 +123,6 @@ class _ProductdemoState extends State<Productdemo> {
                   },
                   child: Text(
                     "Add to Cart",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              SizedBox(
-                height: 50,
-                width: 350,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 3, 1, 68),
-                  ),
-                  onPressed: () {
-                    //cart();
-                  },
-                  child: Text(
-                    "Buy Now",
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 18,

@@ -1,4 +1,3 @@
-import 'package:admin_triveni/Screen/aweaverlist.dart';
 import 'package:flutter/material.dart';
 import 'package:admin_triveni/main.dart';
 
@@ -14,7 +13,8 @@ class _WeaverlistState extends State<Weaverlist> {
 
   Future<void> fetchweaver() async {
     try {
-      final response = await supabase.from('tbl_weaver').select();
+      final response =
+          await supabase.from('tbl_weaver').select().eq('weaver_status', 2);
       setState(() {
         weavers = response;
       });

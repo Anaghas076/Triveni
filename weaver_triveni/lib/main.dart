@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:weaver_triveni/Screen/landingpage.dart';
-import 'package:weaver_triveni/Screen/loginpage.dart';
-
-import 'package:weaver_triveni/Screen/registerpage.dart';
 
 Future<void> main() async {
   await Supabase.initialize(

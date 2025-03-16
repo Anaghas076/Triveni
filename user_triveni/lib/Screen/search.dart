@@ -104,7 +104,7 @@ class _SearchState extends State<Search> {
                       ),
                       Text(data['product_name']),
                       // Text(data['product_code']),
-                      Text(data['product_price']),
+                      Text(data['product_price'].toString()),
                       Text(
                         data['product_type'],
                         style: TextStyle(

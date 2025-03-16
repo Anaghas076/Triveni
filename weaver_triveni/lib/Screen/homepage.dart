@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:weaver_triveni/Screen/addexpense.dart';
 
 import 'package:weaver_triveni/Screen/homecontent.dart';
 
-import 'package:weaver_triveni/Screen/loginpage.dart';
 import 'package:weaver_triveni/Screen/order.dart';
 import 'package:weaver_triveni/Screen/profile.dart';
-import 'package:weaver_triveni/Screen/setting.dart';
+
+import 'package:weaver_triveni/main.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -22,7 +23,7 @@ class _HomepageState extends State<Homepage> {
     Homecontent(), // New HomeScreen widget
     Profile(), // Dummy category page
     Order(),
-    Setting(),
+    Addexpense(),
   ];
 
   @override
@@ -31,19 +32,21 @@ class _HomepageState extends State<Homepage> {
       appBar: AppBar(
         toolbarHeight: 80,
         backgroundColor: const Color.fromARGB(255, 3, 1, 68),
-        leading: IconButton(
-          icon: Icon(
-            Icons.menu,
-            color: Colors.yellow,
-            size: 30,
+        title: ListTile(
+          leading: CircleAvatar(
+            radius: 33,
+            backgroundImage: AssetImage("asset/Logo.jpeg"),
           ),
-          onPressed: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => LoginPage(),
-                ));
-          },
+          title: Text(
+            "TRIVENI",
+            style: TextStyle(
+                color: Colors.white, fontWeight: FontWeight.bold, fontSize: 25),
+          ),
+          subtitle: Text(
+            "Handloom with heritage, fashion with soul",
+            style: TextStyle(
+                color: Colors.white, fontWeight: FontWeight.bold, fontSize: 10),
+          ),
         ),
       ),
       body: pageContent[selectedIndex],
@@ -57,7 +60,7 @@ class _HomepageState extends State<Homepage> {
               icon: Icon(Icons.person), label: "My Account"),
           BottomNavigationBarItem(
               icon: Icon(Icons.shopping_bag), label: "My Orders"),
-          BottomNavigationBarItem(icon: Icon(Icons.wallet), label: "Setting"),
+          BottomNavigationBarItem(icon: Icon(Icons.money), label: "Expense"),
         ],
         selectedItemColor:
             const Color.fromARGB(255, 241, 233, 7), // Color of selected icon
