@@ -21,6 +21,14 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: LoginPage());
+    // Check if the user is already logged in
+    final user = supabase.auth.currentUser;
+
+    // Navigate to the appropriate page based on authentication status
+    return MaterialApp(
+      home: user == null
+          ? const LoginPage()
+          : Homepage(), // Decide the page based on login status
+    );
   }
 }

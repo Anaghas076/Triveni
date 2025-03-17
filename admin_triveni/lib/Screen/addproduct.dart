@@ -351,6 +351,9 @@ class _AddProductState extends State<AddProduct> {
                                         Row(
                                           children: [
                                             Radio(
+                                              activeColor: Colors.white,
+                                              fillColor: WidgetStatePropertyAll(
+                                                  Colors.grey),
                                               value: "Predesigned",
                                               groupValue: selectedType,
                                               onChanged: (value) {
@@ -369,6 +372,9 @@ class _AddProductState extends State<AddProduct> {
                                         Row(
                                           children: [
                                             Radio(
+                                              activeColor: Colors.white,
+                                              fillColor: WidgetStatePropertyAll(
+                                                  Colors.grey),
                                               value: "Customizable",
                                               groupValue: selectedType,
                                               onChanged: (value) {

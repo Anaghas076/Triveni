@@ -38,6 +38,15 @@ class _CartState extends State<Cart> {
           .order('cart_id', ascending: false);
       setState(() {
         cartItems = response;
+        checkoutTotal = 0; // Reset checkout total before calculation
+        for (var item in cartItems) {
+          final product = item['tbl_product'] ?? {};
+          int qty = item['cart_quantity'];
+          int price = product['product_price'];
+          int total = qty * price;
+          checkoutTotal +=
+              total; // Calculate checkout total outside the builder
+        }
       });
     } catch (e) {
       print("Error: $e");
@@ -98,6 +107,8 @@ class _CartState extends State<Cart> {
     }
   }
 
+  int checkoutTotal = 0;
+
   @override
   void initState() {
     super.initState();
@@ -126,149 +137,191 @@ class _CartState extends State<Cart> {
       ),
       body: cartItems.isEmpty
           ? Center(child: Text("Your cart is empty"))
-          : ListView.builder(
-              itemCount: cartItems.length,
-              itemBuilder: (context, index) {
-                final data = cartItems[index];
-                final product = data['tbl_product'] ?? {}; // Handle null cases
-                int qty = data['cart_quantity'];
-                int price = product['product_price'];
-                int total = qty * price;
-                print(total);
-                return Card(
-                  margin: EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.all(10),
-                    child: Column(
-                      children: [
-                        // Product Image & Details
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            // Product Image
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: Image.network(
-                                product['product_photo'] ?? "",
-                                width: 100,
-                                height: 100,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) =>
-                                    Icon(Icons.image,
-                                        size: 80, color: Colors.grey),
+          : Column(children: [
+              ListView.builder(
+                shrinkWrap: true,
+                itemCount: cartItems.length,
+                itemBuilder: (context, index) {
+                  final data = cartItems[index];
+                  final product =
+                      data['tbl_product'] ?? {}; // Handle null cases
+                  int qty = data['cart_quantity'];
+                  int price = product['product_price'];
+                  int total = qty * price;
+                  print(total);
+                  return Card(
+                    margin: EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.all(10),
+                      child: Column(
+                        children: [
+                          // Product Image & Details
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              // Product Image
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(8),
+                                child: Image.network(
+                                  product['product_photo'] ?? "",
+                                  width: 100,
+                                  height: 100,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) =>
+                                      Icon(Icons.image,
+                                          size: 80, color: Colors.grey),
+                                ),
                               ),
-                            ),
-                            SizedBox(width: 20),
+                              SizedBox(width: 20),
 
-                            // Product Details in Column
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    product['product_name'] ?? "Product Name",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                  SizedBox(height: 10),
-                                  Text(
-                                    "Price: ₹${product['product_price'].toString()}",
-                                    style: TextStyle(
-                                      color: Colors.green,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  SizedBox(height: 10),
-                                  Row(
-                                    children: [
-                                      SizedBox(
-                                        width: 50,
-                                        height: 20,
-                                        child: ElevatedButton(
-                                          onPressed: qty > 1
-                                              ? () {
-                                                  int count = qty - 1;
-                                                  updateCart(
-                                                      count, data['cart_id']);
-                                                }
-                                              : null,
-                                          child: Text("-"),
-                                        ),
+                              // Product Details in Column
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      product['product_name'] ?? "Product Name",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16,
                                       ),
-                                      SizedBox(width: 5),
-                                      Text(
-                                        qty.toString(),
-                                        style: TextStyle(fontSize: 14),
-                                      ),
-                                      SizedBox(width: 5),
-                                      SizedBox(
-                                        width: 50,
-                                        height: 20,
-                                        child: ElevatedButton(
-                                          onPressed: () {
-                                            int count = qty + 1;
-                                            updateCart(count, data['cart_id']);
-                                          },
-                                          child: Text("+"),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 10),
-                                  Text(
-                                    "Total: ${total.toString()}",
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14,
                                     ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        SizedBox(height: 10),
-
-                        // Buttons: Remove & Custom
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            ElevatedButton(
-                              onPressed: () {
-                                delete(data['cart_id']);
-                              },
-                              child: Text("Remove"),
-                            ),
-                            product['product_type'] == 'Custom'
-                                ? ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => Custom(
-                                            cartId: data['cart_id'],
+                                    SizedBox(height: 10),
+                                    Text(
+                                      "Price: ₹${product['product_price'].toString()}",
+                                      style: TextStyle(
+                                        color: Colors.green,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    SizedBox(height: 10),
+                                    Row(
+                                      children: [
+                                        SizedBox(
+                                          width: 50,
+                                          height: 20,
+                                          child: ElevatedButton(
+                                            onPressed: qty > 1
+                                                ? () {
+                                                    int count = qty - 1;
+                                                    updateCart(
+                                                        count, data['cart_id']);
+                                                  }
+                                                : null,
+                                            child: Text("-"),
                                           ),
                                         ),
-                                      );
-                                    },
-                                    child: Text("Customize"),
-                                  )
-                                : Container()
-                          ],
+                                        SizedBox(width: 5),
+                                        Text(
+                                          qty.toString(),
+                                          style: TextStyle(fontSize: 14),
+                                        ),
+                                        SizedBox(width: 5),
+                                        SizedBox(
+                                          width: 50,
+                                          height: 20,
+                                          child: ElevatedButton(
+                                            onPressed: () {
+                                              int count = qty + 1;
+                                              updateCart(
+                                                  count, data['cart_id']);
+                                            },
+                                            child: Text("+"),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 10),
+                                    Text(
+                                      "Total: ${total.toString()}",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          SizedBox(height: 10),
+
+                          // Buttons: Remove & Custom
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () {
+                                  delete(data['cart_id']);
+                                },
+                                child: Text("Remove"),
+                              ),
+                              product['product_type'] == 'Custom'
+                                  ? ElevatedButton(
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => Custom(
+                                              cartId: data['cart_id'],
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: Text("Customize"),
+                                    )
+                                  : Container()
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.shade300,
+                      spreadRadius: 2,
+                      blurRadius: 5,
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Grand Total:",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Text(
+                          checkoutTotal.toString(),
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.green,
+                          ),
                         ),
                       ],
                     ),
-                  ),
-                );
-              },
-            ),
+                  ],
+                ),
+              ),
+            ]),
       bottomNavigationBar: cartItems.isNotEmpty
           ? Padding(
               padding: EdgeInsets.all(15),

@@ -56,6 +56,11 @@ class _ChangepasswordState extends State<Changepassword> {
         ),
       );
 
+      await supabase
+          .from('tbl_user')
+          .update({'user_password': _newPasswordController.text}).eq(
+              'user_id', response.user!.id);
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Password changed successfully'),

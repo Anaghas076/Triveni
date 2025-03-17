@@ -41,7 +41,6 @@ class _CategoryState extends State<Category> {
           );
       final publicUrl =
           supabase.storage.from(bucketName).getPublicUrl(filePath);
-      // await updateImage(uid, publicUrl);
       return publicUrl;
     } catch (e) {
       print("Error photo upload: $e");
@@ -51,21 +50,26 @@ class _CategoryState extends State<Category> {
 
   Future<void> submit() async {
     try {
-      String category = categoryController.text;
-      String? url = await photoUpload(category);
-      await supabase.from('tbl_category').insert({
-        'category_name': category,
-        'category_photo': url,
-      });
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("Inserted"),
-        backgroundColor: const Color.fromARGB(255, 54, 3, 116),
-      ));
-      categoryController.clear();
-      setState(() {
-        pickedImage = null;
-      });
-      fetchCategory();
+      if (pickedImage == null) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Pick an image first')));
+      } else {
+        String category = categoryController.text;
+        String? url = await photoUpload(category);
+        await supabase.from('tbl_category').insert({
+          'category_name': category,
+          'category_photo': url,
+        });
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("Inserted"),
+          backgroundColor: const Color.fromARGB(255, 54, 3, 116),
+        ));
+        categoryController.clear();
+        setState(() {
+          pickedImage = null;
+        });
+        fetchCategory();
+      }
     } catch (e) {
       print("Error Category: $e");
     }
@@ -85,6 +89,7 @@ class _CategoryState extends State<Category> {
   }
 
   int eid = 0;
+  String imageUrl = "";
 
   Future<void> update() async {
     try {
@@ -101,6 +106,7 @@ class _CategoryState extends State<Category> {
       categoryController.clear();
       setState(() {
         eid = 0;
+        pickedImage = null; // Reset the image when updating
       });
     } catch (e) {
       print("Error updating data: $e");
@@ -120,12 +126,12 @@ class _CategoryState extends State<Category> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     fetchCategory();
   }
 
   final formkey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -135,38 +141,33 @@ class _CategoryState extends State<Category> {
           padding: EdgeInsets.all(20),
           children: [
             Center(
-              //pickimage code start...
               child: SizedBox(
-                height: 100,
-                width: 100,
-                child: pickedImage == null
-                    ? GestureDetector(
-                        onTap: handleImagePick,
-                        child: Icon(
-                          Icons.add_a_photo,
-                          color: Color.fromARGB(255, 19, 1, 83),
-                          size: 50,
-                        ),
-                      )
-                    : GestureDetector(
-                        onTap: handleImagePick,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(100),
-                          child: pickedImage!.bytes != null
-                              ? Image.memory(
-                                  Uint8List.fromList(
-                                      pickedImage!.bytes!), // For web
-                                  fit: BoxFit.cover,
-                                )
-                              : Image.file(
-                                  File(
-                                      pickedImage!.path!), // For mobile/desktop
-                                  fit: BoxFit.cover,
-                                ),
-                        ),
-                      ),
-              ),
-            ), //pickimage code ending
+                  height: 100,
+                  width: 100,
+                  child: pickedImage == null && imageUrl == ""
+                      ? GestureDetector(
+                          onTap: handleImagePick,
+                          child: Icon(
+                            Icons.add_a_photo,
+                            color: Color.fromARGB(255, 19, 1, 83),
+                            size: 50,
+                          ),
+                        )
+                      : GestureDetector(
+                          onTap: handleImagePick,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(100),
+                            child: pickedImage != null
+                                ? Image.memory(
+                                    Uint8List.fromList(pickedImage!.bytes!),
+                                    fit: BoxFit.cover,
+                                  )
+                                : (imageUrl != ""
+                                    ? Image.network(imageUrl, fit: BoxFit.cover)
+                                    : SizedBox.shrink()),
+                          ),
+                        )),
+            ),
             SizedBox(
               height: 30,
             ),
@@ -212,8 +213,7 @@ class _CategoryState extends State<Category> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text((index + 1).toString()),
-                          SizedBox(
-                              width: 80), // Spacing between number and image
+                          SizedBox(width: 80),
                           CircleAvatar(
                             radius: 30,
                             backgroundImage:
@@ -233,6 +233,7 @@ class _CategoryState extends State<Category> {
                                   eid = data['category_id'];
                                   categoryController.text =
                                       data['category_name'];
+                                  imageUrl = data['category_photo'];
                                 });
                               },
                               icon: Icon(Icons.edit),

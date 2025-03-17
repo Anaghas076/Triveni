@@ -36,11 +36,12 @@ class _DashboardState extends State<Dashboard> {
           .from('tbl_admin')
           .select('admin_name')
           .eq('id', supabase.auth.currentUser!.id)
-          .single();
+          .maybeSingle()
+          .limit(1);
 
       print(response);
       setState(() {
-        adminid = response;
+        adminid = response!;
       });
     } catch (e) {
       print("Error fetching admin data: $e");

@@ -17,7 +17,8 @@ class _ProductdemoState extends State<Productdemo> {
           .select()
           .eq('user_id', supabase.auth.currentUser!.id)
           .eq('booking_status', 0)
-          .maybeSingle(); // Use maybeSingle() instead of single()
+          .maybeSingle()
+          .limit(1); // Use maybeSingle() instead of single()
 
       if (response == null) {
         print("No existing booking, creating a new one.");
