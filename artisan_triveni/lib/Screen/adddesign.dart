@@ -51,22 +51,27 @@ class _AddDesignState extends State<AddDesign> {
 
   Future<void> submit() async {
     try {
-      String name = nameController.text;
+      if (_image == null) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Pick an image first')));
+      } else {
+        String name = nameController.text;
 
-      String? imageUrl = await _uploadImage();
-      await supabase.from('tbl_design').insert({
-        'design_name': name,
-        'design_photo': imageUrl,
-      });
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("Inserted"),
-        backgroundColor: const Color.fromARGB(255, 54, 3, 116),
-      ));
-      nameController.clear();
-      setState(() {
-        _image = null;
-      });
-      fetchdesign();
+        String? imageUrl = await _uploadImage();
+        await supabase.from('tbl_design').insert({
+          'design_name': name,
+          'design_photo': imageUrl,
+        });
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("Inserted"),
+          backgroundColor: const Color.fromARGB(255, 54, 3, 116),
+        ));
+        nameController.clear();
+        setState(() {
+          _image = null;
+        });
+        fetchdesign();
+      }
     } catch (e) {
       print("Error design: $e");
     }

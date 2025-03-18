@@ -50,43 +50,48 @@ class _RegisterpageState extends State<Registerpage> {
 
   Future<void> register() async {
     try {
-      String name = nameController.text;
-      String address = addressController.text;
-      String contact = contactController.text;
-      String email = emailController.text;
-      String password = passwordController.text;
+      if (_image == null) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Pick an image first')));
+      } else {
+        String name = nameController.text;
+        String address = addressController.text;
+        String contact = contactController.text;
+        String email = emailController.text;
+        String password = passwordController.text;
 
-      final response =
-          await supabase.auth.signUp(password: password, email: email);
-      String userId = response.user!.id;
+        final response =
+            await supabase.auth.signUp(password: password, email: email);
+        String userId = response.user!.id;
 
-      String? imageUrl = await _uploadImage(userId);
-      await supabase.from('tbl_user').insert({
-        'user_name': name,
-        'user_address': address,
-        'user_contact': contact,
-        'user_email': email,
-        'user_password': password,
-        'user_photo': imageUrl,
-      });
+        String? imageUrl = await _uploadImage(userId);
+        await supabase.from('tbl_user').insert({
+          'user_name': name,
+          'user_address': address,
+          'user_contact': contact,
+          'user_email': email,
+          'user_password': password,
+          'user_photo': imageUrl,
+        });
 
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("Successfully registed!!!!"),
-        backgroundColor: const Color.fromARGB(255, 3, 1, 68),
-      ));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("Successfully registed!!!!"),
+          backgroundColor: const Color.fromARGB(255, 3, 1, 68),
+        ));
 
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => Homepage(),
-          ));
-      nameController.clear();
-      addressController.clear();
-      contactController.clear();
-      emailController.clear();
-      passwordController.clear();
-      confirmController.clear();
-      print("Register Successfully");
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Homepage(),
+            ));
+        nameController.clear();
+        addressController.clear();
+        contactController.clear();
+        emailController.clear();
+        passwordController.clear();
+        confirmController.clear();
+        print("Register Successfully");
+      }
     } catch (e) {
       print("Error user: $e");
     }

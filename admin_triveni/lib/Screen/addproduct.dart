@@ -64,42 +64,47 @@ class _AddProductState extends State<AddProduct> {
 
   Future<void> submit() async {
     try {
-      String name = nameController.text;
-      String code = codeController.text;
-      String price = priceController.text;
-      // String type = typeController.text;
-      String description = descriptionController.text;
-      String? url = await photoUpload(name);
+      if (pickedImage == null) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Pick an image first')));
+      } else {
+        String name = nameController.text;
+        String code = codeController.text;
+        String price = priceController.text;
+        // String type = typeController.text;
+        String description = descriptionController.text;
+        String? url = await photoUpload(name);
 
-      print(name);
-      print(code);
-      print(price);
-      print(selectedType);
-      print(description);
+        print(name);
+        print(code);
+        print(price);
+        print(selectedType);
+        print(description);
 
-      await supabase.from('tbl_product').insert({
-        'product_name': name,
-        'product_code': code,
-        'product_price': price,
-        'product_type': selectedType,
-        'product_photo': url,
-        'product_description': description,
-        'subcategory_id': selectedSub,
-      });
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("Inserted"),
-        backgroundColor: const Color.fromARGB(255, 3, 1, 68),
-      ));
-      nameController.clear();
-      codeController.clear();
-      priceController.clear();
-      typeController.clear();
-      descriptionController.clear();
-      fetchproduct();
-      setState(() {
-        selectedCat = null;
-        selectedSub = null;
-      });
+        await supabase.from('tbl_product').insert({
+          'product_name': name,
+          'product_code': code,
+          'product_price': price,
+          'product_type': selectedType,
+          'product_photo': url,
+          'product_description': description,
+          'subcategory_id': selectedSub,
+        });
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("Inserted"),
+          backgroundColor: const Color.fromARGB(255, 3, 1, 68),
+        ));
+        nameController.clear();
+        codeController.clear();
+        priceController.clear();
+        typeController.clear();
+        descriptionController.clear();
+        fetchproduct();
+        setState(() {
+          selectedCat = null;
+          selectedSub = null;
+        });
+      }
     } catch (e) {
       print("Error Product: $e");
     }

@@ -52,23 +52,28 @@ class _CustomState extends State<Custom> {
 
   Future<void> submit() async {
     try {
-      String? imageUrl = await _uploadImage();
-      String description = descriptionController.text;
+      if (_image == null) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Pick an image first')));
+      } else {
+        String? imageUrl = await _uploadImage();
+        String description = descriptionController.text;
 
-      await supabase.from('tbl_customization').insert({
-        'customization_photo': imageUrl,
-        'customization_description': description,
-        'cart_id': widget.cartId,
-      });
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(
-            "Order update: custom order requires an extra fee, confirmed by the admin before payment."),
-        backgroundColor: const Color.fromARGB(255, 3, 1, 68),
-      ));
-      setState(() {
-        _image = null;
-      });
-      descriptionController.clear();
+        await supabase.from('tbl_customization').insert({
+          'customization_photo': imageUrl,
+          'customization_description': description,
+          'cart_id': widget.cartId,
+        });
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+              "Order update: custom order requires an extra fee, confirmed by the admin before payment."),
+          backgroundColor: const Color.fromARGB(255, 3, 1, 68),
+        ));
+        setState(() {
+          _image = null;
+        });
+        descriptionController.clear();
+      }
     } catch (e) {
       print("Error customization: $e");
     }
