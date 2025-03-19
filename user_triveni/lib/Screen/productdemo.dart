@@ -19,7 +19,7 @@ class _ProductdemoState extends State<Productdemo> {
           .eq('booking_status', 0)
           .maybeSingle()
           .limit(1); // Use maybeSingle() instead of single()
-
+      print("Resopnse: $response");
       if (response == null) {
         print("No existing booking, creating a new one.");
         int bookingid = await booking();

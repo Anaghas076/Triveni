@@ -1,7 +1,6 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:user_triveni/Screen/payment.dart';
 import 'package:user_triveni/Screen/postcomplaint.dart';
-import 'package:user_triveni/Screen/productdemo.dart';
 import 'package:user_triveni/main.dart';
 
 class Myorder extends StatefulWidget {
@@ -11,22 +10,6 @@ class Myorder extends StatefulWidget {
 
 class _MybookingDataState extends State<Myorder> {
   List<Map<String, dynamic>> bookingData = [];
-  Future<void> fetchCartItems() async {
-    try {
-      final user = supabase.auth.currentUser;
-      if (user == null) return;
-
-      // Fetch the user's active booking
-      await supabase
-          .from('tbl_booking')
-          .select()
-          .eq('user_id', user.id)
-          .eq('booking_status', 1)
-          .maybeSingle();
-    } catch (e) {
-      print("Error: $e");
-    }
-  }
 
   Future<void> fetchBooking() async {
     try {
@@ -37,13 +20,14 @@ class _MybookingDataState extends State<Myorder> {
 
       final response = await supabase
           .from('tbl_booking')
-          .select(" * ,tbl_cart(*,tbl_product(*))")
-          .eq('booking_status', 1)
-          .eq('user_id', supabase.auth.currentUser!.id);
+          .select(" *, tbl_cart(*, tbl_product(*))")
+          .gte('booking_status', 1)
+          .eq('user_id', user.id);
 
       for (var data in response) {
         final cart = data['tbl_cart'];
         List<Map<String, dynamic>> cartItems = [];
+
         for (var cartData in cart) {
           int total = cartData['cart_quantity'] *
               cartData['tbl_product']['product_price'];
@@ -53,21 +37,21 @@ class _MybookingDataState extends State<Myorder> {
             'product_name': cartData['tbl_product']['product_name'],
             'product_photo': cartData['tbl_product']['product_photo'],
             'product_price': cartData['tbl_product']['product_price'],
-            'product_code': cartData['tbl_product']['product_price'],
-            'total': total
+            'product_code': cartData['tbl_product']
+                ['product_code'], // Correct field
+            'total': total,
           });
         }
+
         orders.add({
           'booking_id': data['booking_id'],
           'booking_status': data['booking_status'],
+          'booking_amount':
+              data['booking_amount'], // Ensure this field is fetched
+          'created_at': data['created_at'], // Fetch order date
           'cart': cartItems,
         });
-        // Map<String, dynamic> cart = {
-        //   'product':
-        // };
       }
-
-      print(orders);
 
       setState(() {
         bookingData = orders;
@@ -77,118 +61,189 @@ class _MybookingDataState extends State<Myorder> {
     }
   }
 
+  Future<void> order(int bookingId, int status) async {
+    try {
+      await supabase
+          .from('tbl_booking')
+          .update({'booking_status': status}).eq('booking_id', bookingId);
+      Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => Payment(),
+          ));
+      fetchBooking();
+    } catch (e) {
+      print("Error updating status: $e");
+    }
+  }
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     fetchBooking();
-    fetchCartItems();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView.builder(
-        padding: EdgeInsets.all(10),
-        itemCount: bookingData.length,
-        itemBuilder: (context, index) {
-          final bookingItems = bookingData[index];
-          final cartData = bookingData[index]['cart'];
-          print("Booking data: $bookingItems");
-          print("Cart: $cartData");
-          // final cartItems = bookingItems['tbl_cart'] ?? [];
-          // final productItems = bookingItems['tbl_cart'] ?? [];
-          return Card(
-            margin: EdgeInsets.symmetric(vertical: 8),
-            elevation: 2,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            child: Padding(
-              padding: EdgeInsets.all(12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Booking Details
-                  // Text(
-                  //   "Order ID: ${bookingItems['booking_id']}",
-                  //   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  // ),
-                  SizedBox(height: 5),
-                  Text(
-                    "Date: ${bookingItems['current_date']}",
-                    style: TextStyle(fontSize: 14, color: Colors.grey),
-                  ),
-                  SizedBox(height: 5),
-                  Text(
-                    "Total Amount: ₹${bookingItems['booking_amount']}",
-                    style: TextStyle(fontSize: 14, color: Colors.green),
-                  ),
-                  SizedBox(height: 10),
+      body: bookingData.isEmpty
+          ? Center(child: Text("No orders found"))
+          : ListView.builder(
+              padding: EdgeInsets.all(10),
+              itemCount: bookingData.length,
+              itemBuilder: (context, index) {
+                final bookingItems = bookingData[index];
+                final cartData = bookingItems['cart'];
 
-                  // Cart Items List
-                  Column(
-                    children: cartData.map<Widget>((cartItem) {
-                      return ListTile(
-                        leading: Image.network(
-                          cartItem['product_photo'] ?? "",
-                          width: 60,
-                          height: 60,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) =>
-                              Icon(Icons.image_not_supported, size: 50),
-                        ),
-                        title: Text(
-                          cartItem['product_name'] ?? "Product Name",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                return Card(
+                  margin: EdgeInsets.symmetric(vertical: 8),
+                  elevation: 2,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10)),
+                  child: Padding(
+                    padding: EdgeInsets.all(12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
                           children: [
-                            Text("Code: ${cartItem['product_price']}"),
-                            Text("QTY: ${cartItem['cart_quantity']}"),
+                            if (bookingItems['booking_status'] == 9)
+                              ElevatedButton(
+                                onPressed: () {
+                                  order(bookingItems['booking_id'], 10);
+                                },
+                                child: Text(
+                                  "Pay Amount",
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            Text(
+                              bookingItems['booking_status'] == 1
+                                  ? "Ordered"
+                                  : bookingItems['booking_status'] == 2
+                                      ? "Publish to weaver"
+                                      : bookingItems['booking_status'] == 3
+                                          ? "Weaver Accepted"
+                                          : bookingItems['booking_status'] == 4
+                                              ? "Weaver Completed"
+                                              : bookingItems[
+                                                          'booking_status'] ==
+                                                      5
+                                                  ? "Publish to artisan"
+                                                  : bookingItems[
+                                                              'booking_status'] ==
+                                                          6
+                                                      ? "Artisan Accepted"
+                                                      : bookingItems[
+                                                                  'booking_status'] ==
+                                                              7
+                                                          ? "Artisan Completed"
+                                                          : bookingItems[
+                                                                      'booking_status'] ==
+                                                                  8
+                                                              ? "Item packed"
+                                                              : bookingItems[
+                                                                          'booking_status'] ==
+                                                                      10
+                                                                  ? "Payed"
+                                                                  : bookingItems[
+                                                                              'booking_status'] ==
+                                                                          11
+                                                                      ? "Shipped"
+                                                                      : bookingItems['booking_status'] ==
+                                                                              12
+                                                                          ? "Delivered"
+                                                                          : "Unknown Status", // Default case if status doesn't match
+                              style: TextStyle(
+                                  fontSize: 15, fontWeight: FontWeight.bold),
+                            ),
                           ],
                         ),
-                        trailing: Text(
-                          "₹${cartItem['total']}",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold, color: Colors.black),
+                        SizedBox(height: 5),
+                        Text(
+                          "Date: ${bookingItems['created_at']}",
+                          style: TextStyle(fontSize: 14, color: Colors.grey),
                         ),
-                      );
-                    }).toList(),
-                  ),
 
-                  SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Postcomplaint()));
-                        },
-                        child: Text(
-                          "Complaint",
-                          style: TextStyle(
-                              fontSize: 12, fontWeight: FontWeight.bold),
+                        SizedBox(height: 10),
+
+                        // Cart Items
+                        Column(
+                          children: cartData.map<Widget>((cartItem) {
+                            return ListTile(
+                              leading: Image.network(
+                                cartItem['product_photo'] ?? "",
+                                width: 60,
+                                height: 60,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) =>
+                                    Icon(Icons.image_not_supported, size: 50),
+                              ),
+                              title: Text(
+                                cartItem['product_name'] ?? "Product Name",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                      "Code: ${cartItem['product_code'] ?? 'N/A'}"),
+                                  Text("QTY: ${cartItem['cart_quantity']}"),
+                                ],
+                              ),
+                              trailing: Text(
+                                "₹${cartItem['total']}",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black),
+                              ),
+                            );
+                          }).toList(),
                         ),
-                      ),
-                      Text(
-                        bookingItems['booking_status'] == 1
-                            ? "Active"
-                            : "Completed",
-                        style: TextStyle(
-                            fontSize: 15, fontWeight: FontWeight.bold),
-                      ),
-                    ],
+
+                        SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            if (bookingItems['booking_status'] == 12)
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              Postcomplaint()));
+                                },
+                                child: Text(
+                                  "Complaint",
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            SizedBox(
+                              width: 50,
+                            ),
+                            Text(
+                              " Total Amount : ₹  ${bookingItems['booking_amount']}",
+                              style: TextStyle(
+                                  fontSize: 15,
+                                  color: Colors.green,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                ],
-              ),
+                );
+              },
             ),
-          );
-        },
-      ),
     );
   }
 }

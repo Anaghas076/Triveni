@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 //import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
 import 'package:weaver_triveni/main.dart';
 
 class Changepassword extends StatefulWidget {
@@ -56,10 +57,15 @@ class _ChangepasswordState extends State<Changepassword> {
         ),
       );
 
+      await supabase
+          .from('tbl_weaver')
+          .update({'weaver_password': _newPasswordController.text}).eq(
+              'weaver_id', response.user!.id);
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Password changed successfully'),
-          backgroundColor: Colors.green,
+          backgroundColor: const Color.fromARGB(255, 3, 1, 68),
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
@@ -75,7 +81,7 @@ class _ChangepasswordState extends State<Changepassword> {
           content: Text(e.toString().contains('incorrect')
               ? 'Current password is incorrect'
               : 'Failed to change password'),
-          backgroundColor: Colors.red,
+          backgroundColor: const Color.fromARGB(255, 3, 1, 68),
           behavior: SnackBarBehavior.floating,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),

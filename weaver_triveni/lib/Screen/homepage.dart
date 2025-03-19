@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:weaver_triveni/Screen/addexpense.dart';
 
 import 'package:weaver_triveni/Screen/homecontent.dart';
-
 import 'package:weaver_triveni/Screen/order.dart';
-import 'package:weaver_triveni/Screen/profile.dart';
 
-import 'package:weaver_triveni/main.dart';
+import 'package:weaver_triveni/Screen/profile.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -22,7 +20,7 @@ class _HomepageState extends State<Homepage> {
   final List<Widget> pageContent = [
     Homecontent(), // New HomeScreen widget
     Profile(), // Dummy category page
-    Order(),
+    Booking(),
     Addexpense(),
   ];
 

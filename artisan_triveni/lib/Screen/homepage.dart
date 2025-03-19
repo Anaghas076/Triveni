@@ -22,7 +22,7 @@ class _HomepageState extends State<Homepage> {
   final List<Widget> pageContent = [
     Homecontent(), // New HomeScreen widget
     Profile(), // Dummy category page
-    Order(),
+    Booking(),
     Setting(),
   ];
 

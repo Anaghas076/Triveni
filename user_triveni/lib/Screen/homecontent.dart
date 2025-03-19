@@ -90,10 +90,8 @@ class _HomecontentState extends State<Homecontent> {
               ),
             ),
 
-            SizedBox(height: 20),
-            SizedBox(
-              height: 10,
-            ),
+            SizedBox(height: 5),
+
             Center(
               child: Text(
                 "Customized Product",

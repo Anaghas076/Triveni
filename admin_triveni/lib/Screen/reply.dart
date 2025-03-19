@@ -1,42 +1,57 @@
-import 'package:admin_triveni/Components/formvalidation.dart';
 import 'package:flutter/material.dart';
 import 'package:admin_triveni/main.dart';
 
 class Reply extends StatefulWidget {
-  const Reply({super.key});
+  final int complaintId; // Complaint ID passed when opening this page
+
+  const Reply({super.key, required this.complaintId});
 
   @override
-  State<Reply> createState() => _PostcomplaintState();
+  State<Reply> createState() => _ReplyState();
 }
 
-class _PostcomplaintState extends State<Reply> {
-  final TextEditingController replyContoller = TextEditingController();
+class _ReplyState extends State<Reply> {
+  final TextEditingController replyController = TextEditingController();
+  final formKey = GlobalKey<FormState>();
 
-  Future<void> reply() async {
+  Future<void> sendReply() async {
+    if (!formKey.currentState!.validate()) return;
+
     try {
-      String reply = replyContoller.text;
+      String reply = replyController.text.trim();
 
-      // Make sure to provide the correct complaint ID (replace 'complaint_id_value' accordingly)
+      if (widget.complaintId == 0) {
+        throw "Invalid complaint ID";
+      }
+
+      // Update complaint_reply and complaint_status in tbl_complaint
       await supabase.from('tbl_complaint').update({
         'complaint_reply': reply,
-        'complaint_status': 1,
-      }); // Ensure you're updating the correct complaint
+        'complaint_status': 1, // Set status as replied
+      }).eq('complaint_id',
+          widget.complaintId); // Ensure correct complaint is updated
 
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("Reply Posted"),
-        backgroundColor: const Color.fromARGB(255, 54, 3, 116),
-      ));
-      replyContoller.clear();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Reply Posted Successfully"),
+          backgroundColor: Colors.green,
+        ),
+      );
+
+      replyController.clear(); // Clear input field
+
+      Navigator.pop(context); // Return to previous screen after posting reply
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("Error: $e"),
-        backgroundColor: Colors.red,
-      ));
-      print("Error Complaint: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Error: ${e.toString()}"),
+          backgroundColor: Colors.red,
+        ),
+      );
+      print("Error in sending reply: $e");
     }
   }
 
-  final formkey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,14 +74,15 @@ class _PostcomplaintState extends State<Reply> {
       ),
       body: Center(
         child: Form(
-          key: formkey,
+          key: formKey,
           child: Container(
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(25),
-                border: Border.all(
-                  color: const Color.fromARGB(255, 3, 1, 68),
-                  width: 3,
-                )),
+              borderRadius: BorderRadius.circular(25),
+              border: Border.all(
+                color: const Color.fromARGB(255, 3, 1, 68),
+                width: 3,
+              ),
+            ),
             width: 340,
             height: 380,
             margin: EdgeInsets.only(top: 50),
@@ -75,44 +91,39 @@ class _PostcomplaintState extends State<Reply> {
               child: Column(
                 children: [
                   TextFormField(
-                    validator: (value) =>
-                        FormValidation.validateDescription(value),
-                    controller: replyContoller,
+                    validator: (value) => value == null || value.isEmpty
+                        ? "Reply cannot be empty"
+                        : null,
+                    controller: replyController,
                     keyboardType: TextInputType.multiline,
                     maxLines: 10,
                     style: TextStyle(
-                        color: const Color.fromARGB(255, 3, 1, 68),
-                        fontWeight: FontWeight.bold),
+                      color: const Color.fromARGB(255, 3, 1, 68),
+                      fontWeight: FontWeight.bold,
+                    ),
                     decoration: InputDecoration(
                       enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: BorderSide(
-                            color: const Color.fromARGB(255, 10, 10, 10),
-                          )),
-                      // prefixIcon: Icon(
-                      //   Icons.image,
-                      //   color: const Color.fromARGB(255, 7, 2, 54),
-                      // ),
-                      hintText: " Reply",
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: BorderSide(
+                          color: const Color.fromARGB(255, 10, 10, 10),
+                        ),
+                      ),
+                      hintText: "Enter Reply",
                       hintStyle: TextStyle(
-                          color: const Color.fromARGB(255, 8, 8, 8),
-                          fontWeight: FontWeight.bold),
+                        color: const Color.fromARGB(255, 8, 8, 8),
+                        fontWeight: FontWeight.bold,
+                      ),
                       border: OutlineInputBorder(),
                     ),
                   ),
-                  SizedBox(
-                    height: 20,
-                  ),
+                  SizedBox(height: 20),
                   SizedBox(
                     width: 500,
                     child: ElevatedButton(
-                        onPressed: () {
-                          if (formkey.currentState!.validate()) {
-                            reply();
-                          }
-                        },
-                        child: Text("reply")),
-                  )
+                      onPressed: sendReply,
+                      child: Text("Send Reply"),
+                    ),
+                  ),
                 ],
               ),
             ),

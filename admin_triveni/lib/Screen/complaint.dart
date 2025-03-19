@@ -16,8 +16,10 @@ class _ComplaintState extends State<Complaint> {
     try {
       final response = await supabase
           .from('tbl_complaint')
-          .select("*, tbl_user:user_id(user_name, user_contact)")
+          .select("*, tbl_user(*)")
           .eq('complaint_status', 0);
+
+      print(response);
 
       setState(() {
         complaints = response;
@@ -76,15 +78,14 @@ class _ComplaintState extends State<Complaint> {
                       ),
                     ),
                     SizedBox(height: 5),
-                    Text(
-                        "Status: ${data['complaint_status'] == 0 ? "Pending" : "Replied"}"),
                     SizedBox(height: 10),
                     ElevatedButton(
                       onPressed: () {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => Reply(),
+                              builder: (context) =>
+                                  Reply(complaintId: data['complaint_id']),
                             ));
                       },
                       child: Text('Reply'),
