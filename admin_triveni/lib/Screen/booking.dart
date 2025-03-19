@@ -11,6 +11,7 @@ class Booking extends StatefulWidget {
 class _MybookingDataState extends State<Booking> {
   List<Map<String, dynamic>> bookingData = [];
   int bookingid = 0;
+  int paymentid = 0;
   Future<void> fetchBooking() async {
     try {
       final response = await supabase
@@ -61,6 +62,7 @@ class _MybookingDataState extends State<Booking> {
           'created_at': data['created_at'],
           'booking_amount': data['booking_amount'],
           'booking_status': data['booking_status'],
+          'payment_status': data['payment_status'],
           'user_name': data['tbl_user']['user_name'],
           'user_contact': data['tbl_user']['user_contact'],
           'cart': cartItems,
@@ -85,6 +87,17 @@ class _MybookingDataState extends State<Booking> {
       fetchBooking();
     } catch (e) {
       print("Error: $e");
+    }
+  }
+
+  Future<void> pay(int bookingId, int newPaymentStatus) async {
+    try {
+      await supabase.from('tbl_booking').update(
+          {'payment_status': newPaymentStatus}).eq('booking_id', bookingId);
+
+      fetchBooking();
+    } catch (e) {
+      print("Error settling payment: $e");
     }
   }
 
@@ -274,6 +287,26 @@ class _MybookingDataState extends State<Booking> {
                                     fontSize: 12, fontWeight: FontWeight.bold),
                               ),
                             ),
+                          bookingItems['booking_status'] == 12
+                              ? ElevatedButton(
+                                  onPressed: () {
+                                    // If payment_status is 0, pay weaver; else, pay artisan
+                                    int status =
+                                        bookingItems['payment_status'] == 0
+                                            ? 1
+                                            : 2;
+                                    pay(bookingItems['booking_id'], status);
+                                  },
+                                  child: Text(
+                                    bookingItems['payment_status'] == 0
+                                        ? "Weaver Settle"
+                                        : "Artisan Settle",
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                )
+                              : Container(),
                         ],
                       ),
                       Text(
@@ -313,7 +346,12 @@ class _MybookingDataState extends State<Booking> {
                                                                     : bookingItems['booking_status'] ==
                                                                             12
                                                                         ? "Delivered"
-                                                                        : "Unknown Status", // Default case if status doesn't match
+                                                                        : bookingItems['payment_status'] ==
+                                                                                1
+                                                                            ? "paid to Weaver"
+                                                                            : bookingItems['payment_status'] == 2
+                                                                                ? "paid to Artisan"
+                                                                                : "Unknown Status", // Default case if status doesn't match
                         style: TextStyle(
                             fontSize: 15, fontWeight: FontWeight.bold),
                       ),

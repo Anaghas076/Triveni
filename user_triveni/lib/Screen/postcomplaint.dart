@@ -3,7 +3,9 @@ import 'package:user_triveni/Component/formvalidation.dart';
 import 'package:user_triveni/main.dart';
 
 class Postcomplaint extends StatefulWidget {
-  const Postcomplaint({super.key});
+  final int productId; // Complaint ID passed when opening this page
+
+  const Postcomplaint({super.key, required this.productId});
 
   @override
   State<Postcomplaint> createState() => _PostcomplaintState();
@@ -21,6 +23,7 @@ class _PostcomplaintState extends State<Postcomplaint> {
       await supabase.from('tbl_complaint').insert({
         'complaint_title': title,
         'complaint_description': description,
+        'product_id': widget.productId,
       });
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Posted"),

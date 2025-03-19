@@ -20,7 +20,7 @@ class _PaymentState extends State<Payment> {
           },
         ),
         title: Text(
-          "Edit Profile",
+          "Payment",
           style: TextStyle(
             color: Colors.white,
             fontSize: 18,
