@@ -14,22 +14,49 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+
   Future<void> login() async {
     try {
       String email = emailController.text;
       String password = passwordController.text;
-      print(email);
-      print(password);
-      await supabase.auth.signInWithPassword(
+      final auth = await supabase.auth.signInWithPassword(
         email: email,
         password: password,
       );
+      String id = auth.user!.id;
 
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => Homepage(),
-          ));
+      final weaver = await supabase
+          .from('tbl_weaver')
+          .select('weaver_status')
+          .eq('weaver_id', id)
+          .single();
+
+      if (weaver.isNotEmpty) {
+        if (weaver['weaver_status'] == 1) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => Homepage()),
+          );
+        } else if (weaver['weaver_status'] == 2) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Admin Rejected"),
+              backgroundColor: const Color.fromARGB(255, 3, 1, 68),
+            ),
+          );
+        } else if (weaver['weaver_status'] == 0) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Not Verified"),
+              backgroundColor: const Color.fromARGB(255, 3, 1, 68),
+            ),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text("Invalid Credentials")));
+      }
+
       print("Login Successfull");
     } catch (e) {
       print("Error During login: $e");

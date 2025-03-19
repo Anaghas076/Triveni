@@ -18,20 +18,30 @@ class _LoginPageState extends State<LoginPage> {
     try {
       String email = emailController.text;
       String password = passwordController.text;
-      print(email);
-      print(password);
-      await supabase.auth.signInWithPassword(
+      final auth = await supabase.auth.signInWithPassword(
         email: email,
         password: password,
       );
 
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => Homepage(),
-          ));
+      String id = auth.user!.id;
+
+      final user = await supabase.from('tbl_user').select().single();
+
+      if (user.isNotEmpty) {
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Homepage(),
+            ));
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text("Invalid Credentials")));
+      }
+
       print("Login Successfull");
     } catch (e) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Invalid Credentials")));
       print("Error During login: $e");
     }
   }

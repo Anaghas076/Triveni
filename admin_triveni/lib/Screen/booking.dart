@@ -107,6 +107,29 @@ class _MybookingDataState extends State<Booking> {
     fetchBooking();
   }
 
+  void submitAmount(int id) {}
+
+  void addAmount(int id) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          child: Form(
+            child: ListView(
+              children: [
+                TextFormField(),
+                SizedBox(
+                  height: 10,
+                ),
+                ElevatedButton(onPressed: () {}, child: Text("Add Amount"))
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -261,7 +284,9 @@ class _MybookingDataState extends State<Booking> {
                                 ),
                                 if (bookingItems['hasCustom'])
                                   ElevatedButton(
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        addAmount(bookingItems['booking_id']);
+                                      },
                                       child: Text("Change Amount"))
                               ],
                             ),
@@ -287,71 +312,78 @@ class _MybookingDataState extends State<Booking> {
                                     fontSize: 12, fontWeight: FontWeight.bold),
                               ),
                             ),
-                          bookingItems['booking_status'] == 12
-                              ? ElevatedButton(
-                                  onPressed: () {
-                                    // If payment_status is 0, pay weaver; else, pay artisan
-                                    int status =
-                                        bookingItems['payment_status'] == 0
-                                            ? 1
-                                            : 2;
-                                    pay(bookingItems['booking_id'], status);
-                                  },
-                                  child: Text(
-                                    bookingItems['payment_status'] == 0
-                                        ? "Weaver Settle"
-                                        : "Artisan Settle",
-                                    style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                )
-                              : Container(),
+                          if (bookingItems['booking_status'] == 12 &&
+                              bookingItems['payment_status'] == 0)
+                            ElevatedButton(
+                              onPressed: () {
+                                pay(bookingItems['booking_id'],
+                                    1); // Pay Weaver
+                              },
+                              child: Text(
+                                "Weaver Settle",
+                                style: TextStyle(
+                                    fontSize: 12, fontWeight: FontWeight.bold),
+                              ),
+                            )
+                          else if (bookingItems['booking_status'] == 12 &&
+                              bookingItems['payment_status'] == 1)
+                            ElevatedButton(
+                              onPressed: () {
+                                pay(bookingItems['booking_id'],
+                                    2); // Pay Artisan
+                              },
+                              child: Text(
+                                "Artisan Settle",
+                                style: TextStyle(
+                                    fontSize: 12, fontWeight: FontWeight.bold),
+                              ),
+                            )
+                          else
+                            Container(),
                         ],
                       ),
                       Text(
-                        bookingItems['booking_status'] == 1
-                            ? "Ordered"
-                            : bookingItems['booking_status'] == 2
-                                ? "Publish to weaver"
-                                : bookingItems['booking_status'] == 3
-                                    ? "Weaver Accepted"
-                                    : bookingItems['booking_status'] == 4
-                                        ? "Weaver Completed"
-                                        : bookingItems['booking_status'] == 5
-                                            ? "Publish to artisan"
+                        bookingItems['booking_status'] == 12
+                            ? (bookingItems['payment_status'] == 1
+                                ? "Paid to Weaver"
+                                : bookingItems['payment_status'] == 2
+                                    ? "Payment complete"
+                                    : "Delivered")
+                            : bookingItems['booking_status'] == 1
+                                ? "Ordered"
+                                : bookingItems['booking_status'] == 2
+                                    ? "Publish to Weaver"
+                                    : bookingItems['booking_status'] == 3
+                                        ? "Weaver Accepted"
+                                        : bookingItems['booking_status'] == 4
+                                            ? "Weaver Completed"
                                             : bookingItems['booking_status'] ==
-                                                    6
-                                                ? "Artisan Accepted"
+                                                    5
+                                                ? "Publish to Artisan"
                                                 : bookingItems[
                                                             'booking_status'] ==
-                                                        7
-                                                    ? "Artisan Completed"
+                                                        6
+                                                    ? "Artisan Accepted"
                                                     : bookingItems[
                                                                 'booking_status'] ==
-                                                            8
-                                                        ? "Item packed"
+                                                            7
+                                                        ? "Artisan Completed"
                                                         : bookingItems[
                                                                     'booking_status'] ==
-                                                                9
-                                                            ? "Request for payment"
+                                                                8
+                                                            ? "Item Packed"
                                                             : bookingItems[
                                                                         'booking_status'] ==
-                                                                    10
-                                                                ? "Payed"
+                                                                    9
+                                                                ? "Request for Payment"
                                                                 : bookingItems[
                                                                             'booking_status'] ==
-                                                                        11
-                                                                    ? "Shipped"
+                                                                        10
+                                                                    ? "Paid"
                                                                     : bookingItems['booking_status'] ==
-                                                                            12
-                                                                        ? "Delivered"
-                                                                        : bookingItems['payment_status'] ==
-                                                                                1
-                                                                            ? "paid to Weaver"
-                                                                            : bookingItems['payment_status'] == 2
-                                                                                ? "paid to Artisan"
-                                                                                : "Unknown Status", // Default case if status doesn't match
+                                                                            11
+                                                                        ? "Shipped"
+                                                                        : "Unknown Status", // Default case
                         style: TextStyle(
                             fontSize: 15, fontWeight: FontWeight.bold),
                       ),

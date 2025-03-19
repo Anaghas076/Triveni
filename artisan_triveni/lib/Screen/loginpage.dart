@@ -18,18 +18,44 @@ class _LoginPageState extends State<LoginPage> {
     try {
       String email = emailController.text;
       String password = passwordController.text;
-      print(email);
-      print(password);
-      await supabase.auth.signInWithPassword(
+      final auth = await supabase.auth.signInWithPassword(
         email: email,
         password: password,
       );
+      String id = auth.user!.id;
 
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => Homepage(),
-          ));
+      final artisan = await supabase
+          .from('tbl_artisan')
+          .select('artisan_status')
+          .eq('artisan_id', id)
+          .single();
+
+      if (artisan.isNotEmpty) {
+        if (artisan['artisan_status'] == 1) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => Homepage()),
+          );
+        } else if (artisan['artisan_status'] == 2) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Admin Rejected"),
+              backgroundColor: const Color.fromARGB(255, 3, 1, 68),
+            ),
+          );
+        } else if (artisan['artisan_status'] == 0) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Not Verified"),
+              backgroundColor: const Color.fromARGB(255, 3, 1, 68),
+            ),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text("Invalid Credentials")));
+      }
+
       print("Login Successfull");
     } catch (e) {
       print("Error During login: $e");

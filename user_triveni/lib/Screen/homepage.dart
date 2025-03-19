@@ -7,6 +7,7 @@ import 'package:user_triveni/Screen/myorder.dart';
 
 import 'package:user_triveni/Screen/profile.dart';
 import 'package:user_triveni/Screen/search.dart';
+import 'package:user_triveni/Screen/viewcomplaint.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -23,7 +24,7 @@ class _HomepageState extends State<Homepage> {
     Homecontent(), // New HomeScreen widget
     Profile(), // Dummy category page
     Myorder(),
-    Search(),
+    // Viewcomplaint(),
   ];
 
   @override

@@ -1,6 +1,6 @@
-import 'package:admin_triveni/Screen/reply.dart';
 import 'package:flutter/material.dart';
-import 'package:admin_triveni/main.dart';
+
+import 'package:user_triveni/main.dart';
 
 class Complaint extends StatefulWidget {
   const Complaint({super.key});
@@ -14,8 +14,10 @@ class _ComplaintState extends State<Complaint> {
 
   Future<void> fetchComplaint() async {
     try {
-      final response =
-          await supabase.from('tbl_complaint').select("*, tbl_user(*)");
+      final response = await supabase
+          .from('tbl_complaint')
+          .select("*, tbl_product(*)")
+          .eq('user_id', supabase.auth.currentUser!.id);
 
       print(response);
 
@@ -77,17 +79,6 @@ class _ComplaintState extends State<Complaint> {
                     ),
                     SizedBox(height: 5),
                     SizedBox(height: 10),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  Reply(complaintId: data['complaint_id']),
-                            ));
-                      },
-                      child: Text('Reply'),
-                    ),
                   ],
                 ),
               ),

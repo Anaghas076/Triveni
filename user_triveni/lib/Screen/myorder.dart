@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:user_triveni/Screen/payment.dart';
 import 'package:user_triveni/Screen/postcomplaint.dart';
 import 'package:user_triveni/main.dart';
+import 'package:intl/intl.dart';
 
 class Myorder extends StatefulWidget {
   @override
@@ -83,6 +84,11 @@ class _MybookingDataState extends State<Myorder> {
     fetchBooking();
   }
 
+  String formatDate(String timestamp) {
+    DateTime parsedDate = DateTime.parse(timestamp); // Convert to DateTime
+    return DateFormat('dd-MM-yyyy').format(parsedDate); // Format the date
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -106,7 +112,7 @@ class _MybookingDataState extends State<Myorder> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "Date: ${bookingItems['created_at']}",
+                          "Date: ${formatDate(bookingItems['created_at'])}",
                           style: TextStyle(fontSize: 14, color: Colors.grey),
                         ),
 
@@ -150,7 +156,7 @@ class _MybookingDataState extends State<Myorder> {
                                   if (bookingItems['booking_status'] == 12)
                                     SizedBox(
                                       width: 110,
-                                      height: 20,
+                                      height: 30,
                                       child: ElevatedButton(
                                         onPressed: () {
                                           Navigator.push(
@@ -234,7 +240,7 @@ class _MybookingDataState extends State<Myorder> {
                                                                       : bookingItems['booking_status'] ==
                                                                               12
                                                                           ? "Delivered"
-                                                                          : "Unknown Status", // Default case if status doesn't match
+                                                                          : " ", // Default case if status doesn't match
                               style: TextStyle(
                                   fontSize: 15, fontWeight: FontWeight.bold),
                             ),
