@@ -27,7 +27,7 @@ class _PostcomplaintState extends State<Postcomplaint> {
       });
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Posted"),
-        backgroundColor: const Color.fromARGB(255, 54, 3, 116),
+        backgroundColor: const Color.fromARGB(255, 3, 1, 68),
       ));
       titleContoller.clear();
       descriptionController.clear();

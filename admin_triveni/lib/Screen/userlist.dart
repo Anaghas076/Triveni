@@ -13,7 +13,10 @@ class _UserlistState extends State<Userlist> {
 
   Future<void> fetchuser() async {
     try {
-      final response = await supabase.from('tbl_user').select();
+      final response = await supabase
+          .from('tbl_user')
+          .select()
+          .order('created_at', ascending: false);
       setState(() {
         users = response;
       });

@@ -14,8 +14,10 @@ class _ComplaintState extends State<Complaint> {
 
   Future<void> fetchComplaint() async {
     try {
-      final response =
-          await supabase.from('tbl_complaint').select("*, tbl_user(*)");
+      final response = await supabase
+          .from('tbl_complaint')
+          .select("*, tbl_user(*)")
+          .order('created_at', ascending: false);
 
       print(response);
 

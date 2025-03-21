@@ -152,7 +152,7 @@ class _CartState extends State<Cart> {
                     int qty = data['cart_quantity'];
                     int price = product['product_price'];
                     int total = qty * price;
-                    print(total);
+                    print(product);
                     return Card(
                       margin: EdgeInsets.symmetric(horizontal: 15, vertical: 8),
                       shape: RoundedRectangleBorder(
@@ -269,7 +269,7 @@ class _CartState extends State<Cart> {
                                   },
                                   child: Text("Remove"),
                                 ),
-                                product['product_type'] == 'Custom'
+                                product['product_type'] == 'Customizable'
                                     ? ElevatedButton(
                                         onPressed: () {
                                           Navigator.push(
@@ -281,7 +281,7 @@ class _CartState extends State<Cart> {
                                             ),
                                           );
                                         },
-                                        child: Text("Customize"),
+                                        child: Text("Customizable"),
                                       )
                                     : Container()
                               ],

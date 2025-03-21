@@ -41,7 +41,10 @@ class _AddexpenseState extends State<Addexpense> {
 
   Future<void> fetchexpense() async {
     try {
-      final response = await supabase.from('tbl_daily').select();
+      final response = await supabase
+          .from('tbl_daily')
+          .select()
+          .eq('weaver_id', supabase.auth.currentUser!.id);
       setState(() {
         daily = response;
       });

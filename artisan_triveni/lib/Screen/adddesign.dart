@@ -52,8 +52,10 @@ class _AddDesignState extends State<AddDesign> {
   Future<void> submit() async {
     try {
       if (_image == null) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Pick an image first')));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Pick an image first'),
+          backgroundColor: const Color.fromARGB(255, 3, 1, 68),
+        ));
       } else {
         String name = nameController.text;
 
@@ -92,7 +94,11 @@ class _AddDesignState extends State<AddDesign> {
 
   Future<void> fetchdesign() async {
     try {
-      final response = await supabase.from('tbl_design').select();
+      final response = await supabase
+          .from('tbl_design')
+          .select()
+          .eq('artisan_id', supabase.auth.currentUser!.id);
+      ;
       setState(() {
         designs = response;
       });
@@ -215,6 +221,7 @@ class _AddDesignState extends State<AddDesign> {
                   trailing: SizedBox(
                     width: 100,
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         IconButton(
                           onPressed: () {

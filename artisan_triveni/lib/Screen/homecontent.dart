@@ -52,7 +52,8 @@ class _HomecontentState extends State<Homecontent> {
 
   Future<void> fetchArtisan() async {
     try {
-      final response = await supabase.from('tbl_artisan').count();
+      final response =
+          await supabase.from('tbl_artisan').count().eq('artisan_status', 1);
       setState(() {
         artisancount = response;
       });
@@ -78,7 +79,8 @@ class _HomecontentState extends State<Homecontent> {
 
   Future<void> fetchWeaver() async {
     try {
-      final response = await supabase.from('tbl_weaver').count();
+      final response =
+          await supabase.from('tbl_weaver').count().eq('weaver_status', 1);
       setState(() {
         weavercount = response;
       });

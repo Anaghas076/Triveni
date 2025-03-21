@@ -17,20 +17,10 @@ class _ViewProductState extends State<Viewproduct> {
       final response = await supabase
           .from('tbl_product')
           .select("*, tbl_subcategory(*)")
-          .order('product_id', ascending: false);
-      ;
+          .order('created_at', ascending: false);
       setState(() {
         products = response;
       });
-    } catch (e) {
-      print("Error: $e");
-    }
-  }
-
-  Future<void> delete(int id) async {
-    try {
-      await supabase.from('tbl_product').delete().eq('product_id', id);
-      fetchproduct();
     } catch (e) {
       print("Error: $e");
     }

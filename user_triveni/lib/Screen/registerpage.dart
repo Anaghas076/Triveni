@@ -93,6 +93,10 @@ class _RegisterpageState extends State<Registerpage> {
         print("Register Successfully");
       }
     } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Already Exist!!"),
+        backgroundColor: const Color.fromARGB(255, 3, 1, 68),
+      ));
       print("Error user: $e");
     }
   }

@@ -13,8 +13,11 @@ class _WeaverlistState extends State<Weaverlist> {
 
   Future<void> fetchweaver() async {
     try {
-      final response =
-          await supabase.from('tbl_weaver').select().eq('weaver_status', 0);
+      final response = await supabase
+          .from('tbl_weaver')
+          .select()
+          .eq('weaver_status', 0)
+          .order('created_at', ascending: false);
       setState(() {
         weavers = response;
       });

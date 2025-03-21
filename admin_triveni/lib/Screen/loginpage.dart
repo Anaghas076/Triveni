@@ -35,14 +35,18 @@ class _LoginPageState extends State<LoginPage> {
               builder: (context) => Homepage(),
             ));
       } else {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text("Invalid Credentials")));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("Invalid Credentials"),
+          backgroundColor: const Color.fromARGB(255, 3, 1, 68),
+        ));
       }
 
       print("Login Successfull");
     } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Invalid Credentials")));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Invalid Credentials"),
+        backgroundColor: const Color.fromARGB(255, 3, 1, 68),
+      ));
       print("Error During login: $e");
     }
   }

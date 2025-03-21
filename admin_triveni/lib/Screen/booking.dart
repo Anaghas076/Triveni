@@ -2,6 +2,7 @@ import 'package:admin_triveni/Screen/custom.dart';
 
 import 'package:admin_triveni/main.dart';
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class Booking extends StatefulWidget {
   @override
@@ -66,7 +67,7 @@ class _MybookingDataState extends State<Booking> {
           'user_name': data['tbl_user']['user_name'],
           'user_contact': data['tbl_user']['user_contact'],
           'cart': cartItems,
-          'hasCustom': hasCustom
+          'hasCustom': hasCustom,
         });
       }
 
@@ -90,41 +91,137 @@ class _MybookingDataState extends State<Booking> {
     }
   }
 
-  Future<void> pay(int bookingId, int newPaymentStatus) async {
-    try {
-      await supabase.from('tbl_booking').update(
-          {'payment_status': newPaymentStatus}).eq('booking_id', bookingId);
-
-      fetchBooking();
-    } catch (e) {
-      print("Error settling payment: $e");
-    }
-  }
-
   @override
   void initState() {
     super.initState();
     fetchBooking();
   }
 
-  void submitAmount(int id) {}
+  TextEditingController amountController = TextEditingController();
+
+  void submitAmount(int id) async {
+    try {
+      final response = await supabase
+          .from('tbl_booking')
+          .select('booking_amount')
+          .eq('booking_id', id)
+          .single();
+
+      int currentAmount = response['booking_amount'] ?? 0;
+      int newAmount = int.tryParse(amountController.text) ?? 0;
+
+      if (newAmount > 0) {
+        await supabase.from('tbl_booking').update(
+            {'booking_amount': currentAmount + newAmount}).eq('booking_id', id);
+
+        fetchBooking(); // Refresh the booking list
+      }
+    } catch (e) {
+      print("Error updating booking amount: $e");
+    }
+  }
+
+  // Future<void> pay(int bookingId, int paymentStatus) async {
+  //   try {
+  //     String amount = amountController.text;
+
+  //     await Supabase.instance.client.from('tbl_daily').insert({
+  //       'daily_name': "salary",
+  //       'daily_amount': amount,
+  //       'daily_type': "INCOME",
+  //     });
+
+  //     await Supabase.instance.client.from('tbl_booking').update(
+  //         {'payment_status': paymentStatus}).eq('booking_id', bookingId);
+
+  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  //       content: Text("Payment Processed Successfully"),
+  //       backgroundColor: const Color.fromARGB(255, 54, 3, 116),
+  //     ));
+  //     amountController.clear();
+  //     fetchBooking();
+  //   } catch (e) {
+  //     print("Error processing payment: $e");
+  //   }
+  // }
 
   void addAmount(int id) {
+    amountController.clear(); // Clear previous input
+
     showDialog(
       context: context,
       builder: (context) {
-        return Dialog(
-          child: Form(
-            child: ListView(
-              children: [
-                TextFormField(),
-                SizedBox(
-                  height: 10,
-                ),
-                ElevatedButton(onPressed: () {}, child: Text("Add Amount"))
-              ],
-            ),
+        return AlertDialog(
+          title: Text("Change Amount"),
+          content: TextFormField(
+            controller: amountController,
+            keyboardType: TextInputType.number,
+            decoration: InputDecoration(labelText: "Enter Amount"),
           ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text("Cancel"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                submitAmount(id);
+                Navigator.pop(context);
+              },
+              child: Text("Submit"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> settleAmount(int id, String name) async {
+    try {
+      final response =
+          await supabase.from('tbl_booking').select().maybeSingle().limit(1);
+      await supabase.from('tbl_daily').insert({
+        'daily_amount': amountController.text,
+        name: response![name],
+        'daily_type': "INCOME",
+        'daily_name': "Salary",
+      });
+      int status = response['payment_status'];
+      await supabase
+          .from('tbl_booking')
+          .update({'payment_status': status + 1}).eq('booking_id', id);
+      fetchBooking();
+    } catch (e) {
+      print("Error settling: $e");
+    }
+  }
+
+  void payAmount(int id, String name) {
+    amountController.clear(); // Clear previous input
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Pay Amount"),
+          content: TextFormField(
+            controller: amountController,
+            keyboardType: TextInputType.number,
+            decoration: InputDecoration(labelText: "Enter Amount"),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text("Cancel"),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                settleAmount(id, name);
+                Navigator.pop(context);
+              },
+              child: Text("Submit"),
+            ),
+          ],
         );
       },
     );
@@ -316,11 +413,13 @@ class _MybookingDataState extends State<Booking> {
                               bookingItems['payment_status'] == 0)
                             ElevatedButton(
                               onPressed: () {
-                                pay(bookingItems['booking_id'],
-                                    1); // Pay Weaver
+                                // pay(bookingItems['booking_id'],
+                                //     1); // Pay Weaver
+                                payAmount(
+                                    bookingItems['booking_id'], "weaver_id");
                               },
                               child: Text(
-                                "Weaver Settle",
+                                "Settle Weaver",
                                 style: TextStyle(
                                     fontSize: 12, fontWeight: FontWeight.bold),
                               ),
@@ -329,11 +428,12 @@ class _MybookingDataState extends State<Booking> {
                               bookingItems['payment_status'] == 1)
                             ElevatedButton(
                               onPressed: () {
-                                pay(bookingItems['booking_id'],
-                                    2); // Pay Artisan
+                                payAmount(
+                                    bookingItems['booking_id'], "artisan_id");
+                                // Pay Artisan
                               },
                               child: Text(
-                                "Artisan Settle",
+                                "Settle Artisan",
                                 style: TextStyle(
                                     fontSize: 12, fontWeight: FontWeight.bold),
                               ),

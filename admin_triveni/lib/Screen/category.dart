@@ -62,7 +62,7 @@ class _CategoryState extends State<Category> {
         });
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text("Inserted"),
-          backgroundColor: const Color.fromARGB(255, 54, 3, 116),
+          backgroundColor: const Color.fromARGB(255, 3, 1, 68),
         ));
         categoryController.clear();
         setState(() {
@@ -80,7 +80,7 @@ class _CategoryState extends State<Category> {
       await supabase.from('tbl_category').delete().eq('category_id', id);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Deleted"),
-        backgroundColor: const Color.fromARGB(255, 54, 3, 116),
+        backgroundColor: const Color.fromARGB(255, 3, 1, 68),
       ));
       fetchCategory();
     } catch (e) {
@@ -100,7 +100,7 @@ class _CategoryState extends State<Category> {
       }).eq('category_id', eid);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Updated"),
-        backgroundColor: const Color.fromARGB(255, 54, 3, 116),
+        backgroundColor: const Color.fromARGB(255, 3, 1, 68),
       ));
       fetchCategory();
       categoryController.clear();

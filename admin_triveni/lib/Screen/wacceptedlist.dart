@@ -13,8 +13,11 @@ class _WacceptedlistState extends State<Wacceptedlist> {
 
   Future<void> fetchweaver() async {
     try {
-      final response =
-          await supabase.from('tbl_weaver').select().eq('weaver_status', 1);
+      final response = await supabase
+          .from('tbl_weaver')
+          .select()
+          .eq('weaver_status', 1)
+          .order('created_at', ascending: false);
       setState(() {
         weavers = response;
       });

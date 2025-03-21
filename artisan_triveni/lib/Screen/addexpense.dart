@@ -29,7 +29,7 @@ class _AddexpenseState extends State<Addexpense> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("Inserted"),
-          backgroundColor: const Color.fromARGB(255, 54, 3, 116),
+          backgroundColor: const Color.fromARGB(255, 3, 1, 68),
         ),
       );
       amountController.clear();
@@ -167,36 +167,35 @@ class _AddexpenseState extends State<Addexpense> {
               SizedBox(height: 10),
               Expanded(
                 // Wrap ListView.builder inside Expanded
-                child:
-                    daily.isEmpty
-                        ? Center(child: Text("No expenses added"))
-                        : ListView.builder(
-                          itemCount: daily.length,
-                          itemBuilder: (context, index) {
-                            final data = daily[index];
-                            return ListTile(
-                              leading: Text((index + 1).toString()),
-                              title: Text(
-                                data['daily_name'] ?? "No Name",
-                                style: TextStyle(
-                                  color: const Color.fromARGB(255, 3, 1, 68),
-                                ),
+                child: daily.isEmpty
+                    ? Center(child: Text("No expenses added"))
+                    : ListView.builder(
+                        itemCount: daily.length,
+                        itemBuilder: (context, index) {
+                          final data = daily[index];
+                          return ListTile(
+                            leading: Text((index + 1).toString()),
+                            title: Text(
+                              data['daily_name'] ?? "No Name",
+                              style: TextStyle(
+                                color: const Color.fromARGB(255, 3, 1, 68),
                               ),
-                              subtitle: Text(
-                                data['daily_amount'] ?? "No amount",
-                                style: TextStyle(
-                                  color: const Color.fromARGB(255, 3, 1, 68),
-                                ),
+                            ),
+                            subtitle: Text(
+                              data['daily_amount'] ?? "No amount",
+                              style: TextStyle(
+                                color: const Color.fromARGB(255, 3, 1, 68),
                               ),
-                              trailing: IconButton(
-                                onPressed: () {
-                                  delete(data['daily_id']);
-                                },
-                                icon: Icon(Icons.delete, color: Colors.red),
-                              ),
-                            );
-                          },
-                        ),
+                            ),
+                            trailing: IconButton(
+                              onPressed: () {
+                                delete(data['daily_id']);
+                              },
+                              icon: Icon(Icons.delete, color: Colors.red),
+                            ),
+                          );
+                        },
+                      ),
               ),
             ],
           ),

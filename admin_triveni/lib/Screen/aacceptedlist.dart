@@ -13,8 +13,12 @@ class _AacceptedlistState extends State<Aacceptedlist> {
 
   Future<void> fetchartisan() async {
     try {
-      final response =
-          await supabase.from('tbl_artisan').select().eq('artisan_status', 1);
+      final response = await supabase
+          .from('tbl_artisan')
+          .select()
+          .eq('artisan_status', 1)
+          .order('created_at', ascending: false);
+
       setState(() {
         artisans = response;
       });

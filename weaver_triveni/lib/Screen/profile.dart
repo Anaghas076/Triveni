@@ -2,6 +2,8 @@ import 'package:weaver_triveni/Screen/changepassword.dart';
 import 'package:weaver_triveni/Screen/edit.dart';
 import 'package:weaver_triveni/main.dart';
 import 'package:flutter/material.dart';
+import 'package:weaver_triveni/Screen/changepassword.dart';
+import 'package:weaver_triveni/Screen/edit.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});

@@ -1,3 +1,4 @@
+import 'package:weaver_triveni/Component/formvalidation.dart';
 import 'package:weaver_triveni/main.dart';
 import 'package:flutter/material.dart';
 
@@ -50,6 +51,8 @@ class _EditState extends State<Edit> {
     fetchweaver();
   }
 
+  final formkey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,109 +74,109 @@ class _EditState extends State<Edit> {
         ),
       ),
       body: Center(
-        child: Container(
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(25),
-              border: Border.all(
-                color: const Color.fromARGB(255, 3, 1, 68),
-                width: 3,
-              )),
-          width: 350,
-          height: 400,
-          child: Padding(
-            padding: EdgeInsets.all(16),
-            child: Column(
-              children: [
-                Icon(
-                  Icons.edit,
+        child: Form(
+          key: formkey,
+          child: Container(
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(25),
+                border: Border.all(
                   color: const Color.fromARGB(255, 3, 1, 68),
-                  size: 80,
-                ),
-                SizedBox(
-                  height: 30,
-                ),
-                TextFormField(
-                  controller: nameController,
-                  style: TextStyle(
-                      color: const Color.fromARGB(255, 3, 1, 68),
-                      fontWeight: FontWeight.bold),
-                  decoration: InputDecoration(
-                    enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        borderSide: BorderSide(
-                          color: const Color.fromARGB(255, 10, 10, 10),
-                        )),
-                    prefixIcon: Icon(
-                      Icons.person,
-                      color: const Color.fromARGB(255, 7, 2, 54),
-                    ),
-                    hintText: " weavername",
-                    hintStyle: TextStyle(
-                        color: const Color.fromARGB(255, 8, 8, 8),
-                        fontWeight: FontWeight.bold),
-                    border: OutlineInputBorder(),
+                  width: 3,
+                )),
+            width: 350,
+            height: 450,
+            child: Padding(
+              padding: EdgeInsets.all(16),
+              child: ListView(
+                children: [
+                  Icon(
+                    Icons.edit,
+                    color: const Color.fromARGB(255, 3, 1, 68),
+                    size: 80,
                   ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                TextFormField(
-                  controller: addressController,
-                  style: TextStyle(
-                      color: const Color.fromARGB(255, 3, 1, 68),
-                      fontWeight: FontWeight.bold),
-                  decoration: InputDecoration(
-                    enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        borderSide: BorderSide(
-                          color: const Color.fromARGB(255, 10, 10, 10),
-                        )),
-                    prefixIcon: Icon(
-                      Icons.location_on,
-                      color: const Color.fromARGB(255, 7, 2, 54),
-                    ),
-                    hintText: " Address",
-                    hintStyle: TextStyle(
-                        color: const Color.fromARGB(255, 8, 8, 8),
+                  SizedBox(height: 30),
+                  TextFormField(
+                    validator: (value) => FormValidation.validateName(value),
+                    controller: nameController,
+                    style: TextStyle(
+                        color: const Color.fromARGB(255, 3, 1, 68),
                         fontWeight: FontWeight.bold),
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                TextFormField(
-                  controller: contactController,
-                  style: TextStyle(
-                      color: const Color.fromARGB(255, 3, 1, 68),
-                      fontWeight: FontWeight.bold),
-                  decoration: InputDecoration(
-                    enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        borderSide: BorderSide(
-                          color: const Color.fromARGB(255, 10, 10, 10),
-                        )),
-                    prefixIcon: Icon(
-                      Icons.phone,
-                      color: const Color.fromARGB(255, 7, 2, 54),
+                    decoration: InputDecoration(
+                      enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: BorderSide(
+                            color: const Color.fromARGB(255, 10, 10, 10),
+                          )),
+                      prefixIcon: Icon(
+                        Icons.person,
+                        color: const Color.fromARGB(255, 7, 2, 54),
+                      ),
+                      hintText: " weavername",
+                      hintStyle: TextStyle(
+                          color: const Color.fromARGB(255, 8, 8, 8),
+                          fontWeight: FontWeight.bold),
+                      border: OutlineInputBorder(),
                     ),
-                    hintText: " Contact number",
-                    hintStyle: TextStyle(
-                        color: const Color.fromARGB(255, 8, 8, 8),
-                        fontWeight: FontWeight.bold),
-                    border: OutlineInputBorder(),
                   ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    update();
-                  },
-                  child: Text("Update"),
-                ),
-              ],
+                  SizedBox(height: 10),
+                  TextFormField(
+                    validator: (value) => FormValidation.validateAddress(value),
+                    controller: addressController,
+                    style: TextStyle(
+                        color: const Color.fromARGB(255, 3, 1, 68),
+                        fontWeight: FontWeight.bold),
+                    decoration: InputDecoration(
+                      enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: BorderSide(
+                            color: const Color.fromARGB(255, 10, 10, 10),
+                          )),
+                      prefixIcon: Icon(
+                        Icons.location_on,
+                        color: const Color.fromARGB(255, 7, 2, 54),
+                      ),
+                      hintText: " Address",
+                      hintStyle: TextStyle(
+                          color: const Color.fromARGB(255, 8, 8, 8),
+                          fontWeight: FontWeight.bold),
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  TextFormField(
+                    validator: (value) => FormValidation.validateContact(value),
+                    controller: contactController,
+                    style: TextStyle(
+                        color: const Color.fromARGB(255, 3, 1, 68),
+                        fontWeight: FontWeight.bold),
+                    decoration: InputDecoration(
+                      enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: BorderSide(
+                            color: const Color.fromARGB(255, 10, 10, 10),
+                          )),
+                      prefixIcon: Icon(
+                        Icons.phone,
+                        color: const Color.fromARGB(255, 7, 2, 54),
+                      ),
+                      hintText: " Contact number",
+                      hintStyle: TextStyle(
+                          color: const Color.fromARGB(255, 8, 8, 8),
+                          fontWeight: FontWeight.bold),
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  SizedBox(height: 30),
+                  ElevatedButton(
+                    onPressed: () {
+                      if (formkey.currentState!.validate()) {
+                        update();
+                      }
+                    },
+                    child: Text("Update"),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

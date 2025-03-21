@@ -13,8 +13,12 @@ class _WrejectectedlistState extends State<Arejectedlist> {
 
   Future<void> fetchartisan() async {
     try {
-      final response =
-          await supabase.from('tbl_artisan').select().eq('artisan_status', 2);
+      final response = await supabase
+          .from('tbl_artisan')
+          .select()
+          .eq('artisan_status', 2)
+          .order('created_at', ascending: false);
+      
       setState(() {
         artisans = response;
       });
