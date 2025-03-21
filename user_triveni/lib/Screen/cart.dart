@@ -207,6 +207,8 @@ class _CartState extends State<Cart> {
                                         ),
                                       ),
                                       SizedBox(height: 10),
+                                      Text("Size: ${data['product_size']}"),
+                                      SizedBox(height: 10),
                                       Row(
                                         children: [
                                           SizedBox(

@@ -10,6 +10,7 @@ class Productdemo extends StatefulWidget {
 }
 
 class _ProductdemoState extends State<Productdemo> {
+  String selectedSize = "";
   Future<void> add(int pid) async {
     try {
       final response = await supabase
@@ -46,17 +47,43 @@ class _ProductdemoState extends State<Productdemo> {
     }
   }
 
+  List<Map<String, dynamic>> pattributes = [];
+
+  @override
+  void initState() {
+    super.initState();
+    fetchPpattributes();
+  }
+
+  Future<void> fetchPpattributes() async {
+    try {
+      final response = await supabase
+          .from('tbl_pattribute')
+          .select()
+          .eq('product_id', widget.product['product_id']);
+
+      setState(() {
+        pattributes = response;
+      });
+    } catch (e) {
+      print("Error fetching pattributes: $e");
+    }
+  }
+
   Future<void> checkCartProduct(int pid, int bid) async {
     try {
       final response = await supabase
           .from('tbl_cart')
           .select()
           .eq('product_id', pid)
+          .eq('product_size', selectedSize)
           .eq('booking_id', bid);
       if (response.isEmpty) {
-        await supabase
-            .from('tbl_cart')
-            .insert({'booking_id': bid, 'product_id': pid});
+        await supabase.from('tbl_cart').insert({
+          'booking_id': bid,
+          'product_id': pid,
+          'product_size': selectedSize,
+        });
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text("Added to Cart"),
           backgroundColor: const Color.fromARGB(255, 3, 1, 68),
@@ -93,6 +120,41 @@ class _ProductdemoState extends State<Productdemo> {
                 width: 200,
                 height: 200,
               ),
+              SizedBox(
+                height: 10,
+              ),
+              if (widget.product['product_size'] == true)
+                Container(
+                  width: 500,
+                  height: 50,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: ["S", "M", "L", "XL"].map((size) {
+                      return Row(
+                        children: [
+                          Radio<String>(
+                            activeColor: Colors.white,
+                            fillColor: WidgetStatePropertyAll(Colors.grey),
+                            value: size,
+                            groupValue: selectedSize,
+                            onChanged: (value) {
+                              setState(() {
+                                selectedSize = value!;
+                              });
+                            },
+                          ),
+                          Text(
+                            size,
+                            style: TextStyle(
+                                color: const Color.fromARGB(255, 3, 1, 68),
+                                fontSize: 17),
+                          ),
+                        ],
+                      );
+                    }).toList(),
+                  ),
+                ),
+              SizedBox(height: 10),
               SizedBox(
                 height: 10,
               ),

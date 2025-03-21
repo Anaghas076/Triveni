@@ -29,6 +29,7 @@ class _AddProductState extends State<AddProduct> {
 
   String? selectedCat;
   String? selectedSub;
+  bool selectedSizeBool = false;
 
   PlatformFile? pickedImage;
 
@@ -71,7 +72,7 @@ class _AddProductState extends State<AddProduct> {
         String name = nameController.text;
         String code = codeController.text;
         String price = priceController.text;
-        // String type = typeController.text;
+
         String description = descriptionController.text;
         String? url = await photoUpload(name);
 
@@ -79,6 +80,7 @@ class _AddProductState extends State<AddProduct> {
         print(code);
         print(price);
         print(selectedType);
+        print(selectedSizeBool);
         print(description);
 
         final response = await supabase
@@ -88,6 +90,7 @@ class _AddProductState extends State<AddProduct> {
               'product_code': code,
               'product_price': price,
               'product_type': selectedType,
+              'product_size': selectedSizeBool,
               'product_photo': url,
               'product_description': description,
               'subcategory_id': selectedSub,
@@ -115,6 +118,7 @@ class _AddProductState extends State<AddProduct> {
           selectedType = "";
           selectedSub = null;
           selectedCat = null;
+
           pickedImage = null;
           subcategories = [];
         });
@@ -126,6 +130,7 @@ class _AddProductState extends State<AddProduct> {
 
   int eid = 0;
   String selectedType = '';
+  String selectedSize = '';
 
   Future<void> update() async {
     try {
@@ -147,7 +152,7 @@ class _AddProductState extends State<AddProduct> {
       nameController.clear();
       codeController.clear();
       priceController.clear();
-      typeController.clear();
+
       descriptionController.clear();
       setState(() {
         eid = 0;
@@ -478,17 +483,75 @@ class _AddProductState extends State<AddProduct> {
                                           ),
                                         ),
                                         SizedBox(height: 10),
-                                        SizedBox(
-                                          width: 1700,
+                                        // Default value (No Size)
+
+                                        Container(
+                                          width: 500,
                                           height: 50,
-                                          child: ElevatedButton(
-                                            onPressed: () {
-                                              if (formkey.currentState!
-                                                  .validate()) {
-                                                submit();
-                                              }
-                                            },
-                                            child: Text("Submit"),
+                                          decoration: BoxDecoration(
+                                            color:
+                                                Color.fromARGB(255, 3, 1, 68),
+                                            borderRadius:
+                                                BorderRadius.circular(5),
+                                            border: Border.all(
+                                              color: const Color.fromARGB(
+                                                  255, 3, 1, 68),
+                                              width: 1,
+                                            ),
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  Radio<bool>(
+                                                    activeColor: Colors.white,
+                                                    fillColor:
+                                                        WidgetStatePropertyAll(
+                                                            Colors.grey),
+                                                    value:
+                                                        false, // "No Size" → false
+                                                    groupValue:
+                                                        selectedSizeBool,
+                                                    onChanged: (bool? value) {
+                                                      setState(() {
+                                                        selectedSizeBool =
+                                                            value!;
+                                                      });
+                                                    },
+                                                  ),
+                                                  Text("No Size",
+                                                      style: TextStyle(
+                                                          color: Colors
+                                                              .yellowAccent,
+                                                          fontSize: 17)),
+                                                ],
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Radio<bool>(
+                                                    activeColor: Colors.white,
+                                                    fillColor:
+                                                        WidgetStatePropertyAll(
+                                                            Colors.grey),
+                                                    value:
+                                                        true, // "Free Size" → true
+                                                    groupValue:
+                                                        selectedSizeBool,
+                                                    onChanged: (bool? value) {
+                                                      setState(() {
+                                                        selectedSizeBool =
+                                                            value!;
+                                                      });
+                                                    },
+                                                  ),
+                                                  Text("Free Size",
+                                                      style: TextStyle(
+                                                          color: Colors
+                                                              .yellowAccent,
+                                                          fontSize: 17)),
+                                                ],
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ],
@@ -496,23 +559,19 @@ class _AddProductState extends State<AddProduct> {
                                   ),
                                 ],
                               ),
-
                               SizedBox(height: 20),
-
-                              /// 🔹 Submit Button (Fixed)
-
-                              // SizedBox(
-                              //   width: 1700,
-                              //   height: 40,
-                              //   child: ElevatedButton(
-                              //     onPressed: () {
-                              //       if (formkey.currentState!.validate()) {
-                              //         submit();
-                              //       }
-                              //     },
-                              //     child: Text("Submit"),
-                              //   ),
-                              // ),
+                              SizedBox(
+                                width: 1700,
+                                height: 40,
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    if (formkey.currentState!.validate()) {
+                                      submit();
+                                    }
+                                  },
+                                  child: Text("Submit"),
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -533,6 +592,7 @@ class _AddProductState extends State<AddProduct> {
                         DataColumn(label: Text("Code")),
                         DataColumn(label: Text("Price")),
                         DataColumn(label: Text("Type")),
+                        DataColumn(label: Text("Size")),
                         DataColumn(label: Text("Description")),
                         DataColumn(label: Text("Action")),
                       ],
@@ -561,6 +621,13 @@ class _AddProductState extends State<AddProduct> {
                                   data['product_price']?.toString() ?? '')),
                               DataCell(
                                   Text(data['product_type']?.toString() ?? '')),
+                              DataCell(
+                                Text(
+                                  data['product_size'] == true
+                                      ? "Free Size"
+                                      : "No Size",
+                                ),
+                              ),
                               DataCell(Text(
                                   data['product_description']?.toString() ??
                                       '')),

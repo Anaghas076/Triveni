@@ -38,6 +38,7 @@ class _MybookingDataState extends State<Myorder> {
             'product_id': cartData['tbl_product']['product_id'],
             'product_name': cartData['tbl_product']['product_name'],
             'product_photo': cartData['tbl_product']['product_photo'],
+            'product_size': cartData['product_size'],
             'product_price': cartData['tbl_product']['product_price'],
             'product_code': cartData['tbl_product']['product_code'],
             'total': total,
@@ -139,6 +140,7 @@ class _MybookingDataState extends State<Myorder> {
                                 children: [
                                   Text(
                                       "Code: ${cartItem['product_code'] ?? 'N/A'}"),
+                                  Text("Size: ${cartItem['product_size']}"),
                                   Text("QTY: ${cartItem['cart_quantity']}"),
                                 ],
                               ),
