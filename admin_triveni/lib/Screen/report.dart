@@ -13,7 +13,9 @@ class _CountReportState extends State<CountReport> {
   DateTime? endDate;
   int productCount = 0;
   int totalAmount = 0;
-  List<Map<String, dynamic>> products = [];
+  List<Map<String, dynamic>> bookings = [];
+  List<Map<String, dynamic>> cartItems = [];
+  bool isLoading = false;
 
   // Select date function
   Future<void> _selectDate(BuildContext context, bool isStart) async {
@@ -39,7 +41,7 @@ class _CountReportState extends State<CountReport> {
     }
   }
 
-  // Fetch products based on date range
+  // Fetch bookings and cart items based on date range
   Future<void> getProductCount() async {
     try {
       if (startDate == null || endDate == null) {
@@ -49,26 +51,59 @@ class _CountReportState extends State<CountReport> {
         );
         return;
       }
-      final response = await supabase
-          .from('tbl_booking') // Start from tbl_booking
-          .select("""
-        *, 
-        tbl_cart(*, 
-            tbl_product(*, 
-                tbl_subcategory(subcategory_name)
-            )
-        )
-    """) // Fetch from tbl_cart, including product and subcategory details
-          .gte('created_at', startDate!.toIso8601String())
-          .lte('created_at', endDate!.toIso8601String())
-          .order('booking_id', ascending: false); // Order by booking ID
 
       setState(() {
-        products = List<Map<String, dynamic>>.from(response);
-        productCount = products.length;
+        isLoading = true;
+      });
+
+      final response = await supabase
+          .from('tbl_booking')
+          .select("*, tbl_cart(*, tbl_product(*)), tbl_weaver(*), tbl_artisan(*)")
+          .gte('created_at', startDate!.toIso8601String())
+          .lte('created_at', endDate!.toIso8601String())
+          .order('booking_id', ascending: false);
+
+      // Calculate total amount and flatten cart items
+      int tempTotalAmount = 0;
+      List<Map<String, dynamic>> tempCartItems = [];
+
+      for (var booking in response) {
+        tempTotalAmount += (booking['booking_amount'] as int?) ?? 0;
+
+        // Extract weaver and artisan names (or "N/A" if null)
+        final weaverName = booking['tbl_weaver'] != null
+            ? booking['tbl_weaver']['weaver_name']?.toString() ?? 'N/A'
+            : 'N/A';
+        final artisanName = booking['tbl_artisan'] != null
+            ? booking['tbl_artisan']['artisan_name']?.toString() ?? 'N/A'
+            : 'N/A';
+
+        // Flatten tbl_cart list into cart items with additional booking-level info
+        final cartList = List<Map<String, dynamic>>.from(booking['tbl_cart'] ?? []);
+        for (var cartItem in cartList) {
+          tempCartItems.add({
+            ...cartItem,
+            'weaver_name': weaverName,
+            'artisan_name': artisanName,
+          });
+        }
+      }
+
+      setState(() {
+        bookings = List<Map<String, dynamic>>.from(response);
+        cartItems = tempCartItems;
+        productCount = cartItems.length; // Count of cart items (products)
+        totalAmount = tempTotalAmount;
+        isLoading = false;
       });
     } catch (e) {
       print("Error fetching product count: $e");
+      setState(() {
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error fetching data: $e")),
+      );
     }
   }
 
@@ -89,7 +124,7 @@ class _CountReportState extends State<CountReport> {
                         text: startDate == null
                             ? ""
                             : "${startDate!.toLocal()}".split(' ')[0]),
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: "Start Date",
                       hintText: "Select Start Date",
                       suffixIcon: Icon(Icons.calendar_today),
@@ -99,14 +134,14 @@ class _CountReportState extends State<CountReport> {
                     onTap: () => _selectDate(context, true),
                   ),
                 ),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 Expanded(
                   child: TextField(
                     controller: TextEditingController(
                         text: endDate == null
                             ? ""
                             : "${endDate!.toLocal()}".split(' ')[0]),
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       labelText: "End Date",
                       hintText: "Select End Date",
                       suffixIcon: Icon(Icons.calendar_today),
@@ -124,60 +159,70 @@ class _CountReportState extends State<CountReport> {
               child: const Text("Submit"),
             ),
             const SizedBox(height: 20),
-            Expanded(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: FittedBox(
-                  child: DataTable(
-                    columns: const [
-                      DataColumn(label: Text("SNo.")),
-                      DataColumn(label: Text("Image")),
-                      DataColumn(label: Text("Name")),
-                      DataColumn(label: Text("Subcategory")),
-                      DataColumn(label: Text("Code")),
-                      DataColumn(label: Text("Price")),
-                      DataColumn(
-                          label: Text("Quantity")), // Added Quantity Column
-                      DataColumn(label: Text("Type")),
-                    ],
-                    rows: List.generate(
-                      products.length,
-                      (index) {
-                        var data = products[index];
-                        var product = data['tbl_product'] ?? {};
-                        var subcategory = product['tbl_subcategory'] ?? {};
+            if (isLoading)
+              const Center(child: CircularProgressIndicator())
+            else if (cartItems.isEmpty)
+              const Center(child: Text("No products found in this date range"))
+            else
+              Expanded(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: FittedBox(
+                    child: DataTable(
+                      columns: const [
+                        DataColumn(label: Text("SNo.")),
+                        DataColumn(label: Text("Product Image")),
+                        DataColumn(label: Text("Product")),
+                        DataColumn(label: Text("Weaver")),
+                        DataColumn(label: Text("Artisan")),
+                        DataColumn(label: Text("Subcategory")),
+                        DataColumn(label: Text("Code")),
+                        DataColumn(label: Text("Price")),
+                        DataColumn(label: Text("Quantity")),
+                        DataColumn(label: Text("Type")),
+                      ],
+                      rows: List.generate(
+                        cartItems.length,
+                        (index) {
+                          var cartItem = cartItems[index];
+                          var product = cartItem['tbl_product'] ?? {};
 
-                        return DataRow(
-                          cells: [
-                            DataCell(Text((index + 1).toString())),
-                            DataCell(
-                              CircleAvatar(
-                                backgroundImage: NetworkImage(
-                                  product['product_photo']?.toString() ?? '',
+                          return DataRow(
+                            cells: [
+                              DataCell(Text((index + 1).toString())),
+                              DataCell(
+                                CircleAvatar(
+                                  backgroundImage: NetworkImage(
+                                    product['product_photo']?.toString() ?? '',
+                                  ),
+                                  onBackgroundImageError: (_, __) =>
+                                      const Icon(Icons.error),
                                 ),
                               ),
-                            ),
-                            DataCell(Text(
-                                product['product_name']?.toString() ?? '')),
-                            DataCell(Text(
-                                subcategory['subcategory_name']?.toString() ??
-                                    '')), // Corrected Subcategory
-                            DataCell(Text(
-                                product['product_code']?.toString() ?? '')),
-                            DataCell(Text(
-                                product['product_price']?.toString() ?? '')),
-                            DataCell(Text(data['quantity']?.toString() ??
-                                '0')), // Display Quantity
-                            DataCell(Text(
-                                product['product_type']?.toString() ?? '')),
-                          ],
-                        );
-                      },
+                              DataCell(Text(
+                                  product['product_name']?.toString() ?? '')),
+                              DataCell(
+                                  Text(cartItem['weaver_name']?.toString() ?? 'N/A')),
+                              DataCell(
+                                  Text(cartItem['artisan_name']?.toString() ?? 'N/A')),
+                              DataCell(Text(
+                                  product['subcategory_id']?.toString() ?? '')),
+                              DataCell(Text(
+                                  product['product_code']?.toString() ?? '')),
+                              DataCell(Text(
+                                  product['product_price']?.toString() ?? '')),
+                              DataCell(Text(
+                                  cartItem['cart_quantity']?.toString() ?? '0')),
+                              DataCell(Text(
+                                  product['product_type']?.toString() ?? '')),
+                            ],
+                          );
+                        },
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
             const SizedBox(height: 20),
             Text(
               "Total Amount: ₹$totalAmount",
