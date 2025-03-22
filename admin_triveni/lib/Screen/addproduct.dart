@@ -4,7 +4,8 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:admin_triveni/Components/formvalidation.dart';
-import 'package:admin_triveni/Screen/pattribute.dart';
+import 'package:admin_triveni/Screen/gallery.dart';
+
 import 'package:admin_triveni/main.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -646,7 +647,7 @@ class _AddProductState extends State<AddProduct> {
                                         Navigator.push(
                                             context,
                                             MaterialPageRoute(
-                                              builder: (context) => Pattribute(
+                                              builder: (context) => Gallery(
                                                 productid: data['product_id'],
                                               ),
                                             ));

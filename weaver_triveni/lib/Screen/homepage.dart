@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:weaver_triveni/Screen/addexpense.dart';
+import 'package:weaver_triveni/Screen/dashboard.dart';
 
 import 'package:weaver_triveni/Screen/homecontent.dart';
-import 'package:weaver_triveni/Screen/order.dart';
+import 'package:weaver_triveni/Screen/myorder.dart';
 
 import 'package:weaver_triveni/Screen/profile.dart';
 
@@ -18,9 +19,9 @@ class _HomepageState extends State<Homepage> {
 
   // List of pages for bottom navigation
   final List<Widget> pageContent = [
-    Homecontent(), // New HomeScreen widget
+    Orders(), // New HomeScreen widget
     Profile(), // Dummy category page
-    Booking(),
+    Myorder(),
     Addexpense(),
   ];
 

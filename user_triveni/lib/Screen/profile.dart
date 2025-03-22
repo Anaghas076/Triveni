@@ -1,6 +1,7 @@
 import 'package:user_triveni/Screen/changepassword.dart';
 import 'package:user_triveni/Screen/edit.dart';
 import 'package:user_triveni/Screen/viewcomplaint.dart';
+import 'package:user_triveni/Screen/wallet.dart';
 import 'package:user_triveni/main.dart';
 import 'package:flutter/material.dart';
 
@@ -166,7 +167,16 @@ class _ProfileState extends State<Profile> {
                             builder: (context) => Complaint(),
                           ));
                     },
-                    child: Text("Change password")),
+                    child: Text("Complaints")),
+                ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => WalletPage(),
+                          ));
+                    },
+                    child: Text("Wallet")),
               ],
             ),
           );

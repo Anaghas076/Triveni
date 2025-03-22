@@ -27,7 +27,7 @@ class _LoginPageState extends State<LoginPage> {
 
       final weaver = await supabase
           .from('tbl_weaver')
-          .select('weaver_status')
+          .select()
           .eq('weaver_id', id)
           .single();
 

@@ -135,6 +135,7 @@ class _RegisterpageState extends State<Registerpage> {
         child: Form(
           key: formkey,
           child: Container(
+            color: Colors.white,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(25),
               border: Border.all(

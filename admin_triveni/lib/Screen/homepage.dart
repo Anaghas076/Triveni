@@ -2,11 +2,11 @@ import 'package:admin_triveni/Screen/aacceptedlist.dart';
 import 'package:admin_triveni/Screen/arejectedlist.dart';
 import 'package:admin_triveni/Screen/artisanlist.dart';
 
-import 'package:admin_triveni/Screen/attribute.dart';
 import 'package:admin_triveni/Screen/booking.dart';
 import 'package:admin_triveni/Screen/category.dart';
 import 'package:admin_triveni/Screen/complaint.dart';
 import 'package:admin_triveni/Screen/dashboard.dart';
+import 'package:admin_triveni/Screen/report.dart';
 
 import 'package:admin_triveni/Screen/subcategory.dart';
 import 'package:admin_triveni/Screen/userlist.dart';
@@ -30,10 +30,10 @@ class _HomepageState extends State<Homepage> {
     'Dashboard',
     'Category',
     'Subcategory',
-    'Attribute',
     'Product',
     'Booking',
     'Complaint',
+    'Report',
     'UserList',
     'WeaverList',
     'WacceptedList',
@@ -47,10 +47,10 @@ class _HomepageState extends State<Homepage> {
     Icons.dashboard,
     Icons.category,
     Icons.subdirectory_arrow_left,
-    Icons.subdirectory_arrow_right,
     Icons.inventory_2,
     Icons.list_alt,
     Icons.comment,
+    Icons.report,
     Icons.group,
     Icons.content_cut,
     Icons.content_cut_sharp,
@@ -64,10 +64,10 @@ class _HomepageState extends State<Homepage> {
     Dashboard(),
     Category(),
     Subcategory(),
-    Attribute(),
     Viewproduct(),
     Booking(),
     Complaint(),
+    CountReport(),
     Userlist(),
     Weaverlist(),
     Wacceptedlist(),

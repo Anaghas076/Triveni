@@ -1,8 +1,14 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:user_triveni/Screen/payment.dart';
 import 'package:user_triveni/Screen/postcomplaint.dart';
+import 'package:user_triveni/Screen/rating.dart';
 import 'package:user_triveni/main.dart';
 import 'package:intl/intl.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:path_provider/path_provider.dart';
+import 'package:open_file/open_file.dart';
 
 class Myorder extends StatefulWidget {
   @override
@@ -48,9 +54,8 @@ class _MybookingDataState extends State<Myorder> {
         orders.add({
           'booking_id': data['booking_id'],
           'booking_status': data['booking_status'],
-          'booking_amount':
-              data['booking_amount'], // Ensure this field is fetched
-          'created_at': data['created_at'], // Fetch order date
+          'booking_amount': data['booking_amount'],
+          'created_at': data['created_at'],
           'cart': cartItems,
         });
       }
@@ -63,16 +68,11 @@ class _MybookingDataState extends State<Myorder> {
     }
   }
 
-  Future<void> order(int bookingId, int status) async {
+  Future<void> order(int bookingId, int status, int amount) async {
     try {
       await supabase
           .from('tbl_booking')
           .update({'booking_status': status}).eq('booking_id', bookingId);
-      Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => Payment(),
-          ));
       fetchBooking();
     } catch (e) {
       print("Error updating status: $e");
@@ -86,8 +86,114 @@ class _MybookingDataState extends State<Myorder> {
   }
 
   String formatDate(String timestamp) {
-    DateTime parsedDate = DateTime.parse(timestamp); // Convert to DateTime
-    return DateFormat('dd-MM-yyyy').format(parsedDate); // Format the date
+    DateTime parsedDate = DateTime.parse(timestamp);
+    return DateFormat('dd-MM-yyyy').format(parsedDate);
+  }
+
+  // Generate and preview PDF bill
+  Future<void> generateBill(Map<String, dynamic> booking) async {
+    try {
+      final pdf = pw.Document();
+
+      pdf.addPage(
+        pw.Page(
+          build: (pw.Context context) {
+            return pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                pw.Text(
+                  'Order Bill',
+                  style: pw.TextStyle(
+                      fontSize: 24, fontWeight: pw.FontWeight.bold),
+                ),
+                pw.SizedBox(height: 20),
+                pw.Text('Booking ID: ${booking['booking_id']}'),
+                pw.Text('Date: ${formatDate(booking['created_at'])}'),
+                pw.Text('Total Amount: Rs.${booking['booking_amount']}'),
+                pw.SizedBox(height: 20),
+                pw.Text(
+                  'Items:',
+                  style: pw.TextStyle(
+                      fontSize: 18, fontWeight: pw.FontWeight.bold),
+                ),
+                pw.SizedBox(height: 10),
+                pw.Table.fromTextArray(
+                  headers: [
+                    'Product Name',
+                    'Code',
+                    'Size',
+                    'Qty',
+                    'Price',
+                    'Total'
+                  ],
+                  data: (booking['cart'] as List<Map<String, dynamic>>)
+                      .map((item) {
+                    return [
+                      item['product_name'],
+                      item['product_code'],
+                      item['product_size'].toString(),
+                      item['cart_quantity'].toString(),
+                      'Rs.${item['product_price']}',
+                      'Rs.${item['total']}',
+                    ];
+                  }).toList(),
+                  border: null,
+                  headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                  cellAlignment: pw.Alignment.centerLeft,
+                  cellPadding: pw.EdgeInsets.all(5),
+                ),
+                pw.SizedBox(height: 20),
+                pw.Text(
+                  'Status: ${getStatusText(booking['booking_status'])}',
+                  style: pw.TextStyle(fontSize: 16),
+                ),
+              ],
+            );
+          },
+        ),
+      );
+
+      final directory = await getExternalStorageDirectory();
+      final file =
+          File("${directory!.path}/Order_${booking['booking_id']}_Bill.pdf");
+      await file.writeAsBytes(await pdf.save());
+
+      // Open the PDF file
+      OpenFile.open(file.path);
+    } catch (e) {
+      print("Error PDF: $e");
+    }
+  }
+
+  String getStatusText(int status) {
+    switch (status) {
+      case 1:
+        return "Ordered";
+      case 2:
+        return "Published to Weaver";
+      case 3:
+        return "Weaver Accepted";
+      case 4:
+        return "Weaver Completed";
+      case 5:
+        return "Published to Artisan";
+      case 6:
+        return "Artisan Accepted";
+      case 7:
+        return "Artisan Completed";
+      case 8:
+        return "Item Packed";
+      case 9:
+        return "Awaiting Payment";
+      case 10:
+        return "Paid";
+      case 11:
+        return "Shipped";
+      case 12:
+        return "Delivered";
+      default:
+        return "Unknown";
+    }
   }
 
   @override
@@ -114,71 +220,95 @@ class _MybookingDataState extends State<Myorder> {
                       children: [
                         Text(
                           "Date: ${formatDate(bookingItems['created_at'])}",
-                          style: TextStyle(fontSize: 14, color: Colors.grey),
+                          style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold),
                         ),
-
                         SizedBox(height: 10),
-
-                        // Cart Items
                         Column(
                           children: cartData.map<Widget>((cartItem) {
-                            return ListTile(
-                              leading: Image.network(
-                                cartItem['product_photo'] ?? "",
-                                width: 60,
-                                height: 60,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) =>
-                                    Icon(Icons.image_not_supported, size: 50),
-                              ),
-                              title: Text(
-                                cartItem['product_name'] ?? "Product Name",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                      "Code: ${cartItem['product_code'] ?? 'N/A'}"),
-                                  Text("Size: ${cartItem['product_size']}"),
-                                  Text("QTY: ${cartItem['cart_quantity']}"),
-                                ],
-                              ),
-                              trailing: Column(
-                                children: [
-                                  Text(
-                                    "₹${cartItem['total']}",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black),
+                            return Column(
+                              children: [
+                                ListTile(
+                                  leading: Image.network(
+                                    cartItem['product_photo'] ?? "",
+                                    width: 60,
+                                    height: 60,
+                                    fit: BoxFit.cover,
+                                    errorBuilder:
+                                        (context, error, stackTrace) => Icon(
+                                            Icons.image_not_supported,
+                                            size: 50),
                                   ),
-                                  SizedBox(
-                                    height: 10,
+                                  title: Text(
+                                    cartItem['product_name'] ?? "Product Name",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
                                   ),
-                                  if (bookingItems['booking_status'] == 12)
-                                    SizedBox(
-                                      width: 110,
-                                      height: 30,
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      Postcomplaint(
-                                                          productId: cartItem[
-                                                              'product_id'])));
-                                        },
-                                        child: Text(
-                                          "Complaint",
-                                          style: TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.bold),
-                                        ),
+                                  subtitle: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                          "Code: ${cartItem['product_code'] ?? 'N/A'}"),
+                                      Text("Size: ${cartItem['product_size']}"),
+                                      Text("QTY: ${cartItem['cart_quantity']}"),
+                                    ],
+                                  ),
+                                  trailing: Column(
+                                    children: [
+                                      Text(
+                                        "Rs.${cartItem['total']}",
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black),
                                       ),
+                                      SizedBox(height: 10),
+                                      if (bookingItems['booking_status'] == 12)
+                                        SizedBox(
+                                          width: 110,
+                                          height: 30,
+                                          child: ElevatedButton(
+                                            onPressed: () {
+                                              Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          Postcomplaint(
+                                                              productId: cartItem[
+                                                                  'product_id'])));
+                                            },
+                                            child: Text(
+                                              "Complaint",
+                                              style: TextStyle(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                                if (bookingItems['booking_status'] == 12)
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => Rating(
+                                              pid: cartItem['product_id']),
+                                        ),
+                                      );
+                                    },
+                                    child: Text(
+                                      "Rate",
+                                      style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold),
                                     ),
-                                ],
-                              ),
+                                  ),
+                              ],
                             );
                           }).toList(),
                         ),
@@ -189,12 +319,18 @@ class _MybookingDataState extends State<Myorder> {
                             if (bookingItems['booking_status'] == 9)
                               ElevatedButton(
                                 onPressed: () {
-                                  order(bookingItems['booking_id'], 10);
+                                  order(bookingItems['booking_id'], 10,
+                                      bookingItems['booking_amount']);
                                   Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => Payment(),
-                                      ));
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          PaymentGatewayScreen(
+                                        amt: bookingItems['booking_amount'],
+                                        id: bookingItems['booking_id'],
+                                      ),
+                                    ),
+                                  );
                                 },
                                 child: Text(
                                   "Pay Amount",
@@ -203,59 +339,31 @@ class _MybookingDataState extends State<Myorder> {
                                       fontWeight: FontWeight.bold),
                                 ),
                               ),
-                            SizedBox(
-                              width: 5,
-                            ),
+                            SizedBox(width: 5),
                             Text(
-                              bookingItems['booking_status'] == 1
-                                  ? "Ordered"
-                                  : bookingItems['booking_status'] == 2
-                                      ? "Publish to weaver"
-                                      : bookingItems['booking_status'] == 3
-                                          ? "Weaver Accepted"
-                                          : bookingItems['booking_status'] == 4
-                                              ? "Weaver Completed"
-                                              : bookingItems[
-                                                          'booking_status'] ==
-                                                      5
-                                                  ? "Publish to artisan"
-                                                  : bookingItems[
-                                                              'booking_status'] ==
-                                                          6
-                                                      ? "Artisan Accepted"
-                                                      : bookingItems[
-                                                                  'booking_status'] ==
-                                                              7
-                                                          ? "Artisan Completed"
-                                                          : bookingItems[
-                                                                      'booking_status'] ==
-                                                                  8
-                                                              ? "Item packed"
-                                                              : bookingItems[
-                                                                          'booking_status'] ==
-                                                                      10
-                                                                  ? "Payed"
-                                                                  : bookingItems[
-                                                                              'booking_status'] ==
-                                                                          11
-                                                                      ? "Shipped"
-                                                                      : bookingItems['booking_status'] ==
-                                                                              12
-                                                                          ? "Delivered"
-                                                                          : " ", // Default case if status doesn't match
+                              getStatusText(bookingItems['booking_status']),
                               style: TextStyle(
                                   fontSize: 15, fontWeight: FontWeight.bold),
                             ),
-                            SizedBox(width: 10),
-                            Text(
-                              " Total Amount : ₹  ${bookingItems['booking_amount']}",
-                              style: TextStyle(
-                                  fontSize: 15,
-                                  color: Colors.green,
-                                  fontWeight: FontWeight.bold),
-                            ),
+                            SizedBox(width: 5),
                           ],
                         ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        bookingItems['booking_status'] == 12
+                            ? ElevatedButton(
+                                onPressed: () {
+                                  generateBill(bookingItems);
+                                },
+                                child: Text(
+                                  "Generate Bill",
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              )
+                            : SizedBox(),
                       ],
                     ),
                   ),

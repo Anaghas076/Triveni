@@ -12,7 +12,7 @@ class Gallery extends StatefulWidget {
 }
 
 class _GalleryState extends State<Gallery> {
-  List<Map<String, dynamic>> gallery = [];
+  List<Map<String, dynamic>> gallerys = [];
   PlatformFile? pickedImage;
 
   // Handle Image Selection
@@ -30,7 +30,7 @@ class _GalleryState extends State<Gallery> {
   // Upload Image to Supabase Storage
   Future<String?> photoUpload() async {
     try {
-      final bucketName = 'Gallery';
+      final bucketName = 'gallery';
       final filePath =
           "gallery-${DateTime.now().millisecondsSinceEpoch}-${pickedImage!.name}";
       await supabase.storage.from(bucketName).uploadBinary(
@@ -48,7 +48,10 @@ class _GalleryState extends State<Gallery> {
   Future<void> submit() async {
     if (pickedImage == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Pick an image first')),
+        SnackBar(
+          content: Text('Pick an image first'),
+          backgroundColor: const Color.fromARGB(255, 3, 1, 68),
+        ),
       );
       return;
     }
@@ -57,11 +60,11 @@ class _GalleryState extends State<Gallery> {
       String? url = await photoUpload();
       if (url != null) {
         await supabase
-            .from('tbl_Gallery')
-            .insert({'Gallery_photo': url, 'product_id': widget.productid});
+            .from('tbl_gallery')
+            .insert({'gallery_photo': url, 'product_id': widget.productid});
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text("Photo Added"),
-          backgroundColor: Colors.green,
+          backgroundColor: const Color.fromARGB(255, 3, 1, 68),
         ));
         setState(() {
           pickedImage = null;
@@ -77,12 +80,12 @@ class _GalleryState extends State<Gallery> {
   Future<void> fetchGallery() async {
     try {
       final response = await supabase
-          .from('tbl_Gallery')
+          .from('tbl_gallery')
           .select()
           .eq('product_id', widget.productid);
       ;
       setState(() {
-        gallery = response;
+        gallerys = response;
       });
     } catch (e) {
       print("Error fetching gallery: $e");
@@ -98,7 +101,23 @@ class _GalleryState extends State<Gallery> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Gallery"), backgroundColor: Colors.blue),
+      appBar: AppBar(
+        backgroundColor: const Color.fromARGB(255, 3, 1, 68),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        title: Text(
+          "View Design",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -114,7 +133,11 @@ class _GalleryState extends State<Gallery> {
                   color: Colors.grey[300],
                 ),
                 child: pickedImage == null
-                    ? Icon(Icons.add_a_photo, size: 50, color: Colors.blue)
+                    ? Icon(
+                        Icons.add_a_photo,
+                        size: 50,
+                        color: const Color.fromARGB(255, 3, 1, 68),
+                      )
                     : ClipOval(
                         child: Image.memory(
                           Uint8List.fromList(pickedImage!.bytes!),
@@ -126,14 +149,20 @@ class _GalleryState extends State<Gallery> {
             SizedBox(height: 20),
             // Submit Button
             ElevatedButton(
-              onPressed: submit,
-              child: Text("Add Photo"),
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
-            ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 3, 1, 68),
+                ),
+                onPressed: () {
+                  submit();
+                },
+                child: Text(
+                  "Submit",
+                  style: TextStyle(color: Colors.white),
+                )),
             SizedBox(height: 30),
             // Gallery Grid
             Expanded(
-              child: gallery.isEmpty
+              child: gallerys.isEmpty
                   ? Center(child: Text("No Photos Available"))
                   : GridView.builder(
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -141,12 +170,12 @@ class _GalleryState extends State<Gallery> {
                         crossAxisSpacing: 10,
                         mainAxisSpacing: 10,
                       ),
-                      itemCount: gallery.length,
+                      itemCount: gallerys.length,
                       itemBuilder: (context, index) {
                         return ClipRRect(
                           borderRadius: BorderRadius.circular(10),
                           child: Image.network(
-                            gallery[index]['Gallery_photo'],
+                            gallerys[index]['gallery_photo'],
                             fit: BoxFit.cover,
                           ),
                         );

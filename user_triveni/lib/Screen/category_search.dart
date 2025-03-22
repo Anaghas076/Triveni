@@ -1,25 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:user_triveni/Component/formvalidation.dart';
 import 'package:user_triveni/Component/product_card.dart';
+import 'package:user_triveni/Screen/productdemo.dart';
 import 'package:user_triveni/main.dart';
 
-class Search extends StatefulWidget {
-  const Search({super.key});
+class CategorySearch extends StatefulWidget {
+  final int category;
+  const CategorySearch({super.key, required this.category});
 
   @override
-  State<Search> createState() => _SearchState();
+  State<CategorySearch> createState() => _CategorySearchState();
 }
 
-class _SearchState extends State<Search> {
+class _CategorySearchState extends State<CategorySearch> {
   List<Map<String, dynamic>> products = [];
-  List<Map<String, dynamic>> filteredProducts = []; // Filtered list to display
+  List<Map<String, dynamic>> filteredProducts = [];
   TextEditingController searchController = TextEditingController();
 
   Future<void> fetchproduct() async {
     try {
       final response = await supabase
           .from('tbl_product')
-          .select("*, tbl_subcategory(*,tbl_category(*))");
+          .select('*, tbl_subcategory!inner(*, tbl_category!inner(*))')
+          .eq('tbl_subcategory.tbl_category.category_id', widget.category);
+
+      print("Fetched products for category ${widget.category}: $response");
       List<Map<String, dynamic>> product = [];
       for (var items in response) {
         final response = await supabase
@@ -40,12 +45,13 @@ class _SearchState extends State<Search> {
         items['rating'] = avgRating;
         product.add(items);
       }
+
       setState(() {
         products = List<Map<String, dynamic>>.from(product);
-        filteredProducts = List.from(products); // Initially show all products
+        filteredProducts = List.from(products);
       });
     } catch (e) {
-      print("Error: $e");
+      print("Error fetching products: $e");
     }
   }
 
@@ -53,47 +59,34 @@ class _SearchState extends State<Search> {
   void initState() {
     super.initState();
     fetchproduct();
-    fetchcategory();
-    searchController.addListener(_filterProducts); // Listen to search input
+    fetchsubcategory(widget.category
+        .toString()); // Fetch subcategories for the selected category
+    searchController.addListener(_filterProducts);
   }
 
   List<Map<String, dynamic>> subcategories = [];
-  List<Map<String, dynamic>> categories = [];
-
-  String? selectedCat;
   String? selectedSub;
-  String selectedType = 'All'; // Default to "All"
-  String selectedSize = 'All'; // Default to "All"
+  String selectedType = 'All';
+  String selectedSize = 'All';
 
-  Future<void> fetchcategory() async {
+  Future<void> fetchsubcategory(String categoryId) async {
     try {
-      final response = await supabase.from('tbl_category').select();
-      setState(() {
-        categories = List<Map<String, dynamic>>.from(response);
-      });
-    } catch (e) {
-      print("Error: $e");
-    }
-  }
-
-  Future<void> fetchsubcategory(String id) async {
-    try {
-      final response =
-          await supabase.from('tbl_subcategory').select().eq('category_id', id);
+      final response = await supabase
+          .from('tbl_subcategory')
+          .select()
+          .eq('category_id', categoryId);
       setState(() {
         subcategories = List<Map<String, dynamic>>.from(response);
       });
     } catch (e) {
-      print("Error: $e");
+      print("Error fetching subcategories: $e");
     }
   }
 
-  // Filter products based on search keyword and selected filters
   void _filterProducts() {
     String query = searchController.text.toLowerCase();
     setState(() {
       filteredProducts = products.where((product) {
-        // Keyword search
         bool matchesKeyword =
             product['product_name'].toString().toLowerCase().contains(query) ||
                 product['product_description']
@@ -101,28 +94,18 @@ class _SearchState extends State<Search> {
                     .toLowerCase()
                     .contains(query);
 
-        // Category filter
-        bool matchesCategory = selectedCat == null ||
-            product['tbl_subcategory']['tbl_category']['category_id']
-                    .toString() ==
-                selectedCat;
-
-        // Subcategory filter
         bool matchesSubcategory = selectedSub == null ||
             product['tbl_subcategory']['subcategory_id'].toString() ==
                 selectedSub;
 
-        // Type filter
         bool matchesType =
             selectedType == 'All' || product['product_type'] == selectedType;
 
-        // Size filter
         bool matchesSize = selectedSize == 'All' ||
             (selectedSize == 'Free Size' && product['product_size'] == true) ||
             (selectedSize == 'No Size' && product['product_size'] == false);
 
         return matchesKeyword &&
-            matchesCategory &&
             matchesSubcategory &&
             matchesType &&
             matchesSize;
@@ -148,40 +131,7 @@ class _SearchState extends State<Search> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Category Dropdown
-                      DropdownButtonFormField(
-                        validator: (value) =>
-                            FormValidation.validateDropdown(value),
-                        style: const TextStyle(color: Colors.white),
-                        dropdownColor: Colors.green,
-                        decoration: const InputDecoration(
-                          fillColor: Color.fromARGB(255, 3, 1, 68),
-                          filled: true,
-                          labelText: "Select Category",
-                          labelStyle: TextStyle(color: Colors.yellowAccent),
-                          border: OutlineInputBorder(),
-                        ),
-                        value: selectedCat,
-                        items: categories.map((cat) {
-                          return DropdownMenuItem(
-                            value: cat['category_id'].toString(),
-                            child: Text(
-                              cat['category_name'],
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                          );
-                        }).toList(),
-                        onChanged: (value) async {
-                          await fetchsubcategory(value!);
-                          dialogSetState(() {
-                            selectedCat = value;
-                            selectedSub = null;
-                          });
-                        },
-                      ),
-                      const SizedBox(height: 15),
-
-                      // Subcategory Dropdown
+                      // Subcategory Dropdown (only for the selected category)
                       DropdownButtonFormField(
                         validator: (value) =>
                             FormValidation.validateDropdown(value),
@@ -391,13 +341,11 @@ class _SearchState extends State<Search> {
                 TextButton(
                   onPressed: () {
                     dialogSetState(() {
-                      selectedCat = null;
                       selectedSub = null;
                       selectedType = "All";
                       selectedSize = "All";
-                      subcategories = [];
                     });
-                    _filterProducts(); // Apply reset filters
+                    _filterProducts();
                     Navigator.pop(context);
                   },
                   child: const Text(
@@ -407,7 +355,7 @@ class _SearchState extends State<Search> {
                 ),
                 TextButton(
                   onPressed: () {
-                    _filterProducts(); // Apply filters
+                    _filterProducts();
                     Navigator.pop(context);
                   },
                   child: const Text(
@@ -435,45 +383,46 @@ class _SearchState extends State<Search> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextFormField(
-              controller: searchController,
-              decoration: InputDecoration(
-                border: const OutlineInputBorder(),
-                hintText: "Search by name or description",
-                suffixIcon: IconButton(
-                  onPressed: () {
-                    showFilter();
-                  },
-                  icon: const Icon(Icons.filter_alt_outlined),
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: TextFormField(
+                controller: searchController,
+                decoration: InputDecoration(
+                  border: const OutlineInputBorder(),
+                  hintText: "Search by name or description",
+                  suffixIcon: IconButton(
+                    onPressed: () {
+                      showFilter();
+                    },
+                    icon: const Icon(Icons.filter_alt_outlined),
+                  ),
                 ),
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: GridView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 5,
-                mainAxisSpacing: 5,
-                childAspectRatio: 0.55,
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: GridView.builder(
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 5,
+                  mainAxisSpacing: 5,
+                  childAspectRatio: 0.62,
+                ),
+                itemBuilder: (context, index) {
+                  final data = filteredProducts[index];
+                  return ProductCard(productData: products[index]);
+                },
+                itemCount: filteredProducts.length,
               ),
-              itemBuilder: (context, index) {
-                final data = filteredProducts[index]; // Use filtered list
-
-                return ProductCard(productData: products[index]);
-              },
-              itemCount: filteredProducts.length,
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

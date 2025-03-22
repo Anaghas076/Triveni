@@ -19,10 +19,10 @@ class _ViewdesignState extends State<Viewdesign> {
     try {
       final response = await supabase.from('tbl_design').select();
       setState(() {
-        designs = response;
+        designs = List<Map<String, dynamic>>.from(response);
       });
     } catch (e) {
-      print("Error: $e");
+      print("Error fetching designs: $e");
     }
   }
 
@@ -34,11 +34,39 @@ class _ViewdesignState extends State<Viewdesign> {
 
   Future<void> _saveImage(String imageUrl, String imageName) async {
     try {
-      // Request permission for storage
-      if (await Permission.storage.request().isGranted) {
-        // Get directory to save file
-        Directory? directory = await getExternalStorageDirectory();
-        String savePath = "${directory!.path}/$imageName.jpg";
+      // Check and request storage permission based on Android version
+      bool permissionGranted = false;
+
+      if (Platform.isAndroid) {
+        var status = await Permission.storage.status;
+        if (!status.isGranted) {
+          status = await Permission.storage.request();
+        }
+
+        if (status.isGranted) {
+          permissionGranted = true;
+        } else if (status.isPermanentlyDenied) {
+          // Handle permanently denied by prompting user to enable in settings
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text("Please enable storage permission in settings."),
+              action: SnackBarAction(
+                label: 'Settings',
+                onPressed: () => openAppSettings(),
+              ),
+            ),
+          );
+          return;
+        }
+      } else {
+        // For iOS or other platforms, assume permission is not needed or handled differently
+        permissionGranted = true;
+      }
+
+      if (permissionGranted) {
+        // Use app-specific directory instead of external storage for broader compatibility
+        Directory? directory = await getApplicationDocumentsDirectory();
+        String savePath = "${directory.path}/$imageName.jpg";
 
         // Download image
         Dio dio = Dio();
@@ -54,6 +82,7 @@ class _ViewdesignState extends State<Viewdesign> {
         );
       }
     } catch (e) {
+      print("Error saving image: $e");
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Error saving image: $e")),
       );
@@ -87,7 +116,7 @@ class _ViewdesignState extends State<Viewdesign> {
             crossAxisCount: 2,
             crossAxisSpacing: 5,
             mainAxisSpacing: 5,
-            childAspectRatio: .75, // Adjust card height vs width ratio
+            childAspectRatio: .75,
           ),
           itemBuilder: (context, index) {
             final data = designs[index];
@@ -95,7 +124,7 @@ class _ViewdesignState extends State<Viewdesign> {
             return Card(
               elevation: 2,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12), // Rounded corners
+                borderRadius: BorderRadius.circular(12),
               ),
               child: Column(
                 children: [

@@ -17,7 +17,7 @@ class _ViewProductState extends State<Viewproduct> {
       final response = await supabase
           .from('tbl_product')
           .select("*, tbl_subcategory(*)")
-          .order('created_at', ascending: false);
+          .order('created_at', ascending: true);
       setState(() {
         products = response;
       });

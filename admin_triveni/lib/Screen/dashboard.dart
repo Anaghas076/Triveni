@@ -1,3 +1,4 @@
+import 'package:admin_triveni/Screen/weaver_report.dart';
 import 'package:admin_triveni/main.dart';
 import 'package:flutter/material.dart';
 
@@ -110,164 +111,174 @@ class _DashboardState extends State<Dashboard> {
     return Scaffold(
         body: Padding(
       padding: const EdgeInsets.all(8.0),
-      child: GridView(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 6,
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
-          childAspectRatio: 1.4,
-        ),
+      child: ListView(
         children: [
-          Card(
-            child: Column(
-              children: [
-                Icon(
-                  Icons.person,
-                  color: const Color.fromARGB(255, 3, 1, 68),
-                  size: 70,
-                ),
-                Text(
-                  "Weaver",
-                  style: TextStyle(
-                      color: const Color.fromARGB(255, 3, 1, 68),
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  weavercount.toString(),
-                  style: TextStyle(
-                      color: const Color.fromARGB(255, 3, 1, 68),
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold),
-                ),
-              ],
+          GridView(
+            physics: NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 6,
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
+              childAspectRatio: 1.4,
             ),
+            children: [
+              Card(
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.person,
+                      color: const Color.fromARGB(255, 3, 1, 68),
+                      size: 70,
+                    ),
+                    Text(
+                      "Weaver",
+                      style: TextStyle(
+                          color: const Color.fromARGB(255, 3, 1, 68),
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      weavercount.toString(),
+                      style: TextStyle(
+                          color: const Color.fromARGB(255, 3, 1, 68),
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+              Card(
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.palette,
+                      color: const Color.fromARGB(255, 3, 1, 68),
+                      size: 70,
+                    ),
+                    Text(
+                      "Artisan",
+                      style: TextStyle(
+                          color: const Color.fromARGB(255, 3, 1, 68),
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      artisancount.toString(),
+                      style: TextStyle(
+                          color: const Color.fromARGB(255, 3, 1, 68),
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+              Card(
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.people,
+                      color: const Color.fromARGB(255, 3, 1, 68),
+                      size: 70,
+                    ),
+                    Text(
+                      "User",
+                      style: TextStyle(
+                          color: const Color.fromARGB(255, 3, 1, 68),
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      usercount.toString(),
+                      style: TextStyle(
+                          color: const Color.fromARGB(255, 3, 1, 68),
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+              Card(
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.shopping_bag,
+                      color: const Color.fromARGB(255, 3, 1, 68),
+                      size: 70,
+                    ),
+                    Text(
+                      "Product",
+                      style: TextStyle(
+                          color: const Color.fromARGB(255, 3, 1, 68),
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      productcount.toString(),
+                      style: TextStyle(
+                          color: const Color.fromARGB(255, 3, 1, 68),
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+              Card(
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.design_services,
+                      color: const Color.fromARGB(255, 3, 1, 68),
+                      size: 70,
+                    ),
+                    Text(
+                      "Design",
+                      style: TextStyle(
+                          color: const Color.fromARGB(255, 3, 1, 68),
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      designcount.toString(),
+                      style: TextStyle(
+                          color: const Color.fromARGB(255, 3, 1, 68),
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+              Card(
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.architecture,
+                      color: const Color.fromARGB(255, 3, 1, 68),
+                      size: 70,
+                    ),
+                    Text(
+                      "Hello ",
+                      style: TextStyle(
+                          color: const Color.fromARGB(255, 3, 1, 68),
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      adminid['admin_name'] ?? " ",
+                      style: TextStyle(
+                          color: const Color.fromARGB(255, 3, 1, 68),
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-          Card(
-            child: Column(
-              children: [
-                Icon(
-                  Icons.palette,
-                  color: const Color.fromARGB(255, 3, 1, 68),
-                  size: 70,
-                ),
-                Text(
-                  "Artisan",
-                  style: TextStyle(
-                      color: const Color.fromARGB(255, 3, 1, 68),
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  artisancount.toString(),
-                  style: TextStyle(
-                      color: const Color.fromARGB(255, 3, 1, 68),
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
+          SizedBox(
+            height: 20,
           ),
-          Card(
-            child: Column(
-              children: [
-                Icon(
-                  Icons.people,
-                  color: const Color.fromARGB(255, 3, 1, 68),
-                  size: 70,
-                ),
-                Text(
-                  "User",
-                  style: TextStyle(
-                      color: const Color.fromARGB(255, 3, 1, 68),
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  usercount.toString(),
-                  style: TextStyle(
-                      color: const Color.fromARGB(255, 3, 1, 68),
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-          ),
-          Card(
-            child: Column(
-              children: [
-                Icon(
-                  Icons.shopping_bag,
-                  color: const Color.fromARGB(255, 3, 1, 68),
-                  size: 70,
-                ),
-                Text(
-                  "Product",
-                  style: TextStyle(
-                      color: const Color.fromARGB(255, 3, 1, 68),
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  productcount.toString(),
-                  style: TextStyle(
-                      color: const Color.fromARGB(255, 3, 1, 68),
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-          ),
-          Card(
-            child: Column(
-              children: [
-                Icon(
-                  Icons.design_services,
-                  color: const Color.fromARGB(255, 3, 1, 68),
-                  size: 70,
-                ),
-                Text(
-                  "Design",
-                  style: TextStyle(
-                      color: const Color.fromARGB(255, 3, 1, 68),
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  designcount.toString(),
-                  style: TextStyle(
-                      color: const Color.fromARGB(255, 3, 1, 68),
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-          ),
-          Card(
-            child: Column(
-              children: [
-                Icon(
-                  Icons.architecture,
-                  color: const Color.fromARGB(255, 3, 1, 68),
-                  size: 70,
-                ),
-                Text(
-                  "Hello ",
-                  style: TextStyle(
-                      color: const Color.fromARGB(255, 3, 1, 68),
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold),
-                ),
-                Text(
-                  adminid['admin_name'] ?? " ",
-                  style: TextStyle(
-                      color: const Color.fromARGB(255, 3, 1, 68),
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold),
-                ),
-              ],
-            ),
-          ),
+          WeaverReportWidget()
         ],
       ),
     ));

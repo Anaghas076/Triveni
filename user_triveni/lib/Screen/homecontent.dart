@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:user_triveni/Component/product_card.dart';
-
-import 'package:user_triveni/Screen/demo.dart';
-import 'package:user_triveni/Screen/productdemo.dart';
+import 'package:user_triveni/Screen/category_search.dart';
 import 'package:user_triveni/main.dart';
 
 class Homecontent extends StatefulWidget {
@@ -35,8 +33,28 @@ class _HomecontentState extends State<Homecontent> {
           .select()
           .order('created_at', ascending: false)
           .limit(6);
+      List<Map<String, dynamic>> product = [];
+      for (var items in response) {
+        final response = await supabase
+            .from('tbl_review')
+            .select()
+            .eq('product_id', items['product_id']);
+
+        final reviewsList = List<Map<String, dynamic>>.from(response);
+
+        // Calculate average rating
+        double totalRating = 0;
+        for (var review in reviewsList) {
+          totalRating += double.parse(review['review_rating'].toString());
+        }
+
+        double avgRating =
+            reviewsList.isNotEmpty ? totalRating / reviewsList.length : 0;
+        items['rating'] = avgRating;
+        product.add(items);
+      }
       setState(() {
-        products = response;
+        products = product;
       });
     } catch (e) {
       print("Error fetching products: $e");
@@ -87,7 +105,8 @@ class _HomecontentState extends State<Homecontent> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => Productdemo(product: data),
+                        builder: (context) =>
+                            CategorySearch(category: data['category_id']),
                       ),
                     );
                   },
@@ -114,7 +133,7 @@ class _HomecontentState extends State<Homecontent> {
 
           Center(
             child: Text(
-              "Customized Product",
+              "Recent Product",
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
           ),
@@ -125,7 +144,7 @@ class _HomecontentState extends State<Homecontent> {
             shrinkWrap: true,
             physics: NeverScrollableScrollPhysics(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2, childAspectRatio: .6),
+                crossAxisCount: 2, childAspectRatio: .65),
             itemCount: products.length,
             itemBuilder: (context, index) {
               return ProductCard(productData: products[index]);

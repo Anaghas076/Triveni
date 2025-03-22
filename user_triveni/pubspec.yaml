@@ -7,13 +7,20 @@ environment:
   sdk: ^3.6.0
 
 dependencies:
+  confetti: ^0.8.0
   dio: ^5.8.0+1
   flutter:
     sdk: flutter
+  flutter_credit_card: ^4.1.0
+  flutter_rating_bar: ^4.0.1
   image_picker: ^1.1.2
   intl: ^0.20.2
+  lottie: ^3.3.1
+  open_file: ^3.5.10
   path_provider: ^2.1.5
+  pdf: ^3.11.3
   permission_handler: ^11.4.0
+  printing: ^5.14.2
   supabase_flutter: ^2.8.3
 
 dev_dependencies:
