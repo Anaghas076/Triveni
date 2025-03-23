@@ -13,8 +13,11 @@ class _WrejectectedlistState extends State<Wrejectectedlist> {
 
   Future<void> fetchweaver() async {
     try {
-      final response =
-          await supabase.from('tbl_weaver').select().eq('weaver_status', 2).order('created_at', ascending: false);
+      final response = await supabase
+          .from('tbl_weaver')
+          .select()
+          .eq('weaver_status', 2)
+          .order('created_at', ascending: true);
       setState(() {
         weavers = response;
       });
@@ -60,42 +63,46 @@ class _WrejectectedlistState extends State<Wrejectectedlist> {
                     ],
                   ),
                   padding: EdgeInsets.all(10),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                  child: Column(
                     children: [
-                      CircleAvatar(
-                        radius: 30, // Reduced size for better alignment
-                        backgroundImage:
-                            NetworkImage(data['weaver_photo'] ?? ""),
-                        backgroundColor: Colors.grey.shade200,
-                      ),
-                      SizedBox(width: 18), // Space between image and text
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              data['weaver_name'] ?? " ",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                              ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          CircleAvatar(
+                            radius: 30, // Reduced size for better alignment
+                            backgroundImage:
+                                NetworkImage(data['weaver_photo'] ?? ""),
+                            backgroundColor: Colors.grey.shade200,
+                          ),
+                          SizedBox(width: 18), // Space between image and text
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  data['weaver_name'] ?? " ",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                Text(
+                                  data['weaver_address'] ?? " ",
+                                ),
+                                Text(
+                                  data['weaver_contact'] ?? " ",
+                                ),
+                                Text(
+                                  data['weaver_email'] ?? " ",
+                                ),
+                                Text(
+                                  data['weaver_password'] ?? " ",
+                                ),
+                              ],
                             ),
-                            Text(
-                              data['weaver_address'] ?? " ",
-                            ),
-                            Text(
-                              data['weaver_contact'] ?? " ",
-                            ),
-                            Text(
-                              data['weaver_email'] ?? " ",
-                            ),
-                            Text(
-                              data['weaver_password'] ?? " ",
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ],
                   ),

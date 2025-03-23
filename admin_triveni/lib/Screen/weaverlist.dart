@@ -17,7 +17,7 @@ class _WeaverlistState extends State<Weaverlist> {
           .from('tbl_weaver')
           .select()
           .eq('weaver_status', 0)
-          .order('created_at', ascending: false);
+          .order('created_at', ascending: true);
       setState(() {
         weavers = response;
       });
@@ -59,7 +59,7 @@ class _WeaverlistState extends State<Weaverlist> {
                 crossAxisCount: 5,
                 crossAxisSpacing: 5,
                 mainAxisSpacing: 5,
-                childAspectRatio: 1.5, // Adjusted for better proportions
+                childAspectRatio: .85, // Adjusted for better proportions
               ),
               itemCount: weavers.length,
               itemBuilder: (context, index) {
@@ -120,8 +120,20 @@ class _WeaverlistState extends State<Weaverlist> {
                           ),
                         ],
                       ),
+                      SizedBox(height: 10),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.network(
+                          data['weaver_proof'] ?? "",
+                          width: 150,
+                          height: 100,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              Icon(Icons.image, size: 80, color: Colors.grey),
+                        ),
+                      ),
                       SizedBox(
-                        height: 10,
+                        height: 5,
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,

@@ -17,7 +17,7 @@ class _AacceptedlistState extends State<Aacceptedlist> {
           .from('tbl_artisan')
           .select()
           .eq('artisan_status', 1)
-          .order('created_at', ascending: false);
+          .order('created_at', ascending: true);
 
       setState(() {
         artisans = response;

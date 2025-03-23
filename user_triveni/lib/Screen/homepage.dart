@@ -21,9 +21,9 @@ class _HomepageState extends State<Homepage> {
   // List of pages for bottom navigation
   final List<Widget> pageContent = [
     Homecontent(), // New HomeScreen widget
-    Profile(), // Dummy category page
+    Search(), // Dummy category page
     Myorder(),
-    Search(),
+    Profile(),
   ];
 
   @override
@@ -32,29 +32,20 @@ class _HomepageState extends State<Homepage> {
       appBar: AppBar(
         toolbarHeight: 80,
         backgroundColor: const Color.fromARGB(255, 3, 1, 68),
-        leading: CircleAvatar(
-          backgroundImage: AssetImage("asset/Logo.jpeg"),
-        ),
-        title: TextFormField(
-          style: const TextStyle(
-              color: Color.fromARGB(255, 240, 240, 242),
-              fontWeight: FontWeight.bold),
-          decoration: InputDecoration(
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(30),
-              borderSide: const BorderSide(
-                color: Colors.white,
-              ),
-            ),
-            prefixIcon: const Icon(
-              Icons.search,
-              color: Colors.white,
-            ),
-            hintText: "Search",
-            hintStyle: const TextStyle(
-              color: Colors.white,
-            ),
-            border: const OutlineInputBorder(),
+        title: ListTile(
+          leading: CircleAvatar(
+            radius: 33,
+            backgroundImage: AssetImage("asset/Logo.jpeg"),
+          ),
+          title: Text(
+            "TRIVENI",
+            style: TextStyle(
+                color: Colors.white, fontWeight: FontWeight.bold, fontSize: 25),
+          ),
+          subtitle: Text(
+            "Heritage weaves,fashion breathes.",
+            style: TextStyle(
+                color: Colors.white, fontWeight: FontWeight.bold, fontSize: 9),
           ),
         ),
         actions: [
@@ -81,10 +72,11 @@ class _HomepageState extends State<Homepage> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
           BottomNavigationBarItem(
-              icon: Icon(Icons.person), label: "My Profile"),
+              icon: Icon(Icons.search_rounded), label: "Search"),
           BottomNavigationBarItem(
               icon: Icon(Icons.shopping_bag), label: "My Orders"),
-          BottomNavigationBarItem(icon: Icon(Icons.wallet), label: "Wallet"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.person), label: "My Account"),
         ],
         selectedItemColor:
             const Color.fromARGB(255, 241, 233, 7), // Color of selected icon

@@ -16,7 +16,7 @@ class _UserlistState extends State<Userlist> {
       final response = await supabase
           .from('tbl_user')
           .select()
-          .order('created_at', ascending: false);
+          .order('created_at', ascending: true);
       setState(() {
         users = response;
       });

@@ -17,8 +17,8 @@ class _WrejectectedlistState extends State<Arejectedlist> {
           .from('tbl_artisan')
           .select()
           .eq('artisan_status', 2)
-          .order('created_at', ascending: false);
-      
+          .order('created_at', ascending: true);
+
       setState(() {
         artisans = response;
       });

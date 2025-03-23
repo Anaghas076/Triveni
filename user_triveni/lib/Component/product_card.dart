@@ -34,25 +34,56 @@ class ProductCard extends StatelessWidget {
                 ),
               ),
             ),
-            Row(
-              children: [
-                Icon(Icons.star, size: 16, color: Colors.amber),
-                Text(
-                  productData['rating'].toString(),
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[700],
-                  ),
-                ),
-              ],
+            Text(
+              productData['product_name'],
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
-            Text(productData['product_code']),
+            SizedBox(height: 5),
             Text(
               productData['product_type'],
-              style:
-                  TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 14,
+                color: Colors.green,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            Text(productData['product_price'].toString()),
+            SizedBox(height: 3),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Icon(Icons.star, size: 20, color: Colors.amber),
+                  Icon(Icons.star, size: 20, color: Colors.amber),
+                  Icon(Icons.star, size: 20, color: Colors.amber),
+                  Icon(Icons.star, size: 20, color: Colors.amber),
+                  Icon(Icons.star, size: 20, color: Colors.amber),
+                  SizedBox(width: 10),
+                  Text(
+                    productData['rating'].toString(),
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 3),
+            Text(
+              "₹${productData['product_price']}",
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
           ],
         ),
       ),

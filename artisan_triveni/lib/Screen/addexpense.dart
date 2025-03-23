@@ -73,7 +73,7 @@ class _AddexpenseState extends State<Addexpense> {
     fetchexpense();
   }
 
-  final formkey = GlobalKey<FormState>();
+  final formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -94,104 +94,132 @@ class _AddexpenseState extends State<Addexpense> {
           ),
         ),
       ),
-      body: Form(
-        key: formkey,
+      backgroundColor: Colors.white,
+      body: Center(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              TextFormField(
-                validator: (value) => FormValidation.validateName(value),
-                controller: nameController,
-                keyboardType: TextInputType.name,
-                style: TextStyle(
-                  color: const Color.fromARGB(255, 3, 1, 68),
-                  fontWeight: FontWeight.bold,
-                ),
-                decoration: InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    borderSide: BorderSide(
-                      color: const Color.fromARGB(255, 10, 10, 10),
-                    ),
+              Container(
+                padding: EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(25),
+                    border: Border.all(
+                      color: const Color.fromARGB(255, 3, 1, 68),
+                      width: 3,
+                    )),
+                child: Form(
+                  key: formKey,
+                  child: Column(
+                    children: [
+                      TextFormField(
+                        validator: (value) =>
+                            FormValidation.validateName(value),
+                        controller: nameController,
+                        style: TextStyle(
+                            color: const Color.fromARGB(255, 3, 1, 68),
+                            fontWeight: FontWeight.bold),
+                        decoration: InputDecoration(
+                          enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              borderSide: BorderSide(
+                                color: const Color.fromARGB(255, 3, 1, 68),
+                                width: 3,
+                              )),
+                          prefixIcon: Icon(
+                            Icons.description,
+                            color: const Color.fromARGB(255, 7, 2, 54),
+                          ),
+                          hintText: "Name",
+                          hintStyle: TextStyle(
+                            color: const Color.fromARGB(255, 3, 1, 68),
+                            fontWeight: FontWeight.w900,
+                          ),
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      TextFormField(
+                        validator: (value) =>
+                            FormValidation.validateAmount(value),
+                        controller: amountController,
+                        style: TextStyle(
+                            color: const Color.fromARGB(255, 3, 1, 68),
+                            fontWeight: FontWeight.bold),
+                        decoration: InputDecoration(
+                          enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(30),
+                              borderSide: BorderSide(
+                                color: const Color.fromARGB(255, 3, 1, 68),
+                                width: 3,
+                              )),
+                          prefixIcon: Icon(
+                            Icons.money,
+                            color: const Color.fromARGB(255, 7, 2, 54),
+                          ),
+                          hintText: "Amount",
+                          hintStyle: TextStyle(
+                            color: const Color.fromARGB(255, 3, 1, 68),
+                            fontWeight: FontWeight.w900,
+                          ),
+                          border: OutlineInputBorder(),
+                        ),
+                      ),
+                      SizedBox(height: 15),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color.fromARGB(255, 3, 1, 68),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          padding: EdgeInsets.symmetric(
+                              vertical: 15, horizontal: 50),
+                        ),
+                        onPressed: () {
+                          if (formKey.currentState!.validate()) {
+                            submit();
+                          }
+                        },
+                        child: Text("Submit",
+                            style:
+                                TextStyle(fontSize: 16, color: Colors.white)),
+                      ),
+                    ],
                   ),
-                  prefixIcon: Icon(
-                    Icons.description,
-                    color: const Color.fromARGB(255, 7, 2, 54),
-                  ),
-                  hintText: " Name",
-                  hintStyle: TextStyle(
-                    color: const Color.fromARGB(255, 8, 8, 8),
-                    fontWeight: FontWeight.bold,
-                  ),
-                  border: OutlineInputBorder(),
                 ),
               ),
-              SizedBox(height: 10),
-              TextFormField(
-                validator: (value) => FormValidation.validateAmount(value),
-                controller: amountController,
-                keyboardType: TextInputType.number,
-                style: TextStyle(
-                  color: const Color.fromARGB(255, 3, 1, 68),
-                  fontWeight: FontWeight.bold,
-                ),
-                decoration: InputDecoration(
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(30),
-                    borderSide: BorderSide(
-                      color: const Color.fromARGB(255, 10, 10, 10),
-                    ),
-                  ),
-                  prefixIcon: Icon(
-                    Icons.description,
-                    color: const Color.fromARGB(255, 7, 2, 54),
-                  ),
-                  hintText: " Amount",
-                  hintStyle: TextStyle(
-                    color: const Color.fromARGB(255, 8, 8, 8),
-                    fontWeight: FontWeight.bold,
-                  ),
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              SizedBox(height: 10),
-              ElevatedButton(
-                onPressed: () {
-                  if (formkey.currentState!.validate()) {
-                    submit();
-                  }
-                },
-                child: Text("Submit"),
-              ),
-              SizedBox(height: 10),
+              SizedBox(height: 20),
               Expanded(
-                // Wrap ListView.builder inside Expanded
                 child: daily.isEmpty
-                    ? Center(child: Text("No expenses added"))
+                    ? Center(
+                        child: Text("No expenses added",
+                            style: TextStyle(color: Colors.grey)))
                     : ListView.builder(
                         itemCount: daily.length,
                         itemBuilder: (context, index) {
                           final data = daily[index];
-                          return ListTile(
-                            leading: Text((index + 1).toString()),
-                            title: Text(
-                              data['daily_name'] ?? "No Name",
-                              style: TextStyle(
-                                color: const Color.fromARGB(255, 3, 1, 68),
+                          return Card(
+                            color: Colors.white,
+                            margin: EdgeInsets.symmetric(
+                                vertical: 5, horizontal: 1),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15)),
+                            child: ListTile(
+                              leading: CircleAvatar(
+                                backgroundColor:
+                                    const Color.fromARGB(255, 3, 1, 68),
+                                child: Text("${index + 1}",
+                                    style: TextStyle(color: Colors.white)),
                               ),
-                            ),
-                            subtitle: Text(
-                              data['daily_amount'] ?? "No amount",
-                              style: TextStyle(
-                                color: const Color.fromARGB(255, 3, 1, 68),
+                              title: Text(data['daily_name'] ?? "No Name",
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)),
+                              subtitle: Text("₹${data['daily_amount'] ?? "0"}"),
+                              trailing: IconButton(
+                                onPressed: () => delete(data['daily_id']),
+                                icon: Icon(Icons.delete, color: Colors.red),
                               ),
-                            ),
-                            trailing: IconButton(
-                              onPressed: () {
-                                delete(data['daily_id']);
-                              },
-                              icon: Icon(Icons.delete, color: Colors.red),
                             ),
                           );
                         },

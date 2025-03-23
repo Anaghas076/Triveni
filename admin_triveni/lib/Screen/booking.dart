@@ -121,30 +121,6 @@ class _MybookingDataState extends State<Booking> {
     }
   }
 
-  // Future<void> pay(int bookingId, int paymentStatus) async {
-  //   try {
-  //     String amount = amountController.text;
-
-  //     await Supabase.instance.client.from('tbl_daily').insert({
-  //       'daily_name': "salary",
-  //       'daily_amount': amount,
-  //       'daily_type': "INCOME",
-  //     });
-
-  //     await Supabase.instance.client.from('tbl_booking').update(
-  //         {'payment_status': paymentStatus}).eq('booking_id', bookingId);
-
-  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-  //       content: Text("Payment Processed Successfully"),
-  //       backgroundColor: const Color.fromARGB(255, 54, 3, 116),
-  //     ));
-  //     amountController.clear();
-  //     fetchBooking();
-  //   } catch (e) {
-  //     print("Error processing payment: $e");
-  //   }
-  // }
-
   void addAmount(int id) {
     amountController.clear(); // Clear previous input
 

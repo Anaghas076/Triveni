@@ -463,7 +463,7 @@ class _SearchState extends State<Search> {
                 crossAxisCount: 2,
                 crossAxisSpacing: 5,
                 mainAxisSpacing: 5,
-                childAspectRatio: 0.55,
+                childAspectRatio: 0.52,
               ),
               itemBuilder: (context, index) {
                 final data = filteredProducts[index]; // Use filtered list

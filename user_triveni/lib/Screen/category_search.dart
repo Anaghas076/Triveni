@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:user_triveni/Component/formvalidation.dart';
 import 'package:user_triveni/Component/product_card.dart';
+import 'package:user_triveni/Screen/cart.dart';
 import 'package:user_triveni/Screen/productdemo.dart';
 import 'package:user_triveni/main.dart';
 
@@ -384,6 +385,38 @@ class _CategorySearchState extends State<CategorySearch> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: const Color.fromARGB(255, 3, 1, 68),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        title: Text(
+          "Category Wise",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: Icon(
+              Icons.shopping_cart,
+              color: Colors.yellow,
+            ),
+            onPressed: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => Cart(),
+                  ));
+            },
+          ),
+        ],
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -409,11 +442,10 @@ class _CategorySearchState extends State<CategorySearch> {
                 physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 5,
-                  mainAxisSpacing: 5,
-                  childAspectRatio: 0.62,
-                ),
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 5,
+                    mainAxisSpacing: 5,
+                    childAspectRatio: 0.52),
                 itemBuilder: (context, index) {
                   final data = filteredProducts[index];
                   return ProductCard(productData: products[index]);
