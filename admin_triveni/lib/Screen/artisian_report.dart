@@ -2,17 +2,17 @@ import 'package:admin_triveni/main.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
-class WeaverReportWidget extends StatefulWidget {
-  const WeaverReportWidget({super.key});
+class ArtisanReportWidget extends StatefulWidget {
+  const ArtisanReportWidget({super.key});
 
   @override
-  State<WeaverReportWidget> createState() => _WeaverReportWidgetState();
+  State<ArtisanReportWidget> createState() => _ArtisanReportWidgetState();
 }
 
-class _WeaverReportWidgetState extends State<WeaverReportWidget> {
+class _ArtisanReportWidgetState extends State<ArtisanReportWidget> {
   List<Map<String, dynamic>> bookings = [];
-  Map<String, String> weaverNames = {};
-  Map<String, int> weaverWorkCount = {};
+  Map<String, String> artisanNames = {};
+  Map<String, int> artisanWorkCount = {};
 
   @override
   void initState() {
@@ -22,34 +22,34 @@ class _WeaverReportWidgetState extends State<WeaverReportWidget> {
 
   Future<void> fetchData() async {
     try {
-      // Fetch weaver names
-      final weaverResponse =
-          await supabase.from('tbl_weaver').select('weaver_id, weaver_name');
+      // Fetch artisan names
+      final artisanResponse =
+          await supabase.from('tbl_artisan').select('artisan_id, artisan_name');
       setState(() {
-        weaverNames = {
-          for (var weaver in weaverResponse)
-            weaver['weaver_id']: weaver['weaver_name']
+        artisanNames = {
+          for (var artisan in artisanResponse)
+            artisan['artisan_id']: artisan['artisan_name']
         };
-        print("Weaver Names: $weaverNames");
+        print("artisan Names: $artisanNames");
       });
 
-      // Fetch bookings where weaver_id is not null
+      // Fetch bookings where artisan_id is not null
       final bookingResponse = await supabase
           .from('tbl_booking')
-          .select('weaver_id')
-          .not('weaver_id', 'is', null);
+          .select('artisan_id')
+          .not('artisan_id', 'is', null);
 
-      // Aggregate work count per weaver
+      // Aggregate work count per artisan
       Map<String, int> tempWorkCount = {};
       for (var booking in bookingResponse) {
-        final weaverId = booking['weaver_id'];
-        tempWorkCount[weaverId] = (tempWorkCount[weaverId] ?? 0) + 1;
+        final artisanId = booking['artisan_id'];
+        tempWorkCount[artisanId] = (tempWorkCount[artisanId] ?? 0) + 1;
       }
 
       setState(() {
         bookings = List<Map<String, dynamic>>.from(bookingResponse);
-        weaverWorkCount = tempWorkCount;
-        print("Weaver Work Count: $weaverWorkCount");
+        artisanWorkCount = tempWorkCount;
+        print("artisan Work Count: $artisanWorkCount");
       });
     } catch (e) {
       print("Error fetching data: $e");
@@ -63,7 +63,7 @@ class _WeaverReportWidgetState extends State<WeaverReportWidget> {
 
   @override
   Widget build(BuildContext context) {
-    if (weaverWorkCount.isEmpty) {
+    if (artisanWorkCount.isEmpty) {
       return Container(
         height: 300,
         padding: const EdgeInsets.all(16.0),
@@ -100,7 +100,7 @@ class _WeaverReportWidgetState extends State<WeaverReportWidget> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Weaver Work Report",
+            "Artisan Work Report",
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -112,7 +112,7 @@ class _WeaverReportWidgetState extends State<WeaverReportWidget> {
             child: BarChart(
               BarChartData(
                 alignment: BarChartAlignment.spaceAround,
-                maxY: (weaverWorkCount.values.reduce((a, b) => a > b ? a : b) + 1).toDouble(),
+                maxY: (artisanWorkCount.values.reduce((a, b) => a > b ? a : b) + 1).toDouble(),
                 barGroups: _buildBarGroups(),
                 titlesData: FlTitlesData(
                   leftTitles: AxisTitles(
@@ -132,10 +132,10 @@ class _WeaverReportWidgetState extends State<WeaverReportWidget> {
                       showTitles: true,
                       reservedSize: 80, // Increased space for labels
                       getTitlesWidget: (value, meta) {
-                        final weaverId =
-                            weaverWorkCount.keys.toList()[value.toInt()];
+                        final artisanId =
+                            artisanWorkCount.keys.toList()[value.toInt()];
                         final name =
-                            weaverNames[weaverId] ?? weaverId.substring(0, 6);
+                            artisanNames[artisanId] ?? artisanId.substring(0, 6);
                         return SideTitleWidget(
                           meta: meta,
                           child: RotatedBox(
@@ -169,8 +169,8 @@ class _WeaverReportWidgetState extends State<WeaverReportWidget> {
                   enabled: true,
                   touchTooltipData: BarTouchTooltipData(
                     getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                      final weaverId = weaverWorkCount.keys.toList()[group.x];
-                      final name = weaverNames[weaverId] ?? weaverId;
+                      final artisanId = artisanWorkCount.keys.toList()[group.x];
+                      final name = artisanNames[artisanId] ?? artisanId;
                       return BarTooltipItem(
                         '$name\nWorks: ${rod.toY.toInt()}',
                         TextStyle(color: Colors.white),
@@ -187,16 +187,16 @@ class _WeaverReportWidgetState extends State<WeaverReportWidget> {
   }
 
   List<BarChartGroupData> _buildBarGroups() {
-    final sortedKeys = weaverWorkCount.keys.toList()..sort();
+    final sortedKeys = artisanWorkCount.keys.toList()..sort();
     return sortedKeys.asMap().entries.map((entry) {
       final index = entry.key;
-      final weaverId = entry.value;
-      print("Index: $index, Weaver: ${weaverNames[weaverId]}, Count: ${weaverWorkCount[weaverId]}");
+      final artisanId = entry.value;
+      print("Index: $index, artisan: ${artisanNames[artisanId]}, Count: ${artisanWorkCount[artisanId]}");
       return BarChartGroupData(
         x: index,
         barRods: [
           BarChartRodData(
-            toY: weaverWorkCount[weaverId]!.toDouble(),
+            toY: artisanWorkCount[artisanId]!.toDouble(),
             color: Colors.blue,
             width: 18,
             borderRadius: BorderRadius.circular(6),

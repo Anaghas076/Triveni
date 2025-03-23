@@ -1,3 +1,4 @@
+import 'package:admin_triveni/Screen/artisian_report.dart';
 import 'package:admin_triveni/Screen/weaver_report.dart';
 import 'package:admin_triveni/main.dart';
 import 'package:flutter/material.dart';
@@ -278,7 +279,16 @@ class _DashboardState extends State<Dashboard> {
           SizedBox(
             height: 20,
           ),
-          WeaverReportWidget()
+          Row(
+            children: [
+              Expanded(child: WeaverReportWidget()),
+              SizedBox(
+                width: 20,
+              ),
+              Expanded(child: ArtisanReportWidget()),
+            ],
+          ),
+         
         ],
       ),
     ));

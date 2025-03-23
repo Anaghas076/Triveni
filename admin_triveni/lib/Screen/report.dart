@@ -11,16 +11,23 @@ class CountReport extends StatefulWidget {
 class _CountReportState extends State<CountReport> {
   DateTime? startDate;
   DateTime? endDate;
-  int totalProducts = 0;
+  int productCount = 0;
   int totalAmount = 0;
-  List<Map<String, dynamic>> soldProducts = [];
+  List<Map<String, dynamic>> bookings = [];
+  List<Map<String, dynamic>> cartItems = [];
+  bool isLoading = false;
 
+  // Select date function
   Future<void> _selectDate(BuildContext context, bool isStart) async {
+    DateTime initialDate = DateTime.now();
+    DateTime firstDate = DateTime(2020);
+    DateTime lastDate = DateTime(2100);
+
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2020),
-      lastDate: DateTime(2100),
+      initialDate: initialDate,
+      firstDate: firstDate,
+      lastDate: lastDate,
     );
 
     if (picked != null) {
@@ -34,7 +41,8 @@ class _CountReportState extends State<CountReport> {
     }
   }
 
-  Future<void> getProductReport() async {
+  // Fetch bookings and cart items based on date range
+  Future<void> getProductCount() async {
     try {
       if (startDate == null || endDate == null) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -44,67 +52,67 @@ class _CountReportState extends State<CountReport> {
         return;
       }
 
+      setState(() {
+        isLoading = true;
+      });
+
       final response = await supabase
           .from('tbl_booking')
-          .select("""
-          *,
-          tbl_cart(*, 
-            tbl_product(*, 
-              tbl_subcategory(*, 
-                tbl_category(*)
-              )
-            )
-          )
-        """)
+          .select(
+              "*, tbl_cart(*, tbl_product(*)), tbl_weaver(*), tbl_artisan(*)")
           .gte('created_at', startDate!.toIso8601String())
           .lte('created_at', endDate!.toIso8601String())
           .order('booking_id', ascending: false);
 
-      int totalAmountCalc = 0;
-      int totalProductCount = 0;
-      List<Map<String, dynamic>> extractedProducts = [];
+      // Calculate total amount and flatten cart items
+      int tempTotalAmount = 0;
+      List<Map<String, dynamic>> tempCartItems = [];
 
       for (var booking in response) {
-        var cartItems = booking['tbl_cart'] ?? [];
+        tempTotalAmount += (booking['booking_amount'] as int?) ?? 0;
 
-        for (var cartItem in cartItems) {
-          var product = cartItem['tbl_product'] ?? {};
-          var subcategory = product['tbl_subcategory'] ?? {};
-          var category = subcategory['tbl_category'] ?? {};
-          int quantity = cartItem['quantity'] ?? 0;
-          int price =
-              int.tryParse(product['product_price']?.toString() ?? '0') ?? 0;
+        // Extract weaver and artisan names (or "N/A" if null)
+        final weaverName = booking['tbl_weaver'] != null
+            ? booking['tbl_weaver']['weaver_name']?.toString() ?? 'N/A'
+            : 'N/A';
+        final artisanName = booking['tbl_artisan'] != null
+            ? booking['tbl_artisan']['artisan_name']?.toString() ?? 'N/A'
+            : 'N/A';
 
-          totalProductCount += quantity;
-          totalAmountCalc += (quantity * price);
-
-          extractedProducts.add({
-            'product_name': product['product_name'],
-            'product_photo': product['product_photo'],
-            'category_name': category['category_name'],
-            'subcategory_name': subcategory['subcategory_name'],
-            'product_code': product['product_code'],
-            'product_price': product['product_price'],
-            'quantity': quantity,
-            'product_type': product['product_type'],
+        // Flatten tbl_cart list into cart items with additional booking-level info
+        final cartList =
+            List<Map<String, dynamic>>.from(booking['tbl_cart'] ?? []);
+        for (var cartItem in cartList) {
+          tempCartItems.add({
+            ...cartItem,
+            'weaver_name': weaverName,
+            'artisan_name': artisanName,
           });
         }
       }
 
       setState(() {
-        soldProducts = extractedProducts;
-        totalProducts = totalProductCount;
-        totalAmount = totalAmountCalc;
+        bookings = List<Map<String, dynamic>>.from(response);
+        cartItems = tempCartItems;
+        productCount = cartItems.length; // Count of cart items (products)
+        totalAmount = tempTotalAmount;
+        isLoading = false;
       });
     } catch (e) {
-      print("Error fetching product report: $e");
+      print("Error fetching product count: $e");
+      setState(() {
+        isLoading = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error fetching data: $e")),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Product Sales Report")),
+      appBar: AppBar(title: const Text("Product Report")),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -149,72 +157,78 @@ class _CountReportState extends State<CountReport> {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: getProductReport,
-              child: const Text("Generate Report"),
+              onPressed: getProductCount,
+              child: const Text("Submit"),
             ),
             const SizedBox(height: 20),
-            Expanded(
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: DataTable(
-                  columnSpacing: 12,
-                  horizontalMargin: 10,
-                  columns: const [
-                    DataColumn(label: Text("SNo.")),
-                    DataColumn(label: Text("Image")),
-                    DataColumn(label: Text("Name")),
-                    DataColumn(label: Text("Category")),
-                    DataColumn(label: Text("Subcategory")),
-                    DataColumn(label: Text("Code")),
-                    DataColumn(label: Text("Price")),
-                    DataColumn(label: Text("Quantity")),
-                    DataColumn(label: Text("Type")),
-                  ],
-                  rows: List.generate(
-                    soldProducts.length,
-                    (index) {
-                      var data = soldProducts[index];
+            if (isLoading)
+              const Center(child: CircularProgressIndicator())
+            else if (cartItems.isEmpty)
+              const Center(child: Text("No products found in this date range"))
+            else
+              Expanded(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: FittedBox(
+                    child: DataTable(
+                      columns: const [
+                        DataColumn(label: Text("SNo.")),
+                        DataColumn(label: Text("Product Image")),
+                        DataColumn(label: Text("Product")),
+                        DataColumn(label: Text("Weaver")),
+                        DataColumn(label: Text("Artisan")),
+                        DataColumn(label: Text("Subcategory")),
+                        DataColumn(label: Text("Code")),
+                        DataColumn(label: Text("Price")),
+                        DataColumn(label: Text("Quantity")),
+                        DataColumn(label: Text("Type")),
+                      ],
+                      rows: List.generate(
+                        cartItems.length,
+                        (index) {
+                          var cartItem = cartItems[index];
+                          var product = cartItem['tbl_product'] ?? {};
 
-                      return DataRow(
-                        cells: [
-                          DataCell(
-                              Text((index + 1).toString())), // Serial Number
-                          DataCell(
-                            CircleAvatar(
-                              backgroundImage: data['product_photo'] != null
-                                  ? NetworkImage(
-                                      data['product_photo'].toString())
-                                  : const AssetImage(
-                                          'assets/images/placeholder.png')
-                                      as ImageProvider,
-                            ),
-                          ),
-                          DataCell(
-                              Text(data['product_name']?.toString() ?? 'N/A')),
-                          DataCell(Text(data['category_name']?.toString() ??
-                              'N/A')), // ✅ Category Name
-                          DataCell(Text(data['subcategory_name']?.toString() ??
-                              'N/A')), // ✅ Subcategory Name
-                          DataCell(
-                              Text(data['product_code']?.toString() ?? 'N/A')),
-                          DataCell(Text(
-                              "₹${data['product_price']?.toString() ?? '0'}")),
-                          DataCell(Text(data['quantity']
-                              .toString())), // ✅ Quantity Display Fixed
-                          DataCell(
-                              Text(data['product_type']?.toString() ?? 'N/A')),
-                        ],
-                      );
-                    },
+                          return DataRow(
+                            cells: [
+                              DataCell(Text((index + 1).toString())),
+                              DataCell(
+                                CircleAvatar(
+                                  backgroundImage: NetworkImage(
+                                    product['product_photo']?.toString() ?? '',
+                                  ),
+                                  onBackgroundImageError: (_, __) =>
+                                      const Icon(Icons.error),
+                                ),
+                              ),
+                              DataCell(Text(
+                                  product['product_name']?.toString() ?? '')),
+                              DataCell(Text(
+                                  cartItem['weaver_name']?.toString() ??
+                                      'N/A')),
+                              DataCell(Text(
+                                  cartItem['artisan_name']?.toString() ??
+                                      'N/A')),
+                              DataCell(Text(
+                                  product['subcategory_id']?.toString() ?? '')),
+                              DataCell(Text(
+                                  product['product_code']?.toString() ?? '')),
+                              DataCell(Text(
+                                  product['product_price']?.toString() ?? '')),
+                              DataCell(Text(
+                                  cartItem['cart_quantity']?.toString() ??
+                                      '0')),
+                              DataCell(Text(
+                                  product['product_type']?.toString() ?? '')),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
             const SizedBox(height: 20),
-            Text(
-              "Total Products Sold: $totalProducts",
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
             Text(
               "Total Amount: ₹$totalAmount",
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
