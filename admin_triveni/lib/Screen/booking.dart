@@ -4,6 +4,8 @@ import 'package:admin_triveni/main.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'package:intl/intl.dart';
+
 class Booking extends StatefulWidget {
   @override
   _MybookingDataState createState() => _MybookingDataState();
@@ -203,6 +205,11 @@ class _MybookingDataState extends State<Booking> {
     );
   }
 
+  String formatDate(String timestamp) {
+    DateTime parsedDate = DateTime.parse(timestamp);
+    return DateFormat('dd-MM-yyyy').format(parsedDate);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -228,7 +235,7 @@ class _MybookingDataState extends State<Booking> {
                     bookingItems['user_name'] ?? "User Name",
                     style: TextStyle(
                         fontSize: 14,
-                        color: Colors.grey,
+                        color: Colors.black,
                         fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 5),
@@ -238,8 +245,11 @@ class _MybookingDataState extends State<Booking> {
                   ),
                   SizedBox(height: 5),
                   Text(
-                    "Date: ${bookingItems['created_at']}",
-                    style: TextStyle(fontSize: 14, color: Colors.grey),
+                    "Date: ${formatDate(bookingItems['created_at'])}",
+                    style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 5),
                   Text(

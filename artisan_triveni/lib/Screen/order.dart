@@ -1,6 +1,7 @@
 import 'package:artisan_triveni/Screen/custom.dart';
 import 'package:artisan_triveni/main.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class Booking extends StatefulWidget {
   @override
@@ -73,6 +74,11 @@ class _MybookingDataState extends State<Booking> {
     }
   }
 
+  String formatDate(String timestamp) {
+    DateTime parsedDate = DateTime.parse(timestamp);
+    return DateFormat('dd-MM-yyyy').format(parsedDate);
+  }
+
   Future<void> order(int bookingId, int status) async {
     try {
       final artisanId = supabase.auth.currentUser!.id;
@@ -120,18 +126,24 @@ class _MybookingDataState extends State<Booking> {
                           bookingItems['user_name'] ?? "User Name",
                           style: TextStyle(
                               fontSize: 14,
-                              color: Colors.grey,
+                              color: Colors.black,
                               fontWeight: FontWeight.bold),
                         ),
                         SizedBox(height: 5),
                         Text(
                           bookingItems['user_contact'] ?? "User Contact",
-                          style: TextStyle(fontSize: 14, color: Colors.green),
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.green,
+                          ),
                         ),
                         SizedBox(height: 5),
                         Text(
-                          "Date: ${bookingItems['created_at']}",
-                          style: TextStyle(fontSize: 14, color: Colors.grey),
+                          "Date: ${formatDate(bookingItems['created_at'])}",
+                          style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold),
                         ),
                         SizedBox(height: 5),
                         Text(

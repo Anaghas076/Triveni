@@ -33,7 +33,7 @@ class _WeaverlistState extends State<Weaverlist> {
 
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(status == 1 ? " Accepted" : " Rejected"),
-        backgroundColor: status == 1 ? Colors.green : Colors.red,
+        backgroundColor: const Color.fromARGB(255, 27, 1, 69),
       ));
 
       fetchweaver(); // Refresh list

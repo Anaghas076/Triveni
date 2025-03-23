@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:weaver_triveni/Screen/custom.dart';
 import 'package:weaver_triveni/main.dart';
+import 'package:intl/intl.dart';
 
 class Myorder extends StatefulWidget {
   @override
@@ -75,6 +76,11 @@ class _MyorderDataState extends State<Myorder> {
     }
   }
 
+  String formatDate(String timestamp) {
+    DateTime parsedDate = DateTime.parse(timestamp);
+    return DateFormat('dd-MM-yyyy').format(parsedDate);
+  }
+
   Future<void> order(int bookingId, int status) async {
     try {
       final weaverId = supabase.auth.currentUser!.id;
@@ -132,8 +138,11 @@ class _MyorderDataState extends State<Myorder> {
                         ),
                         SizedBox(height: 5),
                         Text(
-                          "Date: ${bookingItems['created_at']}",
-                          style: TextStyle(fontSize: 14, color: Colors.grey),
+                          "Date: ${formatDate(bookingItems['created_at'])}",
+                          style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold),
                         ),
                         SizedBox(height: 5),
                         Text(

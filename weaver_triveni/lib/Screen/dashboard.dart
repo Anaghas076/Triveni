@@ -150,34 +150,6 @@ class _OrdersDataState extends State<Orders> {
                     padding: EdgeInsets.all(12),
                     child: Column(
                       children: [
-                        // Card(
-                        //   child: Column(
-                        //     children: [
-                        //       Icon(
-                        //         Icons.architecture,
-                        //         color: const Color.fromARGB(255, 3, 1, 68),
-                        //         size: 70,
-                        //       ),
-                        //       Text(
-                        //         "Hello ",
-                        //         style: TextStyle(
-                        //             color: const Color.fromARGB(255, 3, 1, 68),
-                        //             fontSize: 18,
-                        //             fontWeight: FontWeight.bold),
-                        //       ),
-                        //       Text(
-                        //         weaverid['weaver_name'] ?? "weaver Name",
-                        //         style: TextStyle(
-                        //             color: const Color.fromARGB(255, 3, 1, 68),
-                        //             fontSize: 18,
-                        //             fontWeight: FontWeight.bold),
-                        //       ),
-                        //     ],
-                        //   ),
-                        // ),
-                        // SizedBox(
-                        //   height: 10,
-                        // ),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [

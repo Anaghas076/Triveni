@@ -2,7 +2,6 @@ import 'package:weaver_triveni/Component/formvalidation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:weaver_triveni/main.dart';
-import 'package:weaver_triveni/main.dart';
 
 class Addexpense extends StatefulWidget {
   const Addexpense({super.key});

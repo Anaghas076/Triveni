@@ -38,63 +38,54 @@ class _ComplaintState extends State<Complaint> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title: Text('Complaints')),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: GridView.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 5,
-            crossAxisSpacing: 10,
-            mainAxisSpacing: 10,
-            childAspectRatio: 1,
-          ),
-          itemCount: complaints.length,
-          itemBuilder: (context, index) {
-            final data = complaints[index];
-            final user = data['tbl_user']; // tbl_user contains the user details
-            return Card(
-              elevation: 3,
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("Customer: ${user['user_name'] ?? ""}"),
-                    SizedBox(height: 5),
-                    Text("Contact: ${user['user_contact'] ?? ""}"),
-                    SizedBox(height: 5),
-                    Text(
-                      data['complaint_title'] ?? " ",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                    SizedBox(height: 5),
-                    Text(
-                      data['complaint_description'] ?? " ",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                    SizedBox(height: 5),
-                    SizedBox(height: 10),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  Reply(complaintId: data['complaint_id']),
-                            ));
-                      },
-                      child: Text('Reply'),
-                    ),
-                  ],
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: DataTable(
+            columnSpacing: 20.0,
+            columns: [
+              DataColumn(label: Text('Customer')),
+              DataColumn(label: Text('Contact')),
+              DataColumn(label: Text('Title')),
+              DataColumn(label: Text('Description')),
+              DataColumn(label: Text('Action')),
+            ],
+            rows: complaints.map((data) {
+              final user = data['tbl_user'];
+              return DataRow(cells: [
+                DataCell(Text(user['user_name'] ?? "")),
+                DataCell(Text(user['user_contact'] ?? "")),
+                DataCell(Text(data['complaint_title'] ?? "")),
+                DataCell(Text(data['complaint_description'] ?? "")),
+                DataCell(
+                  SizedBox(
+                    width: 100,
+                    child: data['complaint_status'] == 0
+                        ? ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      Reply(complaintId: data['complaint_id']),
+                                ),
+                              );
+                            },
+                            child: Text('Reply'),
+                          )
+                        : Center(
+                            child: Text(
+                              'Replied',
+                              style: TextStyle(color: Colors.green),
+                            ),
+                          ),
+                  ),
                 ),
-              ),
-            );
-          },
+              ]);
+            }).toList(),
+          ),
         ),
       ),
     );
