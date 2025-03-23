@@ -112,7 +112,9 @@ class _ArtisanReportWidgetState extends State<ArtisanReportWidget> {
             child: BarChart(
               BarChartData(
                 alignment: BarChartAlignment.spaceAround,
-                maxY: (artisanWorkCount.values.reduce((a, b) => a > b ? a : b) + 1).toDouble(),
+                maxY: (artisanWorkCount.values.reduce((a, b) => a > b ? a : b) +
+                        1)
+                    .toDouble(),
                 barGroups: _buildBarGroups(),
                 titlesData: FlTitlesData(
                   leftTitles: AxisTitles(
@@ -134,15 +136,16 @@ class _ArtisanReportWidgetState extends State<ArtisanReportWidget> {
                       getTitlesWidget: (value, meta) {
                         final artisanId =
                             artisanWorkCount.keys.toList()[value.toInt()];
-                        final name =
-                            artisanNames[artisanId] ?? artisanId.substring(0, 6);
+                        final name = artisanNames[artisanId] ??
+                            artisanId.substring(0, 6);
                         return SideTitleWidget(
                           meta: meta,
                           child: RotatedBox(
                             quarterTurns: 3,
                             child: Text(
                               name,
-                              style: TextStyle(fontSize: 10), // Reduced font size
+                              style:
+                                  TextStyle(fontSize: 10), // Reduced font size
                               textAlign: TextAlign.center,
                             ),
                           ),
@@ -155,7 +158,8 @@ class _ArtisanReportWidgetState extends State<ArtisanReportWidget> {
                   rightTitles:
                       AxisTitles(sideTitles: SideTitles(showTitles: false)),
                 ),
-                borderData: FlBorderData(border: Border(
+                borderData: FlBorderData(
+                    border: Border(
                   left: BorderSide(color: Colors.black, width: 1),
                   bottom: BorderSide(color: Colors.black, width: 1),
                 )),
@@ -191,7 +195,8 @@ class _ArtisanReportWidgetState extends State<ArtisanReportWidget> {
     return sortedKeys.asMap().entries.map((entry) {
       final index = entry.key;
       final artisanId = entry.value;
-      print("Index: $index, artisan: ${artisanNames[artisanId]}, Count: ${artisanWorkCount[artisanId]}");
+      print(
+          "Index: $index, artisan: ${artisanNames[artisanId]}, Count: ${artisanWorkCount[artisanId]}");
       return BarChartGroupData(
         x: index,
         barRods: [
