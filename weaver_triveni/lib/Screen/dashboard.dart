@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:weaver_triveni/Screen/custom.dart';
 import 'package:weaver_triveni/main.dart';
+import 'package:intl/intl.dart';
 
 class Orders extends StatefulWidget {
   @override
@@ -20,6 +21,11 @@ class _OrdersDataState extends State<Orders> {
     fetchWeaver();
     fetchBooking();
     fetchName();
+  }
+
+  String formatDate(String timestamp) {
+    DateTime parsedDate = DateTime.parse(timestamp);
+    return DateFormat('dd-MM-yyyy').format(parsedDate);
   }
 
   List<Map<String, dynamic>> bookingData = [];
@@ -149,143 +155,137 @@ class _OrdersDataState extends State<Orders> {
                   child: Padding(
                     padding: EdgeInsets.all(12),
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        // Booking Details
+                        Text(
+                          bookingItems['user_name'] ?? "User Name",
+                          style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(height: 5),
+                        Text(
+                          bookingItems['user_contact'] ?? "User Contact",
+                          style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(height: 5),
+                        Text(
+                          "Date: ${formatDate(bookingItems['created_at'])}",
+                          style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        SizedBox(height: 5),
+                        Text(
+                          "Total Amount: ₹${bookingItems['booking_amount']}",
+                          style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.green,
+                              fontWeight: FontWeight.bold),
+                        ),
+
+                        SizedBox(height: 10),
+
+                        // Cart Items List
                         Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: cartData.map<Widget>((cartItem) {
+                            return ListTile(
+                              leading: Image.network(
+                                cartItem['product_photo'] ?? "",
+                                width: 60,
+                                height: 60,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) =>
+                                    Icon(Icons.image_not_supported, size: 50),
+                              ),
+                              title: Text(
+                                cartItem['product_name'] ?? "Product Name",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("Code: ${cartItem['product_code']}"),
+                                  Text("QTY: ${cartItem['cart_quantity']}"),
+                                  cartItem['isCustom']
+                                      ? ElevatedButton(
+                                          onPressed: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      Viewdesign(
+                                                    cartId: cartItem['cart_id'],
+                                                    // customs:cartItem['customData']
+                                                  ),
+                                                ));
+                                          },
+                                          child: Text("View Design",
+                                              style: TextStyle(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.bold)))
+                                      : SizedBox()
+                                ],
+                              ),
+                              trailing: Text(
+                                " ₹${cartItem['total']}",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+
+                        SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            // Booking Details
-                            Text(
-                              bookingItems['user_name'] ?? "User Name",
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(height: 5),
-                            Text(
-                              bookingItems['user_contact'] ?? "User Contact",
-                              style:
-                                  TextStyle(fontSize: 14, color: Colors.green),
-                            ),
-                            SizedBox(height: 5),
-                            Text(
-                              "Date: ${bookingItems['created_at']}",
-                              style:
-                                  TextStyle(fontSize: 14, color: Colors.grey),
-                            ),
-                            SizedBox(height: 5),
-                            Text(
-                              "Total Amount: ₹${bookingItems['booking_amount']}",
-                              style:
-                                  TextStyle(fontSize: 14, color: Colors.green),
-                            ),
-
-                            SizedBox(height: 10),
-
-                            // Cart Items List
-                            Column(
-                              children: cartData.map<Widget>((cartItem) {
-                                return ListTile(
-                                  leading: Image.network(
-                                    cartItem['product_photo'] ?? "",
-                                    width: 60,
-                                    height: 60,
-                                    fit: BoxFit.cover,
-                                    errorBuilder:
-                                        (context, error, stackTrace) => Icon(
-                                            Icons.image_not_supported,
-                                            size: 50),
-                                  ),
-                                  title: Text(
-                                    cartItem['product_name'] ?? "Product Name",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                  subtitle: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text("Code: ${cartItem['product_code']}"),
-                                      Text("QTY: ${cartItem['cart_quantity']}"),
-                                      cartItem['isCustom']
-                                          ? ElevatedButton(
-                                              onPressed: () {
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          Viewdesign(
-                                                        cartId:
-                                                            cartItem['cart_id'],
-                                                        // customs:cartItem['customData']
-                                                      ),
-                                                    ));
-                                              },
-                                              child: Text("View Design",
-                                                  style: TextStyle(
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.bold)))
-                                          : SizedBox()
-                                    ],
-                                  ),
-                                  trailing: Text(
-                                    " ₹${cartItem['total']}",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black),
-                                  ),
-                                );
-                              }).toList(),
-                            ),
-
-                            SizedBox(height: 10),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    if (bookingItems['booking_status'] == 2)
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          order(bookingItems['booking_id'], 3);
-                                        },
-                                        child: Text(
-                                          "Accept",
-                                          style: TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ),
-                                    if (bookingItems['booking_status'] == 3)
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          order(bookingItems['booking_id'], 4);
-                                        },
-                                        child: Text(
-                                          "Complete",
-                                          style: TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ),
-                                  ],
-                                ),
-                                Text(
-                                  bookingItems['booking_status'] == 2
-                                      ? "New Order"
-                                      : bookingItems['booking_status'] == 3
-                                          ? " Accepted"
-                                          : bookingItems['booking_status'] >= 4
-                                              ? " Completed"
-                                              : "Unknown Status", // Default case if status doesn't match
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold),
-                                ),
+                                if (bookingItems['booking_status'] == 2)
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      order(bookingItems['booking_id'], 3);
+                                    },
+                                    child: Text(
+                                      "Accept",
+                                      style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                if (bookingItems['booking_status'] == 3)
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      order(bookingItems['booking_id'], 4);
+                                    },
+                                    child: Text(
+                                      "Complete",
+                                      style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
                               ],
+                            ),
+                            Text(
+                              bookingItems['booking_status'] == 2
+                                  ? "New Order"
+                                  : bookingItems['booking_status'] == 3
+                                      ? " Accepted"
+                                      : bookingItems['booking_status'] >= 4
+                                          ? " Completed"
+                                          : "Unknown Status", // Default case if status doesn't match
+                              style: TextStyle(
+                                  fontSize: 15, fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),

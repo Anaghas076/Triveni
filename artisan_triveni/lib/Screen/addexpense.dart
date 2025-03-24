@@ -42,7 +42,10 @@ class _AddexpenseState extends State<Addexpense> {
 
   Future<void> fetchexpense() async {
     try {
-      final response = await supabase.from('tbl_daily').select();
+      final response = await supabase
+          .from('tbl_daily')
+          .select()
+          .eq('artisan_id', supabase.auth.currentUser!.id);
       setState(() {
         daily = response;
       });
@@ -57,7 +60,7 @@ class _AddexpenseState extends State<Addexpense> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("Deleted"),
-          backgroundColor: const Color.fromARGB(255, 54, 3, 116),
+          backgroundColor: const Color.fromARGB(255, 3, 1, 68),
         ),
       );
       fetchexpense();

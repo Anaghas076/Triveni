@@ -78,7 +78,9 @@ class _ComplaintState extends State<Complaint> {
                         : Center(
                             child: Text(
                               'Replied',
-                              style: TextStyle(color: Colors.green),
+                              style: TextStyle(
+                                color: const Color.fromARGB(255, 3, 1, 68),
+                              ),
                             ),
                           ),
                   ),

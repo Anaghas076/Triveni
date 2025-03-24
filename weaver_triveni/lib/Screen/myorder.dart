@@ -128,13 +128,16 @@ class _MyorderDataState extends State<Myorder> {
                           bookingItems['user_name'] ?? "User Name",
                           style: TextStyle(
                               fontSize: 14,
-                              color: Colors.grey,
+                              color: Colors.black,
                               fontWeight: FontWeight.bold),
                         ),
                         SizedBox(height: 5),
                         Text(
                           bookingItems['user_contact'] ?? "User Contact",
-                          style: TextStyle(fontSize: 14, color: Colors.green),
+                          style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold),
                         ),
                         SizedBox(height: 5),
                         Text(
@@ -147,7 +150,10 @@ class _MyorderDataState extends State<Myorder> {
                         SizedBox(height: 5),
                         Text(
                           "Total Amount: ₹${bookingItems['booking_amount']}",
-                          style: TextStyle(fontSize: 14, color: Colors.green),
+                          style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.green,
+                              fontWeight: FontWeight.bold),
                         ),
 
                         SizedBox(height: 10),

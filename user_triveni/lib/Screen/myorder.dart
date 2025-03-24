@@ -225,7 +225,23 @@ class _MybookingDataState extends State<Myorder> {
                               color: Colors.black,
                               fontWeight: FontWeight.bold),
                         ),
-                        SizedBox(height: 10),
+
+                        Text(
+                          getStatusText(bookingItems['booking_status']),
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.green,
+                          ),
+                        ),
+                        Text(
+                          "Total Amount: ₹${bookingItems['booking_amount']}",
+                          style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold),
+                        ),
+
                         Column(
                           children: cartData.map<Widget>((cartItem) {
                             return Column(
@@ -256,114 +272,92 @@ class _MybookingDataState extends State<Myorder> {
                                       Text("QTY: ${cartItem['cart_quantity']}"),
                                     ],
                                   ),
-                                  trailing: Column(
-                                    children: [
-                                      Text(
-                                        "Rs.${cartItem['total']}",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black),
-                                      ),
-                                      SizedBox(height: 10),
-                                      if (bookingItems['booking_status'] == 12)
-                                        SizedBox(
-                                          width: 110,
-                                          height: 30,
-                                          child: ElevatedButton(
-                                            onPressed: () {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          Postcomplaint(
-                                                              productId: cartItem[
-                                                                  'product_id'])));
-                                            },
-                                            child: Text(
-                                              "Complaint",
-                                              style: TextStyle(
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                          ),
-                                        ),
-                                    ],
+                                  trailing: Text(
+                                    "Rs.${cartItem['total']}",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black),
                                   ),
                                 ),
+                                SizedBox(height: 10),
                                 if (bookingItems['booking_status'] == 12)
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => Rating(
-                                              pid: cartItem['product_id']),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      Postcomplaint(
+                                                          productId: cartItem[
+                                                              'product_id'])));
+                                        },
+                                        child: Text("Complaint",
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold)),
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => Rating(
+                                                  pid: cartItem['product_id']),
+                                            ),
+                                          );
+                                        },
+                                        child: Text("Rate",
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold)),
+                                      ),
+                                      if (bookingItems['booking_status'] == 12)
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            generateBill(bookingItems);
+                                          },
+                                          child: Text("Generate Bill",
+                                              style: TextStyle(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.bold)),
                                         ),
-                                      );
-                                    },
-                                    child: Text(
-                                      "Rate",
-                                      style: TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.bold),
-                                    ),
+                                    ],
                                   ),
                               ],
                             );
                           }).toList(),
                         ),
+
                         SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            if (bookingItems['booking_status'] == 9)
-                              ElevatedButton(
-                                onPressed: () {
-                                  order(bookingItems['booking_id'], 10,
-                                      bookingItems['booking_amount']);
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          PaymentGatewayScreen(
-                                        amt: bookingItems['booking_amount'],
-                                        id: bookingItems['booking_id'],
-                                      ),
-                                    ),
-                                  );
-                                },
-                                child: Text(
-                                  "Pay Amount",
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold),
+
+                        // Payment button (only if status is 9)
+                        if (bookingItems['booking_status'] == 9)
+                          ElevatedButton(
+                            onPressed: () {
+                              order(bookingItems['booking_id'], 10,
+                                  bookingItems['booking_amount']);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PaymentGatewayScreen(
+                                    amt: bookingItems['booking_amount'],
+                                    id: bookingItems['booking_id'],
+                                  ),
                                 ),
-                              ),
-                            SizedBox(width: 5),
-                            Text(
-                              getStatusText(bookingItems['booking_status']),
-                              style: TextStyle(
-                                  fontSize: 15, fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(width: 5),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        bookingItems['booking_status'] == 12
-                            ? ElevatedButton(
-                                onPressed: () {
-                                  generateBill(bookingItems);
-                                },
-                                child: Text(
-                                  "Generate Bill",
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              )
-                            : SizedBox(),
+                              );
+                            },
+                            child: Text("Pay Amount",
+                                style: TextStyle(
+                                    fontSize: 12, fontWeight: FontWeight.bold)),
+                          ),
+
+                        // Status text
+
+                        // Generate Bill button (only if status is 12)
                       ],
                     ),
                   ),

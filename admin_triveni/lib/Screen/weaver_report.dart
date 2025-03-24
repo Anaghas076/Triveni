@@ -104,7 +104,7 @@ class _WeaverReportWidgetState extends State<WeaverReportWidget> {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Colors.blueAccent,
+              color: const Color.fromARGB(255, 27, 1, 69),
             ),
           ),
           SizedBox(height: 16),
@@ -112,7 +112,9 @@ class _WeaverReportWidgetState extends State<WeaverReportWidget> {
             child: BarChart(
               BarChartData(
                 alignment: BarChartAlignment.spaceAround,
-                maxY: (weaverWorkCount.values.reduce((a, b) => a > b ? a : b) + 1).toDouble(),
+                maxY:
+                    (weaverWorkCount.values.reduce((a, b) => a > b ? a : b) + 1)
+                        .toDouble(),
                 barGroups: _buildBarGroups(),
                 titlesData: FlTitlesData(
                   leftTitles: AxisTitles(
@@ -142,7 +144,8 @@ class _WeaverReportWidgetState extends State<WeaverReportWidget> {
                             quarterTurns: 3,
                             child: Text(
                               name,
-                              style: TextStyle(fontSize: 10), // Reduced font size
+                              style:
+                                  TextStyle(fontSize: 10), // Reduced font size
                               textAlign: TextAlign.center,
                             ),
                           ),
@@ -155,7 +158,8 @@ class _WeaverReportWidgetState extends State<WeaverReportWidget> {
                   rightTitles:
                       AxisTitles(sideTitles: SideTitles(showTitles: false)),
                 ),
-                borderData: FlBorderData(border: Border(
+                borderData: FlBorderData(
+                    border: Border(
                   left: BorderSide(color: Colors.black, width: 1),
                   bottom: BorderSide(color: Colors.black, width: 1),
                 )),
@@ -191,13 +195,14 @@ class _WeaverReportWidgetState extends State<WeaverReportWidget> {
     return sortedKeys.asMap().entries.map((entry) {
       final index = entry.key;
       final weaverId = entry.value;
-      print("Index: $index, Weaver: ${weaverNames[weaverId]}, Count: ${weaverWorkCount[weaverId]}");
+      print(
+          "Index: $index, Weaver: ${weaverNames[weaverId]}, Count: ${weaverWorkCount[weaverId]}");
       return BarChartGroupData(
         x: index,
         barRods: [
           BarChartRodData(
             toY: weaverWorkCount[weaverId]!.toDouble(),
-            color: Colors.blue,
+            color: const Color.fromARGB(255, 27, 1, 69),
             width: 18,
             borderRadius: BorderRadius.circular(6),
           ),

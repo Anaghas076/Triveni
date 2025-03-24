@@ -59,10 +59,10 @@ class _ViewdesignState extends State<Viewdesign> {
                 padding: const EdgeInsets.all(10.0),
                 child: GridView.builder(
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 1,
+                    crossAxisCount: 1, // Adjust based on requirement
                     crossAxisSpacing: 10,
                     mainAxisSpacing: 10,
-                    childAspectRatio: 2.5, // Adjusted for better layout
+                    childAspectRatio: 8, // Adjusted for better layout
                   ),
                   itemCount: customs.length,
                   itemBuilder: (context, index) {
@@ -72,33 +72,33 @@ class _ViewdesignState extends State<Viewdesign> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            height: 150, // Further reduced height
-                            width: 150, // Further reduced width
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(12),
-                              image: DecorationImage(
-                                image:
-                                    NetworkImage(data['customization_photo']),
-                                fit: BoxFit.cover,
+                      child: Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Container(
+                              width: 100, // Square size
+                              height: 100,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                image: DecorationImage(
+                                  image: NetworkImage(
+                                      data['customization_photo'] ?? ""),
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                             ),
-                          ),
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                data['customization_description'] ?? '',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    fontSize: 12), // Reduced font size
-                              ),
+                            SizedBox(height: 10),
+                            Text(
+                              data['customization_description'] ??
+                                  "No description available",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: Colors.black54),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     );
                   },

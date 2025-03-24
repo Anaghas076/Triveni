@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:user_triveni/main.dart';
+import 'package:intl/intl.dart';
 
 class Complaint extends StatefulWidget {
   const Complaint({super.key});
@@ -26,6 +27,11 @@ class _ComplaintState extends State<Complaint> {
     } catch (e) {
       print("Error fetching complaints: $e");
     }
+  }
+
+  String formatDate(String timestamp) {
+    DateTime parsedDate = DateTime.parse(timestamp);
+    return DateFormat('dd-MM-yyyy').format(parsedDate);
   }
 
   @override
@@ -57,38 +63,47 @@ class _ComplaintState extends State<Complaint> {
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: complaints.isEmpty
-            ? Center(child: Text("No Complaints Found"))
-            : GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 1, // Adjust based on screen size
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                  childAspectRatio: 1.70,
+            ? Center(
+                child: Text(
+                  "No Complaints Found",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
+              )
+            : ListView.builder(
                 itemCount: complaints.length,
                 itemBuilder: (context, index) {
                   final data = complaints[index];
                   final product = data['tbl_product'] ?? {};
 
                   return Card(
+                    color: Colors.white,
                     elevation: 3,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
+                    margin: EdgeInsets.symmetric(vertical: 8, horizontal: 5),
                     child: Padding(
-                      padding: const EdgeInsets.all(10.0),
+                      padding: const EdgeInsets.all(12.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Date: ${formatDate(data['created_at'])}",
+                                style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
                           Divider(),
                           Text(
-                            " ${data['created_at'] ?? "N/A"}",
-                            style: TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(height: 5),
-                          Text(
-                            "Product: ${product['product_name'] ?? "N/A"}",
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                            "Product Code: ${product['product_code'] ?? "N/A"}",
+                            style: TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 16),
                           ),
                           SizedBox(height: 5),
                           Text(
@@ -105,11 +120,18 @@ class _ComplaintState extends State<Complaint> {
                             style: TextStyle(fontSize: 14),
                           ),
                           SizedBox(height: 5),
-                          Text(
-                            data['complaint_reply'] ?? "No Description",
-                            style: TextStyle(fontSize: 14),
+                          Container(
+                            padding: EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: const Color.fromARGB(255, 3, 1, 68),
+                              borderRadius: BorderRadius.circular(5),
+                            ),
+                            child: Text(
+                              data['complaint_reply'] ?? "No Reply Yet",
+                              style:
+                                  TextStyle(fontSize: 14, color: Colors.white),
+                            ),
                           ),
-                          SizedBox(height: 5),
                         ],
                       ),
                     ),

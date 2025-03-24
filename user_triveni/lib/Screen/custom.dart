@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:user_triveni/Component/formvalidation.dart';
+import 'package:user_triveni/Screen/myorder.dart';
 import 'package:user_triveni/Screen/viewdesign.dart';
 import 'package:user_triveni/main.dart';
 
@@ -64,11 +65,18 @@ class _CustomState extends State<Custom> {
           'customization_description': description,
           'cart_id': widget.cartId,
         });
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Myorder(),
+            ));
+
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(
               "Order update: custom order requires an extra fee, confirmed by the admin before payment."),
           backgroundColor: const Color.fromARGB(255, 3, 1, 68),
         ));
+
         setState(() {
           _image = null;
         });
@@ -155,9 +163,7 @@ class _CustomState extends State<Custom> {
                 //   Icons.description,
                 //   color: const Color.fromARGB(255, 7, 2, 54),
                 // ),
-                hintText:
-                    " Description \n Work \n Size \n Color \n Other Specific Requests",
-
+                hintText: " Description",
                 hintStyle: TextStyle(
                     color: const Color.fromARGB(255, 169, 168, 168),
                     fontWeight: FontWeight.bold),

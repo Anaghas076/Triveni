@@ -17,7 +17,7 @@ class _MybookingDataState extends State<Booking> {
           .from('tbl_booking')
           .select(
               "*, tbl_cart(*, tbl_product(*)), tbl_user(user_name, user_contact)")
-          .gte('booking_status', 5); // Ensure only valid bookings are fetched
+          .gte('booking_status', 6); // Ensure only valid bookings are fetched
 
       List<Map<String, dynamic>> orders = [];
 

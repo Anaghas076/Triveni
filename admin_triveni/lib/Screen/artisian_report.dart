@@ -104,7 +104,7 @@ class _ArtisanReportWidgetState extends State<ArtisanReportWidget> {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Colors.blueAccent,
+              color: const Color.fromARGB(255, 27, 1, 69),
             ),
           ),
           SizedBox(height: 16),
@@ -202,7 +202,7 @@ class _ArtisanReportWidgetState extends State<ArtisanReportWidget> {
         barRods: [
           BarChartRodData(
             toY: artisanWorkCount[artisanId]!.toDouble(),
-            color: Colors.blue,
+            color: const Color.fromARGB(255, 27, 1, 69),
             width: 18,
             borderRadius: BorderRadius.circular(6),
           ),
