@@ -19,7 +19,7 @@ class _HomepageState extends State<Homepage> {
 
   // List of pages for bottom navigation
   final List<Widget> pageContent = [
-    Orders(), // New HomeScreen widget
+    Homecontent(), // New HomeScreen widget
     Profile(), // Dummy category page
     Myorder(),
     Addexpense(),

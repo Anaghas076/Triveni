@@ -91,9 +91,10 @@ class _SearchState extends State<Search> {
   // Filter products based on search keyword and selected filters
   void _filterProducts() {
     String query = searchController.text.toLowerCase();
+    print(
+        "Filtering with: query=$query, cat=$selectedCat, sub=$selectedSub, type=$selectedType, size=$selectedSize");
     setState(() {
       filteredProducts = products.where((product) {
-        // Keyword search
         bool matchesKeyword =
             product['product_name'].toString().toLowerCase().contains(query) ||
                 product['product_description']
@@ -101,22 +102,21 @@ class _SearchState extends State<Search> {
                     .toLowerCase()
                     .contains(query);
 
-        // Category filter
         bool matchesCategory = selectedCat == null ||
-            product['tbl_subcategory']['tbl_category']['category_id']
-                    .toString() ==
-                selectedCat;
+            (product['tbl_subcategory'] != null &&
+                product['tbl_subcategory']['tbl_category'] != null &&
+                product['tbl_subcategory']['tbl_category']['category_id']
+                        .toString() ==
+                    selectedCat);
 
-        // Subcategory filter
         bool matchesSubcategory = selectedSub == null ||
-            product['tbl_subcategory']['subcategory_id'].toString() ==
-                selectedSub;
+            (product['tbl_subcategory'] != null &&
+                product['tbl_subcategory']['subcategory_id'].toString() ==
+                    selectedSub);
 
-        // Type filter
         bool matchesType =
             selectedType == 'All' || product['product_type'] == selectedType;
 
-        // Size filter
         bool matchesSize = selectedSize == 'All' ||
             (selectedSize == 'Free Size' && product['product_size'] == true) ||
             (selectedSize == 'No Size' && product['product_size'] == false);
@@ -127,6 +127,8 @@ class _SearchState extends State<Search> {
             matchesType &&
             matchesSize;
       }).toList();
+      print(
+          "Filtered products count: ${filteredProducts.length}"); // Should print a number
     });
   }
 
@@ -176,6 +178,9 @@ class _SearchState extends State<Search> {
                           dialogSetState(() {
                             selectedCat = value;
                             selectedSub = null;
+                          });
+                          setState(() {
+                            _filterProducts(); // Update main widget state
                           });
                         },
                       ),
@@ -407,13 +412,13 @@ class _SearchState extends State<Search> {
                 ),
                 TextButton(
                   onPressed: () {
-                    _filterProducts(); // Apply filters
+                    setState(() {
+                      _filterProducts(); // Apply filters only here
+                    });
                     Navigator.pop(context);
                   },
-                  child: const Text(
-                    "Apply",
-                    style: TextStyle(color: Colors.white),
-                  ),
+                  child: const Text("Apply",
+                      style: TextStyle(color: Colors.white)),
                 ),
               ],
               backgroundColor: const Color.fromARGB(255, 3, 1, 68),
@@ -466,9 +471,8 @@ class _SearchState extends State<Search> {
                 childAspectRatio: 0.52,
               ),
               itemBuilder: (context, index) {
-                final data = filteredProducts[index]; // Use filtered list
-
-                return ProductCard(productData: products[index]);
+                final data = filteredProducts[index];
+                return ProductCard(productData: data);
               },
               itemCount: filteredProducts.length,
             ),

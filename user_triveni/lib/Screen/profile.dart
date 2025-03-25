@@ -69,38 +69,13 @@ class _ProfileState extends State<Profile> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Card(
-              elevation: 3,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)),
-              child: Padding(
-                padding: EdgeInsets.all(12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text("Wallet Balance",
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold)),
-                    SizedBox(height: 5),
-                    Text("₹$walletBalance",
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.green)),
-                    Divider(),
-                    Text("Credited Points: $walletCredit",
-                        style: TextStyle(fontSize: 14, color: Colors.blue)),
-                  ],
-                ),
-              ),
-            ),
             SizedBox(height: 25),
             Expanded(
               child: SingleChildScrollView(
                 child: Center(
                   child: Container(
                     width: 400,
+                    height: 330,
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(12),
@@ -145,7 +120,9 @@ class _ProfileState extends State<Profile> {
                               child: Text(
                                 userid['user_address'] ?? "Address unavailable",
                                 style: TextStyle(
-                                    fontSize: 14, color: Colors.black54),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                    color: Colors.black),
                               ),
                             ),
                           ],
@@ -162,7 +139,9 @@ class _ProfileState extends State<Profile> {
                             Text(
                               userid['user_contact'] ?? "No contact info",
                               style: TextStyle(
-                                  fontSize: 14, color: Colors.black54),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                  color: Colors.black),
                             ),
                           ],
                         ),
@@ -178,51 +157,57 @@ class _ProfileState extends State<Profile> {
                             Text(
                               userid['user_email'] ?? "No email",
                               style: TextStyle(
-                                  fontSize: 14, color: Colors.black54),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 14,
+                                  color: Colors.black),
                             ),
                           ],
                         ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Row(
-                          children: [
-                            ElevatedButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => Edit(),
-                                      ));
-                                },
-                                child: Text("Edit")),
-                            SizedBox(
-                              width: 50,
-                            ),
-                            ElevatedButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => Changepassword(),
-                                      ));
-                                },
-                                child: Text("Change password")),
-                          ],
-                        )
                       ],
                     ),
                   ),
                 ),
               ),
             ),
-            SizedBox(height: 10),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 3, 1, 68),
+                  minimumSize: Size(double.infinity, 50)),
+              onPressed: () => Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => Edit())),
+              child: Text("Edit Profile",
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white,
+                  )),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 3, 1, 68),
+                  minimumSize: Size(double.infinity, 50)),
+              onPressed: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => Changepassword())),
+              child: Text("Change Password",
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white,
+                  )),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 3, 1, 68),
                   minimumSize: Size(double.infinity, 50)),
               onPressed: () => Navigator.push(context,
                   MaterialPageRoute(builder: (context) => Complaint())),
-              child: Text("View Complaints", style: TextStyle(fontSize: 16)),
+              child: Text("View Complaints",
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.white,
+                  )),
             ),
           ],
         ),

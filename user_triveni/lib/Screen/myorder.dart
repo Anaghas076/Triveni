@@ -27,7 +27,8 @@ class _MybookingDataState extends State<Myorder> {
 
       final response = await supabase
           .from('tbl_booking')
-          .select(" *, tbl_cart(*, tbl_product(*))")
+          .select(
+              " *, tbl_cart(*, tbl_product(*)), tbl_user(user_name), tbl_artisan(artisan_name), tbl_weaver(weaver_name)")
           .gte('booking_status', 1)
           .eq('user_id', user.id);
 
@@ -51,12 +52,20 @@ class _MybookingDataState extends State<Myorder> {
           });
         }
 
+        // Extract user details
+        Map<String, dynamic> userData = {
+          'user_name': data['tbl_user']['user_name'] ?? 'N/A',
+          'artisan_name': data['tbl_artisan']?['artisan_name'] ?? 'N/A',
+          'weaver_name': data['tbl_weaver']?['weaver_name'] ?? 'N/A',
+        };
+
         orders.add({
           'booking_id': data['booking_id'],
           'booking_status': data['booking_status'],
           'booking_amount': data['booking_amount'],
           'created_at': data['created_at'],
           'cart': cartItems,
+          'user': userData, // Store user details
         });
       }
 
@@ -90,7 +99,6 @@ class _MybookingDataState extends State<Myorder> {
     return DateFormat('dd-MM-yyyy').format(parsedDate);
   }
 
-  // Generate and preview PDF bill
   Future<void> generateBill(Map<String, dynamic> booking) async {
     try {
       final pdf = pw.Document();
@@ -111,6 +119,18 @@ class _MybookingDataState extends State<Myorder> {
                 pw.Text('Date: ${formatDate(booking['created_at'])}'),
                 pw.Text('Total Amount: Rs.${booking['booking_amount']}'),
                 pw.SizedBox(height: 20),
+
+                // User Details Section
+                pw.Text(
+                  'Customer Details:',
+                  style: pw.TextStyle(
+                      fontSize: 18, fontWeight: pw.FontWeight.bold),
+                ),
+                pw.Text('Customer Name: ${booking['user']['user_name']}'),
+                pw.Text('Artisan: ${booking['user']['artisan_name']}'),
+                pw.Text('Weaver: ${booking['user']['weaver_name']}'),
+                pw.SizedBox(height: 20),
+
                 pw.Text(
                   'Items:',
                   style: pw.TextStyle(
@@ -315,22 +335,27 @@ class _MybookingDataState extends State<Myorder> {
                                                 fontSize: 12,
                                                 fontWeight: FontWeight.bold)),
                                       ),
-                                      if (bookingItems['booking_status'] == 12)
-                                        ElevatedButton(
-                                          onPressed: () {
-                                            generateBill(bookingItems);
-                                          },
-                                          child: Text("Generate Bill",
-                                              style: TextStyle(
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.bold)),
-                                        ),
                                     ],
                                   ),
                               ],
                             );
                           }).toList(),
                         ),
+
+                        if (bookingItems['booking_status'] == 12)
+                          SizedBox(
+                            width: 400,
+                            height: 50,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                generateBill(bookingItems);
+                              },
+                              child: Text("Generate Bill",
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.bold)),
+                            ),
+                          ),
 
                         SizedBox(height: 10),
 

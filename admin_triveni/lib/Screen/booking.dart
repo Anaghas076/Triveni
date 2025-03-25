@@ -156,18 +156,24 @@ class _MybookingDataState extends State<Booking> {
 
   Future<void> settleAmount(int id, String name) async {
     try {
-      final response =
-          await supabase.from('tbl_booking').select().maybeSingle().limit(1);
+      final response = await supabase
+          .from('tbl_booking')
+          .select()
+          .eq('booking_id', id)
+          .single(); // Ensures only one row is fetched
+
       await supabase.from('tbl_daily').insert({
         'daily_amount': amountController.text,
-        name: response![name],
+        name: response[name], // Fetch the correct weaver_id or artisan_id
         'daily_type': "INCOME",
         'daily_name': "Salary",
       });
+
       int status = response['payment_status'];
       await supabase
           .from('tbl_booking')
           .update({'payment_status': status + 1}).eq('booking_id', id);
+
       fetchBooking();
     } catch (e) {
       print("Error settling: $e");

@@ -66,7 +66,7 @@ class _AddDesignState extends State<AddDesign> {
         });
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text("Inserted"),
-          backgroundColor: const Color.fromARGB(255, 54, 3, 116),
+          backgroundColor: const Color.fromARGB(255, 3, 1, 68),
         ));
         nameController.clear();
         setState(() {
@@ -84,7 +84,7 @@ class _AddDesignState extends State<AddDesign> {
       await supabase.from('tbl_design').delete().eq('design_id', id);
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Deleted"),
-        backgroundColor: const Color.fromARGB(255, 54, 3, 116),
+        backgroundColor: const Color.fromARGB(255, 3, 1, 68),
       ));
       fetchdesign();
     } catch (e) {
@@ -118,127 +118,165 @@ class _AddDesignState extends State<AddDesign> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 3, 1, 68),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        title: Text(
-          "Add Design",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
+        appBar: AppBar(
+          backgroundColor: const Color.fromARGB(255, 3, 1, 68),
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: Colors.white),
+            onPressed: () {
+              Navigator.pop(context);
+            },
           ),
-        ),
-      ),
-      body: ListView(
-        padding: EdgeInsets.all(20),
-        children: [
-          Form(
-            key: formkey,
-            child: Column(
-              children: [
-                Center(
-                  child: GestureDetector(
-                    onTap: _pickImage,
-                    child: CircleAvatar(
-                      radius: 50,
-                      backgroundColor: const Color.fromARGB(255, 3, 1, 68),
-                      backgroundImage:
-                          _image != null ? FileImage(_image!) : null,
-                      child: _image == null
-                          ? const Icon(Icons.camera_alt,
-                              color: Colors.white, size: 30)
-                          : null,
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                TextFormField(
-                  validator: (value) => FormValidation.validateName(value),
-                  controller: nameController,
-                  style: TextStyle(
-                      color: const Color.fromARGB(255, 3, 1, 68),
-                      fontWeight: FontWeight.bold),
-                  decoration: InputDecoration(
-                    enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                        borderSide: BorderSide(
-                          color: const Color.fromARGB(255, 10, 10, 10),
-                        )),
-                    prefixIcon: Icon(
-                      Icons.description,
-                      color: const Color.fromARGB(255, 7, 2, 54),
-                    ),
-                    hintText: " Name",
-                    hintStyle: TextStyle(
-                        color: const Color.fromARGB(255, 8, 8, 8),
-                        fontWeight: FontWeight.bold),
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-              ],
+          title: Text(
+            "Add Design",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
             ),
           ),
-          ElevatedButton(
-              onPressed: () {
-                if (formkey.currentState!.validate()) {
-                  submit();
-                }
-              },
-              child: Text("Submit")),
-          SizedBox(
-            height: 50,
-          ),
+        ),
+        backgroundColor: Colors.white,
+        body: ListView(padding: EdgeInsets.all(20), children: [
           Container(
+            padding: EdgeInsets.all(20),
             decoration: BoxDecoration(
-                //color: const Color.fromARGB(255, 54, 3, 116),
-                ),
-            child: ListView.builder(
-              itemCount: designs.length,
-              shrinkWrap: true,
-              itemBuilder: (context, index) {
-                final data = designs[index];
-                return ListTile(
-                  leading: CircleAvatar(
-                    backgroundImage: NetworkImage(data['design_photo'] ?? ""),
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(25),
+                border: Border.all(
+                  color: const Color.fromARGB(255, 3, 1, 68),
+                  width: 3,
+                )),
+            child: Form(
+              key: formkey,
+              child: Column(
+                children: [
+                  Center(
+                    child: GestureDetector(
+                      onTap: _pickImage,
+                      child: CircleAvatar(
+                        radius: 50,
+                        backgroundColor: const Color.fromARGB(255, 3, 1, 68),
+                        backgroundImage:
+                            _image != null ? FileImage(_image!) : null,
+                        child: _image == null
+                            ? const Icon(Icons.camera_alt,
+                                color: Colors.white, size: 30)
+                            : null,
+                      ),
+                    ),
                   ),
-                  title: Text(
-                    data['design_name'] ?? "",
+                  SizedBox(
+                    height: 20,
+                  ),
+                  TextFormField(
+                    validator: (value) => FormValidation.validateName(value),
+                    controller: nameController,
                     style: TextStyle(
-                      color: const Color.fromARGB(255, 3, 1, 68),
+                        color: const Color.fromARGB(255, 3, 1, 68),
+                        fontWeight: FontWeight.bold),
+                    decoration: InputDecoration(
+                      enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: BorderSide(
+                            color: const Color.fromARGB(255, 3, 1, 68),
+                            width: 3,
+                          )),
+                      prefixIcon: Icon(
+                        Icons.description,
+                        color: const Color.fromARGB(255, 7, 2, 54),
+                      ),
+                      hintText: " Name",
+                      hintStyle: TextStyle(
+                          color: const Color.fromARGB(255, 8, 8, 8),
+                          fontWeight: FontWeight.bold),
+                      border: OutlineInputBorder(),
                     ),
                   ),
-                  trailing: SizedBox(
-                    width: 100,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        IconButton(
-                          onPressed: () {
-                            delete(data['design_id'] ?? "");
+                  SizedBox(
+                    height: 10,
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 3, 1, 68),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      padding:
+                          EdgeInsets.symmetric(vertical: 15, horizontal: 50),
+                    ),
+                    onPressed: () {
+                      if (formkey.currentState!.validate()) {
+                        submit();
+                      }
+                    },
+                    child: Text("Submit",
+                        style: TextStyle(fontSize: 16, color: Colors.white)),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 15,
+          ),
+          Center(
+            child: Container(
+              width: 350, // Adjust width as needed
+              padding: EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.2),
+                    blurRadius: 5,
+                    spreadRadius: 2,
+                    offset: Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  designs.isNotEmpty
+                      ? ListView.builder(
+                          itemCount: designs.length,
+                          shrinkWrap: true,
+                          physics:
+                              NeverScrollableScrollPhysics(), // Prevent nested scrolling issues
+                          itemBuilder: (context, index) {
+                            final data = designs[index];
+                            return Card(
+                              elevation: 2,
+                              margin: EdgeInsets.symmetric(vertical: 5),
+                              child: ListTile(
+                                leading: CircleAvatar(
+                                  backgroundImage:
+                                      NetworkImage(data['design_photo'] ?? ""),
+                                ),
+                                title: Text(
+                                  data['design_name'] ?? "",
+                                  style: TextStyle(
+                                    color: const Color.fromARGB(255, 3, 1, 68),
+                                  ),
+                                ),
+                                trailing: IconButton(
+                                  onPressed: () {
+                                    delete(data['design_id'] ?? "");
+                                  },
+                                  icon: Icon(Icons.delete, color: Colors.red),
+                                ),
+                              ),
+                            );
                           },
-                          icon: Icon(Icons.delete),
-                          color: const Color.fromARGB(255, 250, 34, 10),
+                        )
+                      : Text(
+                          "No designs available",
+                          style: TextStyle(color: Colors.grey),
                         ),
-                      ],
-                    ),
-                  ),
-                );
-              },
+                ],
+              ),
             ),
           )
-        ],
-      ),
-    );
+        ]));
   }
 }

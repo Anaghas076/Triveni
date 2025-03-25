@@ -139,163 +139,231 @@ class _OrdersDataState extends State<Orders> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: bookingData.isEmpty
-          ? Center(child: Text("No Orders"))
-          : ListView.builder(
-              padding: EdgeInsets.all(10),
-              itemCount: bookingData.length,
-              itemBuilder: (context, index) {
-                final bookingItems = bookingData[index];
-                final cartData = bookingData[index]['cart'];
+        body: Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            SizedBox(
+              width: 170,
+              child: Card(
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.architecture,
+                      color: const Color.fromARGB(255, 3, 1, 68),
+                      size: 70,
+                    ),
+                    Text(
+                      "Hello ",
+                      style: TextStyle(
+                          color: const Color.fromARGB(255, 3, 1, 68),
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      artisanid['artisan_name'] ?? "Artisan Name",
+                      style: TextStyle(
+                          color: const Color.fromARGB(255, 3, 1, 68),
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(
+              width: 170,
+              child: Card(
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.person,
+                      color: const Color.fromARGB(255, 3, 1, 68),
+                      size: 70,
+                    ),
+                    Text(
+                      "Artisan",
+                      style: TextStyle(
+                          color: const Color.fromARGB(255, 3, 1, 68),
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      artisancount.toString(),
+                      style: TextStyle(
+                          color: const Color.fromARGB(255, 3, 1, 68),
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+        Expanded(
+          child: bookingData.isEmpty
+              ? Center(child: Text("No Orders"))
+              : ListView.builder(
+                  padding: EdgeInsets.all(10),
+                  itemCount: bookingData.length,
+                  itemBuilder: (context, index) {
+                    final bookingItems = bookingData[index];
+                    final cartData = bookingData[index]['cart'];
 
-                return Card(
-                  margin: EdgeInsets.symmetric(vertical: 8),
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
-                  child: Padding(
-                    padding: EdgeInsets.all(12),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Booking Details
-                        Text(
-                          bookingItems['user_name'] ?? "User Name",
-                          style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(height: 5),
-                        Text(
-                          bookingItems['user_contact'] ?? "User Contact",
-                          style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(height: 5),
-                        Text(
-                          "Date: ${formatDate(bookingItems['created_at'])}",
-                          style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        SizedBox(height: 5),
-                        Text(
-                          "Total Amount: ₹${bookingItems['booking_amount']}",
-                          style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.green,
-                              fontWeight: FontWeight.bold),
-                        ),
-
-                        SizedBox(height: 10),
-
-                        // Cart Items List
-                        Column(
-                          children: cartData.map<Widget>((cartItem) {
-                            return ListTile(
-                              leading: Image.network(
-                                cartItem['product_photo'] ?? "",
-                                width: 60,
-                                height: 60,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) =>
-                                    Icon(Icons.image_not_supported, size: 50),
-                              ),
-                              title: Text(
-                                cartItem['product_name'] ?? "Product Name",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              subtitle: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text("Code: ${cartItem['product_code']}"),
-                                  Text("QTY: ${cartItem['cart_quantity']}"),
-                                  cartItem['isCustom']
-                                      ? ElevatedButton(
-                                          onPressed: () {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      Viewdesign(
-                                                    cartId: cartItem['cart_id'],
-                                                    // customs:cartItem['customData']
-                                                  ),
-                                                ));
-                                          },
-                                          child: Text("View Design",
-                                              style: TextStyle(
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.bold)))
-                                      : SizedBox()
-                                ],
-                              ),
-                              trailing: Text(
-                                " ₹${cartItem['total']}",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black),
-                              ),
-                            );
-                          }).toList(),
-                        ),
-
-                        SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    return Card(
+                      margin: EdgeInsets.symmetric(vertical: 8),
+                      elevation: 2,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10)),
+                      child: Padding(
+                        padding: EdgeInsets.all(12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            Text(
+                              bookingItems['user_name'] ?? "User Name",
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(height: 5),
+                            Text(
+                              bookingItems['user_contact'] ?? "User Contact",
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(height: 5),
+                            Text(
+                              "Date: ${formatDate(bookingItems['created_at'])}",
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(height: 5),
+                            Text(
+                              "Total Amount: ₹${bookingItems['booking_amount']}",
+                              style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.green,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                            SizedBox(height: 10),
+                            Column(
+                              children: cartData.map<Widget>((cartItem) {
+                                return ListTile(
+                                  leading: Image.network(
+                                    cartItem['product_photo'] ?? "",
+                                    width: 60,
+                                    height: 60,
+                                    fit: BoxFit.cover,
+                                    errorBuilder:
+                                        (context, error, stackTrace) => Icon(
+                                            Icons.image_not_supported,
+                                            size: 50),
+                                  ),
+                                  title: Text(
+                                    cartItem['product_name'] ?? "Product Name",
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  subtitle: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text("Code: ${cartItem['product_code']}"),
+                                      Text("QTY: ${cartItem['cart_quantity']}"),
+                                      cartItem['isCustom']
+                                          ? ElevatedButton(
+                                              onPressed: () {
+                                                Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          Viewdesign(
+                                                        cartId:
+                                                            cartItem['cart_id'],
+                                                      ),
+                                                    ));
+                                              },
+                                              child: Text("View Design",
+                                                  style: TextStyle(
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.bold)))
+                                          : SizedBox()
+                                    ],
+                                  ),
+                                  trailing: Text(
+                                    " ₹${cartItem['total']}",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black),
+                                  ),
+                                );
+                              }).toList(),
+                            ),
+                            SizedBox(height: 10),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                if (bookingItems['booking_status'] == 5)
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      order(bookingItems['booking_id'], 6);
-                                    },
-                                    child: Text(
-                                      "Accept",
-                                      style: TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
-                                if (bookingItems['booking_status'] == 6)
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      order(bookingItems['booking_id'], 7);
-                                    },
-                                    child: Text(
-                                      "Complete",
-                                      style: TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  ),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    if (bookingItems['booking_status'] == 5)
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          order(bookingItems['booking_id'], 6);
+                                        },
+                                        child: Text(
+                                          "Accept",
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                    if (bookingItems['booking_status'] == 6)
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          order(bookingItems['booking_id'], 7);
+                                        },
+                                        child: Text(
+                                          "Complete",
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                                Text(
+                                  bookingItems['booking_status'] == 5
+                                      ? "New Order"
+                                      : bookingItems['booking_status'] == 6
+                                          ? "Accepted"
+                                          : bookingItems['booking_status'] >= 7
+                                              ? "Completed"
+                                              : "Unknown Status",
+                                  style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold),
+                                ),
                               ],
-                            ),
-                            Text(
-                              bookingItems['booking_status'] == 5
-                                  ? "New Order"
-                                  : bookingItems['booking_status'] == 6
-                                      ? " Accepted"
-                                      : bookingItems['booking_status'] >= 7
-                                          ? " Completed"
-                                          : "Unknown Status", // Default case if status doesn't match
-                              style: TextStyle(
-                                  fontSize: 15, fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
-    );
+                      ),
+                    );
+                  },
+                ),
+        ),
+      ],
+    ));
   }
 }

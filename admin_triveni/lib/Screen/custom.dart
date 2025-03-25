@@ -52,59 +52,62 @@ class _ViewdesignState extends State<Viewdesign> {
           ),
         ),
       ),
-      body: customs.isEmpty
-          ? Center(child: CircularProgressIndicator())
-          : Center(
-              child: Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 1, // Adjust based on requirement
-                    crossAxisSpacing: 10,
-                    mainAxisSpacing: 10,
-                    childAspectRatio: 8, // Adjusted for better layout
-                  ),
-                  itemCount: customs.length,
-                  itemBuilder: (context, index) {
-                    final data = customs[index];
-                    return Card(
-                      elevation: 3,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.all(10),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Container(
-                              width: 100, // Square size
-                              height: 100,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                image: DecorationImage(
-                                  image: NetworkImage(
-                                      data['customization_photo'] ?? ""),
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: 10),
-                            Text(
-                              data['customization_description'] ??
-                                  "No description available",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(color: Colors.black54),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 1, // Adjust based on requirement
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
+              childAspectRatio: 5, // Adjust for better layout
             ),
+            itemCount: customs.length,
+            itemBuilder: (context, index) {
+              final data = customs[index];
+              return Card(
+                elevation: 3,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.all(10),
+                  child: SizedBox.expand(
+                    // Expands to fit available height
+                    child: Column(
+                      mainAxisAlignment:
+                          MainAxisAlignment.center, // Centers all content
+                      children: [
+                        Spacer(), // Push content down
+                        Container(
+                          width: 100, // Square size
+                          height: 100,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            image: DecorationImage(
+                              image: NetworkImage(
+                                  data['customization_photo'] ?? ""),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        Text(
+                          data['customization_description'] ??
+                              "No description available",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.black54),
+                        ),
+                        Spacer(), // Push content up
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ),
     );
   }
 }

@@ -108,37 +108,42 @@ class _ProductdemoState extends State<Productdemo> {
     try {
       final response = await supabase
           .from('tbl_review')
-          .select()
+          .select('user_id, review_rating, review_content, created_at')
           .eq('product_id', widget.product['product_id']);
 
       final reviewsList = List<Map<String, dynamic>>.from(response);
       double totalRating = 0;
-      for (var review in reviewsList) {
-        totalRating += double.parse(review['review_rating'].toString());
-      }
 
-      double avgRating =
-          reviewsList.isNotEmpty ? totalRating / reviewsList.length : 0;
-      print("Review: $reviews");
-      setState(() {
-        reviews = reviewsList;
-        averageRating = avgRating;
-        reviewCount = reviewsList.length;
-      });
+      if (reviewsList.isNotEmpty) {
+        totalRating = reviewsList.fold(
+            0,
+            (sum, review) =>
+                sum + double.parse(review['review_rating'].toString()));
 
-      for (var review in reviews) {
-        final userId = review['user_id'];
-        if (userId != null) {
-          final userResponse = await supabase
-              .from('tbl_user')
-              .select('user_name')
-              .eq('user_aid', userId)
-              .single();
+        double avgRating = totalRating / reviewsList.length;
+        setState(() {
+          reviews = reviewsList;
+          averageRating = avgRating;
+          reviewCount = reviewsList.length;
+        });
 
-          setState(() {
-            userNames[userId] = userResponse['user_name'] ?? 'Anonymous';
-          });
+        // Fetch user names in a single query
+        List<String> userIds =
+            reviewsList.map((r) => r['user_id'].toString()).toList();
+        final userResponse = await supabase
+            .from('tbl_user')
+            .select('user_id, user_name')
+            .inFilter('user_id', userIds);
+
+        // Map user names to user IDs
+        final Map<String, dynamic> fetchedUserNames = {};
+        for (var user in userResponse) {
+          fetchedUserNames[user['user_id'].toString()] = user['user_name'];
         }
+
+        setState(() {
+          userNames = fetchedUserNames;
+        });
       }
     } catch (e) {
       print('Error fetching reviews: $e');
@@ -157,255 +162,261 @@ class _ProductdemoState extends State<Productdemo> {
           },
         ),
       ),
-      body: ListView(
-        children: [
-          Column(
-            children: [
-              if (gallery.isNotEmpty)
-                SizedBox(
-                  height: 250,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal, // Horizontal scrolling
-                    itemCount: gallery.length,
+      body: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: ListView(
+          children: [
+            Column(
+              children: [
+                if (gallery.isNotEmpty)
+                  SizedBox(
+                    height: 250,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal, // Horizontal scrolling
+                      itemCount: gallery.length,
 
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 5),
-                        child: Image.network(
-                          gallery[index][
-                              'gallery_photo'], // Display fetched gallery images
-                          width: 250,
-                          height: 250,
-                          fit: BoxFit.cover,
-                        ),
-                      );
-                    },
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 5),
+                          child: Image.network(
+                            gallery[index][
+                                'gallery_photo'], // Display fetched gallery images
+                            width: 250,
+                            height: 250,
+                            fit: BoxFit.cover,
+                          ),
+                        );
+                      },
+                    ),
+                  )
+                else
+                  Image.network(
+                    widget.product['product_photo'],
+                    width: 200,
+                    height: 200,
                   ),
-                )
-              else
-                Image.network(
-                  widget.product['product_photo'],
-                  width: 200,
-                  height: 200,
-                ),
-              SizedBox(height: 10),
-              if (widget.product['product_size'] == true)
-                Container(
-                  width: 500,
+                SizedBox(height: 10),
+                if (widget.product['product_size'] == true)
+                  Container(
+                    width: 500,
+                    height: 50,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: ["S", "M", "L", "XL"].map((size) {
+                        return Row(
+                          children: [
+                            Radio<String>(
+                              activeColor: Colors.white,
+                              fillColor: WidgetStatePropertyAll(Colors.grey),
+                              value: size,
+                              groupValue: selectedSize,
+                              onChanged: (value) {
+                                setState(() {
+                                  selectedSize = value!;
+                                });
+                              },
+                            ),
+                            Text(
+                              size,
+                              style: TextStyle(
+                                  color: const Color.fromARGB(255, 3, 1, 68),
+                                  fontSize: 17),
+                            ),
+                          ],
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                SizedBox(height: 10),
+                Text(widget.product['product_price'].toString()),
+                SizedBox(height: 10),
+                Text(widget.product['product_code']),
+                SizedBox(height: 10),
+                Text(widget.product['product_type']),
+                SizedBox(height: 10),
+                Text(widget.product['product_description']),
+                SizedBox(height: 20),
+                SizedBox(
                   height: 50,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: ["S", "M", "L", "XL"].map((size) {
-                      return Row(
-                        children: [
-                          Radio<String>(
-                            activeColor: Colors.white,
-                            fillColor: WidgetStatePropertyAll(Colors.grey),
-                            value: size,
-                            groupValue: selectedSize,
-                            onChanged: (value) {
-                              setState(() {
-                                selectedSize = value!;
-                              });
-                            },
-                          ),
-                          Text(
-                            size,
-                            style: TextStyle(
-                                color: const Color.fromARGB(255, 3, 1, 68),
-                                fontSize: 17),
-                          ),
-                        ],
-                      );
-                    }).toList(),
-                  ),
-                ),
-              SizedBox(height: 10),
-              Text(widget.product['product_price'].toString()),
-              SizedBox(height: 10),
-              Text(widget.product['product_code']),
-              SizedBox(height: 10),
-              Text(widget.product['product_type']),
-              SizedBox(height: 10),
-              Text(widget.product['product_description']),
-              SizedBox(height: 20),
-              SizedBox(
-                height: 50,
-                width: 350,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 3, 1, 68),
-                  ),
-                  onPressed: () {
-                    add(widget.product['product_id']);
-                  },
-                  child: Text(
-                    "Add to Cart",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
+                  width: 350,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 3, 1, 68),
+                    ),
+                    onPressed: () {
+                      add(widget.product['product_id']);
+                    },
+                    child: Text(
+                      "Add to Cart",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          // Reviews Section
-          Container(
-            padding: EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Customer Reviews",
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF333333),
+              ],
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            // Reviews Section
+            Container(
+              padding: EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Customer Reviews",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF333333),
+                    ),
                   ),
-                ),
-                SizedBox(height: 16),
+                  SizedBox(height: 16),
 
-                // Reviews List
-                reviews.isEmpty
-                    ? Container(
-                        padding: EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.05),
-                              blurRadius: 10,
-                              offset: Offset(0, 5),
-                            ),
-                          ],
-                        ),
-                        child: Center(
-                          child: Text(
-                            'No reviews yet. Be the first to review!',
-                            style: TextStyle(
-                              color: Color(0xFF999999),
-                              fontStyle: FontStyle.italic,
+                  // Reviews List
+                  reviews.isEmpty
+                      ? Container(
+                          padding: EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.05),
+                                blurRadius: 10,
+                                offset: Offset(0, 5),
+                              ),
+                            ],
+                          ),
+                          child: Center(
+                            child: Text(
+                              'No reviews yet. Be the first to review!',
+                              style: TextStyle(
+                                color: Color(0xFF999999),
+                                fontStyle: FontStyle.italic,
+                              ),
                             ),
                           ),
-                        ),
-                      )
-                    : Column(
-                        children: reviews.map((review) {
-                          final userId = review['user_id'];
-                          final userName = userNames[userId] ?? 'Anonymous';
-                          final rating =
-                              double.parse(review['review_rating'].toString());
+                        )
+                      : Column(
+                          children: reviews.map((review) {
+                            final userId = review['user_id'];
+                            final userName = userNames[userId] ?? 'Anonymous';
+                            final rating = double.parse(
+                                review['review_rating'].toString());
 
-                          return Container(
-                            margin: EdgeInsets.only(bottom: 16),
-                            padding: EdgeInsets.all(16),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(10),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.05),
-                                  blurRadius: 10,
-                                  offset: Offset(0, 5),
-                                ),
-                              ],
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    CircleAvatar(
-                                      backgroundColor:
-                                          Color(0xFF64B5F6).withOpacity(0.2),
-                                      child: Text(
-                                        userName.substring(0, 1).toUpperCase(),
-                                        style: TextStyle(
-                                          color: Color(0xFF64B5F6),
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(width: 12),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          userName,
+                            return Container(
+                              margin: EdgeInsets.only(bottom: 16),
+                              padding: EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(10),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.05),
+                                    blurRadius: 10,
+                                    offset: Offset(0, 5),
+                                  ),
+                                ],
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      CircleAvatar(
+                                        backgroundColor:
+                                            Color(0xFF64B5F6).withOpacity(0.2),
+                                        child: Text(
+                                          userName
+                                              .substring(0, 1)
+                                              .toUpperCase(),
                                           style: TextStyle(
+                                            color: Color(0xFF64B5F6),
                                             fontWeight: FontWeight.bold,
-                                            fontSize: 16,
                                           ),
                                         ),
-                                        SizedBox(height: 4),
-                                        Text(
-                                          '${DateTime.parse(review['created_at']).toLocal().toString().split(' ')[0]}',
-                                          style: TextStyle(
-                                            color: Color(0xFF999999),
-                                            fontSize: 12,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Spacer(),
-                                    Container(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: 8, vertical: 4),
-                                      decoration: BoxDecoration(
-                                        color:
-                                            Color(0xFF64B5F6).withOpacity(0.1),
-                                        borderRadius: BorderRadius.circular(20),
                                       ),
-                                      child: Row(
+                                      SizedBox(width: 12),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
-                                          Icon(
-                                            Icons.star,
-                                            size: 16,
-                                            color: Color(0xFFFFD700),
-                                          ),
-                                          SizedBox(width: 4),
                                           Text(
-                                            rating.toString(),
+                                            userName,
                                             style: TextStyle(
                                               fontWeight: FontWeight.bold,
-                                              color: Color(0xFF333333),
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                          SizedBox(height: 4),
+                                          Text(
+                                            '${DateTime.parse(review['created_at']).toLocal().toString().split(' ')[0]}',
+                                            style: TextStyle(
+                                              color: Color(0xFF999999),
+                                              fontSize: 12,
                                             ),
                                           ),
                                         ],
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 12),
-                                Container(
-                                  padding: EdgeInsets.all(12),
-                                  decoration: BoxDecoration(
-                                    color: Color(0xFFF8F9FA),
-                                    borderRadius: BorderRadius.circular(8),
+                                      Spacer(),
+                                      Container(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 4),
+                                        decoration: BoxDecoration(
+                                          color: Color(0xFF64B5F6)
+                                              .withOpacity(0.1),
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Icon(
+                                              Icons.star,
+                                              size: 16,
+                                              color: Color(0xFFFFD700),
+                                            ),
+                                            SizedBox(width: 4),
+                                            Text(
+                                              rating.toString(),
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Color(0xFF333333),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  child: Text(
-                                    review['review_content'] ?? 'No comment',
-                                    style: TextStyle(
-                                      color: Color(0xFF666666),
-                                      height: 1.5,
+                                  SizedBox(height: 12),
+                                  Container(
+                                    padding: EdgeInsets.all(12),
+                                    decoration: BoxDecoration(
+                                      color: Color(0xFFF8F9FA),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Text(
+                                      review['review_content'] ?? 'No comment',
+                                      style: TextStyle(
+                                        color: Color(0xFF666666),
+                                        height: 1.5,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          );
-                        }).toList(),
-                      ),
-              ],
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

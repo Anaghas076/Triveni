@@ -66,26 +66,41 @@ class _CategorySearchState extends State<CategorySearch> {
   }
 
   List<Map<String, dynamic>> subcategories = [];
-  String? selectedSub;
-  String selectedType = 'All';
-  String selectedSize = 'All';
+  List<Map<String, dynamic>> categories = [];
 
-  Future<void> fetchsubcategory(String categoryId) async {
+  String? selectedCat;
+  String? selectedSub;
+  String selectedType = 'All'; // Default to "All"
+  String selectedSize = 'All'; // Default to "All"
+
+  Future<void> fetchcategory() async {
     try {
-      final response = await supabase
-          .from('tbl_subcategory')
-          .select()
-          .eq('category_id', categoryId);
+      final response = await supabase.from('tbl_category').select();
+      setState(() {
+        categories = List<Map<String, dynamic>>.from(response);
+      });
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
+  Future<void> fetchsubcategory(String id) async {
+    try {
+      final response =
+          await supabase.from('tbl_subcategory').select().eq('category_id', id);
       setState(() {
         subcategories = List<Map<String, dynamic>>.from(response);
       });
     } catch (e) {
-      print("Error fetching subcategories: $e");
+      print("Error: $e");
     }
   }
 
+  // Filter products based on search keyword and selected filters
   void _filterProducts() {
     String query = searchController.text.toLowerCase();
+    print(
+        "Filtering with: query=$query, cat=$selectedCat, sub=$selectedSub, type=$selectedType, size=$selectedSize");
     setState(() {
       filteredProducts = products.where((product) {
         bool matchesKeyword =
@@ -95,9 +110,17 @@ class _CategorySearchState extends State<CategorySearch> {
                     .toLowerCase()
                     .contains(query);
 
+        bool matchesCategory = selectedCat == null ||
+            (product['tbl_subcategory'] != null &&
+                product['tbl_subcategory']['tbl_category'] != null &&
+                product['tbl_subcategory']['tbl_category']['category_id']
+                        .toString() ==
+                    selectedCat);
+
         bool matchesSubcategory = selectedSub == null ||
-            product['tbl_subcategory']['subcategory_id'].toString() ==
-                selectedSub;
+            (product['tbl_subcategory'] != null &&
+                product['tbl_subcategory']['subcategory_id'].toString() ==
+                    selectedSub);
 
         bool matchesType =
             selectedType == 'All' || product['product_type'] == selectedType;
@@ -107,10 +130,13 @@ class _CategorySearchState extends State<CategorySearch> {
             (selectedSize == 'No Size' && product['product_size'] == false);
 
         return matchesKeyword &&
+            matchesCategory &&
             matchesSubcategory &&
             matchesType &&
             matchesSize;
       }).toList();
+      print(
+          "Filtered products count: ${filteredProducts.length}"); // Should print a number
     });
   }
 
@@ -132,7 +158,6 @@ class _CategorySearchState extends State<CategorySearch> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Subcategory Dropdown (only for the selected category)
                       DropdownButtonFormField(
                         validator: (value) =>
                             FormValidation.validateDropdown(value),
@@ -146,18 +171,24 @@ class _CategorySearchState extends State<CategorySearch> {
                           border: OutlineInputBorder(),
                         ),
                         value: selectedSub,
-                        items: subcategories.map((sub) {
-                          return DropdownMenuItem(
-                            value: sub['subcategory_id'].toString(),
-                            child: Text(
-                              sub['subcategory_name'],
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                          );
-                        }).toList(),
+                        items: [
+                          DropdownMenuItem(
+                            value: 'All',
+                            child: Text("All Subcategories",
+                                style: TextStyle(color: Colors.white)),
+                          ),
+                          ...subcategories.map((sub) {
+                            return DropdownMenuItem(
+                              value: sub['subcategory_id'].toString(),
+                              child: Text(sub['subcategory_name'],
+                                  style: TextStyle(color: Colors.white)),
+                            );
+                          }).toList(),
+                        ],
                         onChanged: (value) {
-                          dialogSetState(() {
-                            selectedSub = value;
+                          setState(() {
+                            selectedSub = value.toString();
+                            _filterProducts(); // Ensure filtering updates immediately
                           });
                         },
                       ),

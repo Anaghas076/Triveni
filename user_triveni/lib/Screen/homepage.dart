@@ -30,6 +30,7 @@ class _HomepageState extends State<Homepage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false, // Removes the back arrow
         toolbarHeight: 80,
         backgroundColor: const Color.fromARGB(255, 3, 1, 68),
         title: ListTile(
@@ -43,9 +44,11 @@ class _HomepageState extends State<Homepage> {
                 color: Colors.white, fontWeight: FontWeight.bold, fontSize: 25),
           ),
           subtitle: Text(
-            "Heritage weaves,fashion breathes.",
+            "Handloom with heritage, fashion with soul",
             style: TextStyle(
-                color: Colors.white, fontWeight: FontWeight.bold, fontSize: 9),
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 7.5),
           ),
         ),
         actions: [

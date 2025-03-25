@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:user_triveni/Component/formvalidation.dart';
+import 'package:user_triveni/Screen/cart.dart';
 import 'package:user_triveni/Screen/myorder.dart';
 import 'package:user_triveni/Screen/viewdesign.dart';
 import 'package:user_triveni/main.dart';
@@ -68,7 +69,7 @@ class _CustomState extends State<Custom> {
         Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => Myorder(),
+              builder: (context) => Cart(),
             ));
 
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
