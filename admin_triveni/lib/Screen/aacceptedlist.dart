@@ -108,6 +108,9 @@ class _AacceptedlistState extends State<Aacceptedlist> {
                                 Text(data['artisan_address'] ?? " "),
                                 Text(data['artisan_contact'] ?? " "),
                                 Text(data['artisan_email'] ?? " "),
+                                Text(
+                                  data['artisan_password'] ?? " ",
+                                ),
                               ],
                             ),
                           ),

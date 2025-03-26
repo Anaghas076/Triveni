@@ -19,7 +19,6 @@ class _MyorderDataState extends State<Myorder> {
               "*, tbl_cart(*, tbl_product(*)), tbl_user(user_name, user_contact)")
           .gte('booking_status', 2)
           .eq('weaver_id', supabase.auth.currentUser!.id);
-      ;
 
       List<Map<String, dynamic>> orders = [];
 

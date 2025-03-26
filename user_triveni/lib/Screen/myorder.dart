@@ -17,7 +17,6 @@ class Myorder extends StatefulWidget {
 
 class _MybookingDataState extends State<Myorder> {
   List<Map<String, dynamic>> bookingData = [];
-
   Future<void> fetchBooking() async {
     try {
       final user = supabase.auth.currentUser;
@@ -28,7 +27,7 @@ class _MybookingDataState extends State<Myorder> {
       final response = await supabase
           .from('tbl_booking')
           .select(
-              " *, tbl_cart(*, tbl_product(*)), tbl_user(user_name), tbl_artisan(artisan_name), tbl_weaver(weaver_name)")
+              " *, tbl_cart(*, tbl_product(*)), tbl_user(user_name,user_address,user_contact), tbl_artisan(artisan_name,artisan_address,artisan_contact), tbl_weaver(weaver_name,weaver_address,weaver_contact)")
           .gte('booking_status', 1)
           .eq('user_id', user.id);
 
@@ -52,11 +51,17 @@ class _MybookingDataState extends State<Myorder> {
           });
         }
 
-        // Extract user details
+        // Extract user details safely
         Map<String, dynamic> userData = {
-          'user_name': data['tbl_user']['user_name'] ?? 'N/A',
+          'user_name': data['tbl_user']?['user_name'] ?? 'N/A',
+          'user_address': data['tbl_user']?['user_address'] ?? 'N/A',
+          'user_contact': data['tbl_user']?['user_contact'] ?? 'N/A',
           'artisan_name': data['tbl_artisan']?['artisan_name'] ?? 'N/A',
+          'artisan_address': data['tbl_artisan']?['artisan_address'] ?? 'N/A',
+          'artisan_contact': data['tbl_artisan']?['artisan_contact'] ?? 'N/A',
           'weaver_name': data['tbl_weaver']?['weaver_name'] ?? 'N/A',
+          'weaver_address': data['tbl_weaver']?['weaver_address'] ?? 'N/A',
+          'weaver_contact': data['tbl_weaver']?['weaver_contact'] ?? 'N/A',
         };
 
         orders.add({
@@ -65,13 +70,16 @@ class _MybookingDataState extends State<Myorder> {
           'booking_amount': data['booking_amount'],
           'created_at': data['created_at'],
           'cart': cartItems,
-          'user': userData, // Store user details
+          'user': userData, // Store user details safely
         });
       }
 
-      setState(() {
-        bookingData = orders;
-      });
+      // Check if widget is still mounted before calling setState
+      if (mounted) {
+        setState(() {
+          bookingData = orders;
+        });
+      }
     } catch (e) {
       print("Error: $e");
     }
@@ -127,9 +135,29 @@ class _MybookingDataState extends State<Myorder> {
                       fontSize: 18, fontWeight: pw.FontWeight.bold),
                 ),
                 pw.Text('Customer Name: ${booking['user']['user_name']}'),
-                pw.Text('Artisan: ${booking['user']['artisan_name']}'),
+                pw.Text('Customer Address: ${booking['user']['user_address']}'),
+                pw.Text('Customer Contact: ${booking['user']['user_contact']}'),
+
+                pw.Text(
+                  'Weaver Details:',
+                  style: pw.TextStyle(
+                      fontSize: 18, fontWeight: pw.FontWeight.bold),
+                ),
                 pw.Text('Weaver: ${booking['user']['weaver_name']}'),
+                pw.Text('Weaver Address: ${booking['user']['weaver_address']}'),
+                pw.Text('Weaver Contact: ${booking['user']['weaver_contact']}'),
                 pw.SizedBox(height: 20),
+
+                pw.Text(
+                  'Artisan Details:',
+                  style: pw.TextStyle(
+                      fontSize: 18, fontWeight: pw.FontWeight.bold),
+                ),
+                pw.Text('Artisan: ${booking['user']['artisan_name']}'),
+                pw.Text(
+                    'Artisan Address: ${booking['user']['artisan_address']}'),
+                pw.Text(
+                    'Artisan Contact: ${booking['user']['artisan_contact']}'),
 
                 pw.Text(
                   'Items:',
