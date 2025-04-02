@@ -134,37 +134,40 @@ class _MybookingDataState extends State<Myorder> {
                   style: pw.TextStyle(
                       fontSize: 18, fontWeight: pw.FontWeight.bold),
                 ),
+                pw.SizedBox(height: 5),
                 pw.Text('Customer Name: ${booking['user']['user_name']}'),
                 pw.Text('Customer Address: ${booking['user']['user_address']}'),
                 pw.Text('Customer Contact: ${booking['user']['user_contact']}'),
-
+                pw.SizedBox(height: 10),
                 pw.Text(
                   'Weaver Details:',
                   style: pw.TextStyle(
                       fontSize: 18, fontWeight: pw.FontWeight.bold),
                 ),
+                pw.SizedBox(height: 5),
                 pw.Text('Weaver: ${booking['user']['weaver_name']}'),
                 pw.Text('Weaver Address: ${booking['user']['weaver_address']}'),
                 pw.Text('Weaver Contact: ${booking['user']['weaver_contact']}'),
-                pw.SizedBox(height: 20),
+                pw.SizedBox(height: 10),
 
                 pw.Text(
                   'Artisan Details:',
                   style: pw.TextStyle(
                       fontSize: 18, fontWeight: pw.FontWeight.bold),
                 ),
+                pw.SizedBox(height: 5),
                 pw.Text('Artisan: ${booking['user']['artisan_name']}'),
                 pw.Text(
                     'Artisan Address: ${booking['user']['artisan_address']}'),
                 pw.Text(
                     'Artisan Contact: ${booking['user']['artisan_contact']}'),
+                pw.SizedBox(height: 20),
+                // pw.Text(
+                //   'Items:',
+                //   style: pw.TextStyle(
+                //       fontSize: 18, fontWeight: pw.FontWeight.bold),
+                // ),
 
-                pw.Text(
-                  'Items:',
-                  style: pw.TextStyle(
-                      fontSize: 18, fontWeight: pw.FontWeight.bold),
-                ),
-                pw.SizedBox(height: 10),
                 pw.Table.fromTextArray(
                   headers: [
                     'Product Name',
