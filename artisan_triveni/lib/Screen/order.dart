@@ -1,9 +1,11 @@
-import 'package:artisan_triveni/Screen/custom.dart';
+import 'package:artisan_triveni/screen/custom.dart';
 import 'package:artisan_triveni/main.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class Booking extends StatefulWidget {
+  const Booking({super.key});
+
   @override
   _MybookingDataState createState() => _MybookingDataState();
 }
@@ -11,15 +13,25 @@ class Booking extends StatefulWidget {
 class _MybookingDataState extends State<Booking> {
   List<Map<String, dynamic>> bookingData = [];
   int bookingid = 0;
+  final DateFormat dateFormatter = DateFormat('dd MMM yyyy, hh:mm a');
+
+  String getFormattedDate(String? dateString) {
+    if (dateString == null) return "Not available";
+    try {
+      final DateTime date = DateTime.parse(dateString);
+      return dateFormatter.format(date);
+    } catch (e) {
+      return "Invalid date";
+    }
+  }
+
   Future<void> fetchBooking() async {
     try {
       final response = await supabase
           .from('tbl_booking')
           .select(
               "*, tbl_cart(*, tbl_product(*)), tbl_user(user_name, user_contact)")
-          .gte('booking_status', 6)
-          .eq('artisan_id', supabase.auth.currentUser!.id);
-      ; // Ensure only valid bookings are fetched
+          .gte('booking_status', 5); // Ensure only valid bookings are fetched
 
       List<Map<String, dynamic>> orders = [];
 
@@ -76,11 +88,6 @@ class _MybookingDataState extends State<Booking> {
     }
   }
 
-  String formatDate(String timestamp) {
-    DateTime parsedDate = DateTime.parse(timestamp);
-    return DateFormat('dd-MM-yyyy').format(parsedDate);
-  }
-
   Future<void> order(int bookingId, int status) async {
     try {
       final artisanId = supabase.auth.currentUser!.id;
@@ -128,24 +135,18 @@ class _MybookingDataState extends State<Booking> {
                           bookingItems['user_name'] ?? "User Name",
                           style: TextStyle(
                               fontSize: 14,
-                              color: Colors.black,
+                              color: Colors.grey,
                               fontWeight: FontWeight.bold),
                         ),
                         SizedBox(height: 5),
                         Text(
                           bookingItems['user_contact'] ?? "User Contact",
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.green,
-                          ),
+                          style: TextStyle(fontSize: 14, color: Colors.green),
                         ),
                         SizedBox(height: 5),
                         Text(
-                          "Date: ${formatDate(bookingItems['created_at'])}",
-                          style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold),
+                          "Date: ${getFormattedDate(bookingItems['created_at'])}",
+                          style: TextStyle(fontSize: 14, color: Colors.grey),
                         ),
                         SizedBox(height: 5),
                         Text(
@@ -261,3 +262,4 @@ class _MybookingDataState extends State<Booking> {
     );
   }
 }
+

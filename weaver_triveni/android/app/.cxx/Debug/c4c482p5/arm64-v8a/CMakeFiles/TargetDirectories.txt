@@ -1,0 +1,2 @@
+C:/Projects/Triveni/weaver_triveni/android/app/.cxx/Debug/c4c482p5/arm64-v8a/CMakeFiles/edit_cache.dir
+C:/Projects/Triveni/weaver_triveni/android/app/.cxx/Debug/c4c482p5/arm64-v8a/CMakeFiles/rebuild_cache.dir

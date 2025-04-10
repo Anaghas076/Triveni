@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:user_triveni/Component/formvalidation.dart';
-import 'package:user_triveni/Component/product_card.dart';
-import 'package:user_triveni/Screen/cart.dart';
-import 'package:user_triveni/Screen/productdemo.dart';
+import 'package:user_triveni/component/formvalidation.dart';
+import 'package:user_triveni/component/product_card.dart';
 import 'package:user_triveni/main.dart';
 
 class CategorySearch extends StatefulWidget {
@@ -66,61 +64,37 @@ class _CategorySearchState extends State<CategorySearch> {
   }
 
   List<Map<String, dynamic>> subcategories = [];
-  List<Map<String, dynamic>> categories = [];
-
-  String? selectedCat;
   String? selectedSub;
-  String selectedType = 'All'; // Default to "All"
-  String selectedSize = 'All'; // Default to "All"
+  String selectedType = 'All';
+  String selectedSize = 'All';
 
-  Future<void> fetchcategory() async {
+  Future<void> fetchsubcategory(String categoryId) async {
     try {
-      final response = await supabase.from('tbl_category').select();
-      setState(() {
-        categories = List<Map<String, dynamic>>.from(response);
-      });
-    } catch (e) {
-      print("Error: $e");
-    }
-  }
-
-  Future<void> fetchsubcategory(String id) async {
-    try {
-      final response =
-          await supabase.from('tbl_subcategory').select().eq('category_id', id);
+      final response = await supabase
+          .from('tbl_subcategory')
+          .select()
+          .eq('category_id', categoryId);
       setState(() {
         subcategories = List<Map<String, dynamic>>.from(response);
       });
     } catch (e) {
-      print("Error: $e");
+      print("Error fetching subcategories: $e");
     }
   }
 
-  // Filter products based on search keyword and selected filters
   void _filterProducts() {
     String query = searchController.text.toLowerCase();
-    print(
-        "Filtering with: query=$query, cat=$selectedCat, sub=$selectedSub, type=$selectedType, size=$selectedSize");
+    
     setState(() {
       filteredProducts = products.where((product) {
+        // print("Product name: ${product['product_name']}");
+        print("Query: ${product['product_name']}");
         bool matchesKeyword =
-            product['product_name'].toString().toLowerCase().contains(query) ||
-                product['product_description']
-                    .toString()
-                    .toLowerCase()
-                    .contains(query);
-
-        bool matchesCategory = selectedCat == null ||
-            (product['tbl_subcategory'] != null &&
-                product['tbl_subcategory']['tbl_category'] != null &&
-                product['tbl_subcategory']['tbl_category']['category_id']
-                        .toString() ==
-                    selectedCat);
-
+            product['product_name'].toString().toLowerCase().contains(query);
+        print(matchesKeyword );
         bool matchesSubcategory = selectedSub == null ||
-            (product['tbl_subcategory'] != null &&
-                product['tbl_subcategory']['subcategory_id'].toString() ==
-                    selectedSub);
+            product['tbl_subcategory']['subcategory_id'].toString() ==
+                selectedSub;
 
         bool matchesType =
             selectedType == 'All' || product['product_type'] == selectedType;
@@ -130,13 +104,11 @@ class _CategorySearchState extends State<CategorySearch> {
             (selectedSize == 'No Size' && product['product_size'] == false);
 
         return matchesKeyword &&
-            matchesCategory &&
             matchesSubcategory &&
             matchesType &&
             matchesSize;
       }).toList();
-      print(
-          "Filtered products count: ${filteredProducts.length}"); // Should print a number
+      print("Filtered products: $filteredProducts");
     });
   }
 
@@ -158,6 +130,7 @@ class _CategorySearchState extends State<CategorySearch> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // Subcategory Dropdown (only for the selected category)
                       DropdownButtonFormField(
                         validator: (value) =>
                             FormValidation.validateDropdown(value),
@@ -171,24 +144,18 @@ class _CategorySearchState extends State<CategorySearch> {
                           border: OutlineInputBorder(),
                         ),
                         value: selectedSub,
-                        items: [
-                          DropdownMenuItem(
-                            value: 'All',
-                            child: Text("All Subcategories",
-                                style: TextStyle(color: Colors.white)),
-                          ),
-                          ...subcategories.map((sub) {
-                            return DropdownMenuItem(
-                              value: sub['subcategory_id'].toString(),
-                              child: Text(sub['subcategory_name'],
-                                  style: TextStyle(color: Colors.white)),
-                            );
-                          }).toList(),
-                        ],
+                        items: subcategories.map((sub) {
+                          return DropdownMenuItem(
+                            value: sub['subcategory_id'].toString(),
+                            child: Text(
+                              sub['subcategory_name'],
+                              style: const TextStyle(color: Colors.white),
+                            ),
+                          );
+                        }).toList(),
                         onChanged: (value) {
-                          setState(() {
-                            selectedSub = value.toString();
-                            _filterProducts(); // Ensure filtering updates immediately
+                          dialogSetState(() {
+                            selectedSub = value;
                           });
                         },
                       ),
@@ -416,77 +383,54 @@ class _CategorySearchState extends State<CategorySearch> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 3, 1, 68),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        title: Text(
-          "Category Wise",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(
-              Icons.shopping_cart,
-              color: Colors.yellow,
-            ),
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => Cart(),
-                  ));
-            },
-          ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextFormField(
-                controller: searchController,
-                decoration: InputDecoration(
-                  border: const OutlineInputBorder(),
-                  hintText: "Search by name or description",
-                  suffixIcon: IconButton(
-                    onPressed: () {
-                      showFilter();
-                    },
-                    icon: const Icon(Icons.filter_alt_outlined),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextFormField(
+                  controller: searchController,
+                  decoration: InputDecoration(
+                    border: const OutlineInputBorder(),
+                    hintText: "Search by name or description",
+                    suffixIcon: IconButton(
+                      onPressed: () {
+                        showFilter();
+                      },
+                      icon: const Icon(Icons.filter_alt_outlined),
+                    ),
                   ),
                 ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: GridView.builder(
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: GridView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,
                     crossAxisSpacing: 5,
                     mainAxisSpacing: 5,
-                    childAspectRatio: 0.52),
-                itemBuilder: (context, index) {
-                  final data = filteredProducts[index];
-                  return ProductCard(productData: products[index]);
-                },
-                itemCount: filteredProducts.length,
+                    childAspectRatio: _getResponsiveAspectRatio(context),
+                  ),
+                  itemBuilder: (context, index) {
+                    final data = filteredProducts[index];
+                    return ProductCard(productData: data);
+                  },
+                  itemCount: filteredProducts.length,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
+  }
+  double _getResponsiveAspectRatio(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    // Example: Adjust ratio based on screen width and desired height
+    return (screenWidth / 2) / (screenHeight * 0.4); // Customize as needed
   }
 }

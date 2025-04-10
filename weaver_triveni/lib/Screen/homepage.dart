@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:weaver_triveni/Screen/addexpense.dart';
-import 'package:weaver_triveni/Screen/dashboard.dart';
+import 'package:weaver_triveni/Screen/daily.dart';
+import 'package:weaver_triveni/screen/dashboard.dart';
 
-import 'package:weaver_triveni/Screen/homecontent.dart';
-import 'package:weaver_triveni/Screen/myorder.dart';
+import 'package:weaver_triveni/screen/myorder.dart';
 
-import 'package:weaver_triveni/Screen/profile.dart';
+import 'package:weaver_triveni/screen/profile.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -19,10 +18,10 @@ class _HomepageState extends State<Homepage> {
 
   // List of pages for bottom navigation
   final List<Widget> pageContent = [
-    Homecontent(), // New HomeScreen widget
+    Orders(), // New HomeScreen widget
     Profile(), // Dummy category page
     Myorder(),
-    Addexpense(),
+    DailyWeaver(),
   ];
 
   @override

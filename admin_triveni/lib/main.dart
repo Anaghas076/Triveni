@@ -1,6 +1,6 @@
 // Make sure you import your Dashboard screen
-import 'package:admin_triveni/Screen/homepage.dart';
-import 'package:admin_triveni/Screen/loginpage.dart';
+import 'package:admin_triveni/screen/homepage.dart';
+import 'package:admin_triveni/screen/loginpage.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 

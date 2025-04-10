@@ -1,8 +1,6 @@
-import 'package:artisan_triveni/Component/formvalidation.dart';
-import 'package:artisan_triveni/main.dart';
-import 'package:artisan_triveni/Component/formvalidation.dart';
 import 'package:artisan_triveni/main.dart';
 import 'package:flutter/material.dart';
+import 'package:artisan_triveni/Component/formvalidation.dart';
 
 class Edit extends StatefulWidget {
   const Edit({super.key});
@@ -15,6 +13,7 @@ class _EditState extends State<Edit> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
   final TextEditingController contactController = TextEditingController();
+  bool isLoading = false;
 
   Future<void> fetchartisan() async {
     try {
@@ -60,129 +59,141 @@ class _EditState extends State<Edit> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 3, 1, 68),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
+        elevation: 0,
         title: Text(
           "Edit Profile",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(color: Colors.white),
+        ),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: Center(
-        child: Form(
-          key: formkey,
-          child: Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(25),
-                border: Border.all(
-                  color: const Color.fromARGB(255, 3, 1, 68),
-                  width: 3,
-                )),
-            width: 350,
-            height: 450,
-            child: Padding(
-              padding: EdgeInsets.all(16),
-              child: ListView(
-                children: [
-                  Icon(
-                    Icons.edit,
-                    color: const Color.fromARGB(255, 3, 1, 68),
-                    size: 80,
-                  ),
-                  SizedBox(height: 30),
-                  TextFormField(
-                    validator: (value) => FormValidation.validateName(value),
-                    controller: nameController,
-                    style: TextStyle(
-                        color: const Color.fromARGB(255, 3, 1, 68),
-                        fontWeight: FontWeight.bold),
-                    decoration: InputDecoration(
-                      enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: BorderSide(
-                            color: const Color.fromARGB(255, 10, 10, 10),
-                          )),
-                      prefixIcon: Icon(
-                        Icons.person,
-                        color: const Color.fromARGB(255, 7, 2, 54),
-                      ),
-                      hintText: " artisanname",
-                      hintStyle: TextStyle(
-                          color: const Color.fromARGB(255, 8, 8, 8),
-                          fontWeight: FontWeight.bold),
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  TextFormField(
-                    validator: (value) => FormValidation.validateAddress(value),
-                    controller: addressController,
-                    style: TextStyle(
-                        color: const Color.fromARGB(255, 3, 1, 68),
-                        fontWeight: FontWeight.bold),
-                    decoration: InputDecoration(
-                      enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: BorderSide(
-                            color: const Color.fromARGB(255, 10, 10, 10),
-                          )),
-                      prefixIcon: Icon(
-                        Icons.location_on,
-                        color: const Color.fromARGB(255, 7, 2, 54),
-                      ),
-                      hintText: " Address",
-                      hintStyle: TextStyle(
-                          color: const Color.fromARGB(255, 8, 8, 8),
-                          fontWeight: FontWeight.bold),
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  TextFormField(
-                    validator: (value) => FormValidation.validateContact(value),
-                    controller: contactController,
-                    style: TextStyle(
-                        color: const Color.fromARGB(255, 3, 1, 68),
-                        fontWeight: FontWeight.bold),
-                    decoration: InputDecoration(
-                      enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide: BorderSide(
-                            color: const Color.fromARGB(255, 10, 10, 10),
-                          )),
-                      prefixIcon: Icon(
-                        Icons.phone,
-                        color: const Color.fromARGB(255, 7, 2, 54),
-                      ),
-                      hintText: " Contact number",
-                      hintStyle: TextStyle(
-                          color: const Color.fromARGB(255, 8, 8, 8),
-                          fontWeight: FontWeight.bold),
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  SizedBox(height: 30),
-                  ElevatedButton(
-                    onPressed: () {
-                      if (formkey.currentState!.validate()) {
-                        update();
-                      }
-                    },
-                    child: Text("Update"),
-                  ),
-                ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              height: 100,
+              decoration: BoxDecoration(
+                color: const Color.fromARGB(255, 3, 1, 68),
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(30),
+                  bottomRight: Radius.circular(30),
+                ),
+              ),
+              child: Center(
+                child: Icon(
+                  Icons.edit_note,
+                  size: 60,
+                  color: Colors.white,
+                ),
               ),
             ),
-          ),
+            Padding(
+              padding: EdgeInsets.all(20),
+              child: Form(
+                key: formkey,
+                child: Column(
+                  children: [
+                    SizedBox(height: 20),
+                    TextFormField(
+                      controller: nameController,
+                      decoration: InputDecoration(
+                        labelText: "Full Name",
+                        prefixIcon: Icon(Icons.person, color: Color.fromARGB(255, 54, 3, 116)),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey.shade300),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey.shade300),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Color.fromARGB(255, 54, 3, 116)),
+                        ),
+                      ),
+                      validator: (value) => FormValidation.validateName(value),
+                    ),
+                    SizedBox(height: 20),
+                    TextFormField(
+                      controller: contactController,
+                      decoration: InputDecoration(
+                        labelText: "Phone Number",
+                        prefixIcon: Icon(Icons.phone, color: Color.fromARGB(255, 54, 3, 116)),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey.shade300),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Color.fromARGB(255, 54, 3, 116)),
+                        ),
+                      ),
+                      validator: (value) => FormValidation.validateContact(value),
+                    ),
+                    SizedBox(height: 20),
+                    TextFormField(
+                      controller: addressController,
+                      maxLines: 3,
+                      decoration: InputDecoration(
+                        labelText: "Address",
+                        prefixIcon: Icon(Icons.location_on, color: Color.fromARGB(255, 54, 3, 116)),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey.shade300),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Color.fromARGB(255, 54, 3, 116)),
+                        ),
+                      ),
+                      validator: (value) => FormValidation.validateAddress(value),
+                    ),
+                    SizedBox(height: 40),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          if (formkey.currentState!.validate()) {
+                            setState(() => isLoading = true);
+                            await update();
+                            setState(() => isLoading = false);
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color.fromARGB(255, 3, 1, 68),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                        child: isLoading
+                            ? CircularProgressIndicator(color: Colors.white)
+                            : Text(
+                                "Save Changes",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
+

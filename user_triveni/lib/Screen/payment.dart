@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_credit_card/flutter_credit_card.dart';
-import 'package:user_triveni/Screen/success.dart';
+import 'package:user_triveni/screen/success.dart';
 import 'package:user_triveni/main.dart';
 
 class PaymentGatewayScreen extends StatefulWidget {
@@ -62,7 +62,7 @@ class _PaymentGatewayScreenState extends State<PaymentGatewayScreen> {
 
       if (redeemPoints && availablePoints > 0) {
         // Calculate points needed based on conversion rate
-        double amountInRupees = availablePoints * POINT_VALUE;
+        // double amountInRupees = availablePoints * POINT_VALUE;
         int pointsToUse = (widget.amt / POINT_VALUE).ceil();
         pointsToUse = pointsToUse > availablePoints ? availablePoints : pointsToUse;
         

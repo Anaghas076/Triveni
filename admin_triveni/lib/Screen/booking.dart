@@ -1,12 +1,11 @@
-import 'package:admin_triveni/Screen/custom.dart';
+import 'package:admin_triveni/screen/custom.dart';
 
 import 'package:admin_triveni/main.dart';
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-
-import 'package:intl/intl.dart';
 
 class Booking extends StatefulWidget {
+  const Booking({super.key});
+
   @override
   _MybookingDataState createState() => _MybookingDataState();
 }
@@ -123,6 +122,30 @@ class _MybookingDataState extends State<Booking> {
     }
   }
 
+  // Future<void> pay(int bookingId, int paymentStatus) async {
+  //   try {
+  //     String amount = amountController.text;
+
+  //     await Supabase.instance.client.from('tbl_daily').insert({
+  //       'daily_name': "salary",
+  //       'daily_amount': amount,
+  //       'daily_type': "INCOME",
+  //     });
+
+  //     await Supabase.instance.client.from('tbl_booking').update(
+  //         {'payment_status': paymentStatus}).eq('booking_id', bookingId);
+
+  //     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  //       content: Text("Payment Processed Successfully"),
+  //       backgroundColor: const Color.fromARGB(255, 54, 3, 116),
+  //     ));
+  //     amountController.clear();
+  //     fetchBooking();
+  //   } catch (e) {
+  //     print("Error processing payment: $e");
+  //   }
+  // }
+
   void addAmount(int id) {
     amountController.clear(); // Clear previous input
 
@@ -156,24 +179,18 @@ class _MybookingDataState extends State<Booking> {
 
   Future<void> settleAmount(int id, String name) async {
     try {
-      final response = await supabase
-          .from('tbl_booking')
-          .select()
-          .eq('booking_id', id)
-          .single(); // Ensures only one row is fetched
-
+      final response =
+          await supabase.from('tbl_booking').select().maybeSingle().limit(1);
       await supabase.from('tbl_daily').insert({
         'daily_amount': amountController.text,
-        name: response[name], // Fetch the correct weaver_id or artisan_id
+        name: response![name],
         'daily_type': "INCOME",
         'daily_name': "Salary",
       });
-
       int status = response['payment_status'];
       await supabase
           .from('tbl_booking')
           .update({'payment_status': status + 1}).eq('booking_id', id);
-
       fetchBooking();
     } catch (e) {
       print("Error settling: $e");
@@ -211,11 +228,6 @@ class _MybookingDataState extends State<Booking> {
     );
   }
 
-  String formatDate(String timestamp) {
-    DateTime parsedDate = DateTime.parse(timestamp);
-    return DateFormat('dd-MM-yyyy').format(parsedDate);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -241,7 +253,7 @@ class _MybookingDataState extends State<Booking> {
                     bookingItems['user_name'] ?? "User Name",
                     style: TextStyle(
                         fontSize: 14,
-                        color: Colors.black,
+                        color: Colors.grey,
                         fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 5),
@@ -251,11 +263,8 @@ class _MybookingDataState extends State<Booking> {
                   ),
                   SizedBox(height: 5),
                   Text(
-                    "Date: ${formatDate(bookingItems['created_at'])}",
-                    style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold),
+                    "Date: ${bookingItems['created_at']}",
+                    style: TextStyle(fontSize: 14, color: Colors.grey),
                   ),
                   SizedBox(height: 5),
                   Text(

@@ -1,46 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:admin_triveni/main.dart';
 
-class Wrejectedlist extends StatefulWidget {
-  const Wrejectedlist({super.key});
+class Wrejectectedlist extends StatefulWidget {
+  const Wrejectectedlist({super.key});
 
   @override
-  State<Wrejectedlist> createState() => _WrejectedlistState();
+  State<Wrejectectedlist> createState() => _WrejectectedlistState();
 }
 
-class _WrejectedlistState extends State<Wrejectedlist> {
+class _WrejectectedlistState extends State<Wrejectectedlist> {
   List<Map<String, dynamic>> weavers = [];
 
   Future<void> fetchweaver() async {
     try {
-      final response = await supabase
-          .from('tbl_weaver')
-          .select()
-          .eq('weaver_status', 2)
-          .order('created_at', ascending: true);
-
+      final response =
+          await supabase.from('tbl_weaver').select().eq('weaver_status', 2).order('created_at', ascending: false);
       setState(() {
-        weavers = List<Map<String, dynamic>>.from(response);
+        weavers = response;
       });
     } catch (e) {
-      print("Error fetching weavers: $e");
-    }
-  }
-
-  Future<void> updateweaverStatus(String weaverId, int status) async {
-    try {
-      await supabase
-          .from('tbl_weaver')
-          .update({'weaver_status': status}).eq('weaver_id', weaverId);
-
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("weaver Accepted"),
-        backgroundColor: const Color.fromARGB(255, 27, 1, 69),
-      ));
-
-      fetchweaver(); // Refresh the list
-    } catch (e) {
-      print("Error updating status: $e");
+      print("Error: $e");
     }
   }
 
@@ -61,7 +40,7 @@ class _WrejectedlistState extends State<Wrejectedlist> {
                 crossAxisCount: 5,
                 crossAxisSpacing: 5,
                 mainAxisSpacing: 5,
-                childAspectRatio: .85,
+                childAspectRatio: 2, // Adjusted for better proportions
               ),
               itemCount: weavers.length,
               itemBuilder: (context, index) {
@@ -81,56 +60,42 @@ class _WrejectedlistState extends State<Wrejectedlist> {
                     ],
                   ),
                   padding: EdgeInsets.all(10),
-                  child: Column(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          CircleAvatar(
-                            radius: 30,
-                            backgroundImage:
-                                NetworkImage(data['weaver_photo'] ?? ""),
-                            backgroundColor: Colors.grey.shade200,
-                          ),
-                          SizedBox(width: 18),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  data['weaver_name'] ?? " ",
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                                Text(data['weaver_address'] ?? " "),
-                                Text(data['weaver_contact'] ?? " "),
-                                Text(data['weaver_email'] ?? " "),
-                              ],
+                      CircleAvatar(
+                        radius: 30, // Reduced size for better alignment
+                        backgroundImage:
+                            NetworkImage(data['weaver_photo'] ?? ""),
+                        backgroundColor: Colors.grey.shade200,
+                      ),
+                      SizedBox(width: 18), // Space between image and text
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              data['weaver_name'] ?? " ",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: 10),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.network(
-                          data['weaver_proof'] ?? "",
-                          width: 150,
-                          height: 100,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) =>
-                              Icon(Icons.image, size: 80, color: Colors.grey),
+                            Text(
+                              data['weaver_address'] ?? " ",
+                            ),
+                            Text(
+                              data['weaver_contact'] ?? " ",
+                            ),
+                            Text(
+                              data['weaver_email'] ?? " ",
+                            ),
+                            Text(
+                              data['weaver_password'] ?? " ",
+                            ),
+                          ],
                         ),
-                      ),
-                      SizedBox(height: 5),
-                      ElevatedButton(
-                        onPressed: () {
-                          updateweaverStatus(data['weaver_id'].toString(), 1);
-                        },
-                        child: Text("Accept"),
                       ),
                     ],
                   ),

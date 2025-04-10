@@ -34,7 +34,7 @@ class _ReplyState extends State<Reply> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("Reply Posted Successfully"),
-          backgroundColor: const Color.fromARGB(255, 3, 1, 68),
+          backgroundColor: Colors.green,
         ),
       );
 
@@ -45,7 +45,7 @@ class _ReplyState extends State<Reply> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("Error: ${e.toString()}"),
-          backgroundColor: const Color.fromARGB(255, 3, 1, 68),
+          backgroundColor: Colors.red,
         ),
       );
       print("Error in sending reply: $e");

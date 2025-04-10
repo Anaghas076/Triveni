@@ -1,5 +1,5 @@
-import 'package:artisan_triveni/Screen/loginpage.dart';
-import 'package:artisan_triveni/Screen/registerpage.dart';
+import 'package:artisan_triveni/screen/loginpage.dart';
+import 'package:artisan_triveni/screen/registerpage.dart';
 import 'package:flutter/material.dart';
 
 class Landingpage extends StatefulWidget {

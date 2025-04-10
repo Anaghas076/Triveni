@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:user_triveni/Screen/productdemo.dart';
+import 'package:user_triveni/screen/productdemo.dart';
 
 class ProductCard extends StatelessWidget {
   final Map<String, dynamic> productData;
@@ -34,56 +34,26 @@ class ProductCard extends StatelessWidget {
                 ),
               ),
             ),
-            Text(
-              productData['product_name'],
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+            Row(
+              children: [
+                Icon(Icons.star, size: 16, color: Colors.amber),
+                Text(
+                  productData['rating'].toString(),
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[700],
+                  ),
+                ),
+              ],
             ),
-            SizedBox(height: 5),
+            Text(productData['product_code']),
+            Text(productData['product_name']),
             Text(
               productData['product_type'],
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.green,
-                fontWeight: FontWeight.bold,
-              ),
+              style:
+                  TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 3),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                children: [
-                  Icon(Icons.star, size: 20, color: Colors.amber),
-                  Icon(Icons.star, size: 20, color: Colors.amber),
-                  Icon(Icons.star, size: 20, color: Colors.amber),
-                  Icon(Icons.star, size: 20, color: Colors.amber),
-                  Icon(Icons.star, size: 20, color: Colors.amber),
-                  SizedBox(width: 10),
-                  Text(
-                    productData['rating'].toString(),
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 3),
-            Text(
-              "₹${productData['product_price']}",
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
+            Text(productData['product_price'].toString()),
           ],
         ),
       ),

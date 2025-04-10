@@ -1,7 +1,7 @@
 import 'package:artisan_triveni/main.dart';
 import 'package:flutter/material.dart';
-//import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:artisan_triveni/Component/formvalidation.dart';
 
 class Changepassword extends StatefulWidget {
   const Changepassword({super.key});
@@ -157,12 +157,7 @@ class _ChangepasswordState extends State<Changepassword> {
                       _obscureOldPassword = !_obscureOldPassword;
                     });
                   },
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your current password';
-                    }
-                    return null;
-                  },
+                  validator: (value) => FormValidation.validatePassword(value),
                 ),
                 _buildPasswordField(
                   'New Password',
@@ -174,15 +169,7 @@ class _ChangepasswordState extends State<Changepassword> {
                       _obscureNewPassword = !_obscureNewPassword;
                     });
                   },
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter a new password';
-                    }
-                    if (value.length < 6) {
-                      return 'Password must be at least 6 characters';
-                    }
-                    return null;
-                  },
+                  validator: (value) => FormValidation.validatePassword(value),
                 ),
                 _buildPasswordField(
                   'Confirm New Password',
@@ -194,15 +181,10 @@ class _ChangepasswordState extends State<Changepassword> {
                       _obscureConfirmPassword = !_obscureConfirmPassword;
                     });
                   },
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please confirm your new password';
-                    }
-                    if (value != _newPasswordController.text) {
-                      return 'Passwords do not match';
-                    }
-                    return null;
-                  },
+                  validator: (value) => FormValidation.validateConfirmPassword(
+                    value,
+                    _newPasswordController.text,
+                  ),
                 ),
                 SizedBox(height: 40),
                 SizedBox(

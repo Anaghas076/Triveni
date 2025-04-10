@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:artisan_triveni/Component/formvalidation.dart';
-import 'package:artisan_triveni/Screen/homepage.dart';
+import 'package:artisan_triveni/screen/homepage.dart';
 import 'package:artisan_triveni/main.dart';
 
 class Registerpage extends StatefulWidget {
@@ -136,7 +136,6 @@ class _RegisterpageState extends State<Registerpage> {
           key: formkey,
           child: Container(
             decoration: BoxDecoration(
-              color: Colors.white,
               borderRadius: BorderRadius.circular(25),
               border: Border.all(
                 color: const Color.fromARGB(255, 3, 1, 68),
@@ -173,6 +172,7 @@ class _RegisterpageState extends State<Registerpage> {
                 TextFormField(
                   validator: (value) => FormValidation.validateName(value),
                   controller: nameController,
+                  keyboardType: TextInputType.name,
                   style: TextStyle(
                     color: const Color.fromARGB(255, 3, 1, 68),
                     fontWeight: FontWeight.bold,
@@ -201,6 +201,7 @@ class _RegisterpageState extends State<Registerpage> {
                 TextFormField(
                   validator: (value) => FormValidation.validateAddress(value),
                   controller: addressController,
+                  keyboardType: TextInputType.streetAddress,
                   style: TextStyle(
                     color: const Color.fromARGB(255, 3, 1, 68),
                     fontWeight: FontWeight.bold,
@@ -229,6 +230,7 @@ class _RegisterpageState extends State<Registerpage> {
                 TextFormField(
                   validator: (value) => FormValidation.validateContact(value),
                   controller: contactController,
+                  keyboardType: TextInputType.phone,
                   style: TextStyle(
                     color: const Color.fromARGB(255, 3, 1, 68),
                     fontWeight: FontWeight.bold,
@@ -257,6 +259,7 @@ class _RegisterpageState extends State<Registerpage> {
                 TextFormField(
                   validator: (value) => FormValidation.validateEmail(value),
                   controller: emailController,
+                  keyboardType: TextInputType.emailAddress,
                   style: TextStyle(
                     color: const Color.fromARGB(255, 3, 1, 68),
                     fontWeight: FontWeight.bold,

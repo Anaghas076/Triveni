@@ -1,8 +1,4 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:dio/dio.dart';
 import 'package:user_triveni/main.dart';
 
 class Viewdesign extends StatefulWidget {
@@ -33,60 +29,7 @@ class _ViewdesignState extends State<Viewdesign> {
   }
 
   Future<void> _saveImage(String imageUrl, String imageName) async {
-    try {
-      // Check and request storage permission based on Android version
-      bool permissionGranted = false;
-
-      if (Platform.isAndroid) {
-        var status = await Permission.storage.status;
-        if (!status.isGranted) {
-          status = await Permission.storage.request();
-        }
-
-        if (status.isGranted) {
-          permissionGranted = true;
-        } else if (status.isPermanentlyDenied) {
-          // Handle permanently denied by prompting user to enable in settings
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text("Please enable storage permission in settings."),
-              action: SnackBarAction(
-                label: 'Settings',
-                onPressed: () => openAppSettings(),
-              ),
-            ),
-          );
-          return;
-        }
-      } else {
-        // For iOS or other platforms, assume permission is not needed or handled differently
-        permissionGranted = true;
-      }
-
-      if (permissionGranted) {
-        // Use app-specific directory instead of external storage for broader compatibility
-        Directory? directory = await getApplicationDocumentsDirectory();
-        String savePath = "${directory.path}/$imageName.jpg";
-
-        // Download image
-        Dio dio = Dio();
-        await dio.download(imageUrl, savePath);
-
-        // Show success message
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Image saved to $savePath")),
-        );
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Storage permission denied!")),
-        );
-      }
-    } catch (e) {
-      print("Error saving image: $e");
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text("Error saving image: $e")),
-      );
-    }
+    
   }
 
   @override

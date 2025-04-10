@@ -1,8 +1,7 @@
-import 'package:admin_triveni/Components/formvalidation.dart';
-import 'package:admin_triveni/Screen/homepage.dart';
+import 'package:admin_triveni/components/formvalidation.dart';
+import 'package:admin_triveni/screen/homepage.dart';
 import 'package:admin_triveni/main.dart';
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -27,7 +26,7 @@ class _LoginPageState extends State<LoginPage> {
 
       String id = auth.user!.id;
 
-      final admin = await supabase.from('tbl_admin').select().single();
+      final admin = await supabase.from('tbl_admin').select().eq('id', id).single();
       if (admin.isNotEmpty) {
         Navigator.pushReplacement(
             context,
@@ -83,6 +82,7 @@ class _LoginPageState extends State<LoginPage> {
                 TextFormField(
                   validator: (value) => FormValidation.validateEmail(value),
                   controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
                   style: TextStyle(
                       color: const Color.fromARGB(255, 3, 1, 68),
                       fontWeight: FontWeight.bold),

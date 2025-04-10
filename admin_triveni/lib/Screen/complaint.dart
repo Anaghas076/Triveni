@@ -1,4 +1,4 @@
-import 'package:admin_triveni/Screen/reply.dart';
+import 'package:admin_triveni/screen/reply.dart';
 import 'package:flutter/material.dart';
 import 'package:admin_triveni/main.dart';
 
@@ -38,72 +38,63 @@ class _ComplaintState extends State<Complaint> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Complaints')),
-      body: Container(
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey), // Adds border
-          borderRadius: BorderRadius.circular(10), // Rounded corners
-          color: Colors.white, // Background color
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 5,
-              spreadRadius: 2,
-            ),
-          ],
-        ),
-        padding: const EdgeInsets.all(10),
-        margin: const EdgeInsets.symmetric(vertical: 10),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: DataTable(
-              columnSpacing: 20.0,
-              columns: [
-                DataColumn(label: Text('Customer')),
-                DataColumn(label: Text('Contact')),
-                DataColumn(label: Text('Title')),
-                DataColumn(label: Text('Description')),
-                DataColumn(label: Text('Action')),
-              ],
-              rows: complaints.map((data) {
-                final user = data['tbl_user'];
-                return DataRow(cells: [
-                  DataCell(Text(user['user_name'] ?? "")),
-                  DataCell(Text(user['user_contact'] ?? "")),
-                  DataCell(Text(data['complaint_title'] ?? "")),
-                  DataCell(Text(data['complaint_description'] ?? "")),
-                  DataCell(
-                    SizedBox(
-                      width: 100,
-                      child: data['complaint_status'] == 0
-                          ? ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => Reply(
-                                        complaintId: data['complaint_id']),
-                                  ),
-                                );
-                              },
-                              child: Text('Reply'),
-                            )
-                          : Center(
-                              child: Text(
-                                'Replied',
-                                style: TextStyle(
-                                  color: const Color.fromARGB(255, 3, 1, 68),
-                                ),
-                              ),
-                            ),
-                    ),
-                  ),
-                ]);
-              }).toList(),
-            ),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: GridView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 5,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+            childAspectRatio: 1,
           ),
+          itemCount: complaints.length,
+          itemBuilder: (context, index) {
+            final data = complaints[index];
+            final user = data['tbl_user']; // tbl_user contains the user details
+            return Card(
+              elevation: 3,
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Customer: ${user['user_name'] ?? ""}"),
+                    SizedBox(height: 5),
+                    Text("Contact: ${user['user_contact'] ?? ""}"),
+                    SizedBox(height: 5),
+                    Text(
+                      data['complaint_title'] ?? " ",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    SizedBox(height: 5),
+                    Text(
+                      data['complaint_description'] ?? " ",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                      ),
+                    ),
+                    SizedBox(height: 5),
+                    SizedBox(height: 10),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  Reply(complaintId: data['complaint_id']),
+                            ));
+                      },
+                      child: Text('Reply'),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
         ),
       ),
     );

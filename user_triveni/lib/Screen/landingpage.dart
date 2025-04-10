@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:user_triveni/Screen/loginpage.dart';
+import 'package:user_triveni/screen/loginpage.dart';
 
-import 'package:user_triveni/Screen/registerpage.dart';
+import 'package:user_triveni/screen/registerpage.dart';
 
 class Landingpage extends StatefulWidget {
   const Landingpage({super.key});

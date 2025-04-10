@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:confetti/confetti.dart';
 import 'package:lottie/lottie.dart';
-import 'package:user_triveni/Screen/homepage.dart';
+import 'package:user_triveni/screen/homepage.dart';
 
 class PaymentSuccessPage extends StatefulWidget {
   @override

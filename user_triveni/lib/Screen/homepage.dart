@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:user_triveni/Screen/cart.dart';
+import 'package:user_triveni/screen/cart.dart';
 
-import 'package:user_triveni/Screen/homecontent.dart';
+import 'package:user_triveni/screen/homecontent.dart';
 
-import 'package:user_triveni/Screen/myorder.dart';
+import 'package:user_triveni/screen/myorder.dart';
 
-import 'package:user_triveni/Screen/profile.dart';
-import 'package:user_triveni/Screen/search.dart';
+import 'package:user_triveni/screen/profile.dart';
+import 'package:user_triveni/screen/search.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -21,36 +21,47 @@ class _HomepageState extends State<Homepage> {
   // List of pages for bottom navigation
   final List<Widget> pageContent = [
     Homecontent(), // New HomeScreen widget
-    Search(), // Dummy category page
+    Profile(), // Dummy category page
     Myorder(),
-    Profile(),
+    Search(),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false, // Removes the back arrow
+        leadingWidth: 80,
         toolbarHeight: 80,
         backgroundColor: const Color.fromARGB(255, 3, 1, 68),
-        title: ListTile(
-          leading: CircleAvatar(
-            radius: 33,
-            backgroundImage: AssetImage("asset/Logo.jpeg"),
-          ),
-          title: Text(
-            "TRIVENI",
-            style: TextStyle(
-                color: Colors.white, fontWeight: FontWeight.bold, fontSize: 25),
-          ),
-          subtitle: Text(
-            "Handloom with heritage, fashion with soul",
-            style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 7.5),
-          ),
+        leading: Padding(
+          padding: const EdgeInsets.all(5.0),
+          child: Image.asset("asset/Logo.jpeg"),
         ),
+        // leading: CircleAvatar(
+        //   child: Image.asset("asset/Logo.jpeg"),
+        // ),
+        // title: TextFormField(
+        //   style: const TextStyle(
+        //       color: Color.fromARGB(255, 240, 240, 242),
+        //       fontWeight: FontWeight.bold),
+        //   decoration: InputDecoration(
+        //     enabledBorder: OutlineInputBorder(
+        //       borderRadius: BorderRadius.circular(30),
+        //       borderSide: const BorderSide(
+        //         color: Colors.white,
+        //       ),
+        //     ),
+        //     prefixIcon: const Icon(
+        //       Icons.search,
+        //       color: Colors.white,
+        //     ),
+        //     hintText: "Search",
+        //     hintStyle: const TextStyle(
+        //       color: Colors.white,
+        //     ),
+        //     border: const OutlineInputBorder(),
+        //   ),
+        // ),
         actions: [
           IconButton(
             icon: Icon(
@@ -75,11 +86,10 @@ class _HomepageState extends State<Homepage> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
           BottomNavigationBarItem(
-              icon: Icon(Icons.search_rounded), label: "Search"),
+              icon: Icon(Icons.person), label: "My Profile"),
           BottomNavigationBarItem(
               icon: Icon(Icons.shopping_bag), label: "My Orders"),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.person), label: "My Account"),
+          BottomNavigationBarItem(icon: Icon(Icons.wallet), label: "Wallet"),
         ],
         selectedItemColor:
             const Color.fromARGB(255, 241, 233, 7), // Color of selected icon

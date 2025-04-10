@@ -1,11 +1,8 @@
-import 'package:artisan_triveni/Screen/addexpense.dart';
-import 'package:artisan_triveni/Screen/homecontent.dart';
+import 'package:artisan_triveni/screen/homecontent.dart';
+import 'package:artisan_triveni/screen/order.dart';
 
-import 'package:artisan_triveni/Screen/loginpage.dart';
-import 'package:artisan_triveni/Screen/order.dart';
-
-import 'package:artisan_triveni/Screen/profile.dart';
-import 'package:artisan_triveni/Screen/setting.dart';
+import 'package:artisan_triveni/screen/profile.dart';
+import 'package:artisan_triveni/screen/mydesign.dart';
 import 'package:flutter/material.dart';
 
 class Homepage extends StatefulWidget {
@@ -20,10 +17,10 @@ class _HomepageState extends State<Homepage> {
 
   // List of pages for bottom navigation
   final List<Widget> pageContent = [
-    Orders(), // New HomeScreen widget
+    Homecontent(), // New HomeScreen widget
     Profile(), // Dummy category page
     Booking(),
-    Setting(),
+    MyDesign(),
   ];
 
   @override

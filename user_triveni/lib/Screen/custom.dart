@@ -1,11 +1,10 @@
 import 'dart:io';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:user_triveni/Component/formvalidation.dart';
-import 'package:user_triveni/Screen/cart.dart';
-import 'package:user_triveni/Screen/myorder.dart';
-import 'package:user_triveni/Screen/viewdesign.dart';
+import 'package:user_triveni/component/formvalidation.dart';
 import 'package:user_triveni/main.dart';
 
 class Custom extends StatefulWidget {
@@ -66,18 +65,11 @@ class _CustomState extends State<Custom> {
           'customization_description': description,
           'cart_id': widget.cartId,
         });
-        Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => Cart(),
-            ));
-
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text(
               "Order update: custom order requires an extra fee, confirmed by the admin before payment."),
           backgroundColor: const Color.fromARGB(255, 3, 1, 68),
         ));
-
         setState(() {
           _image = null;
         });
@@ -86,6 +78,108 @@ class _CustomState extends State<Custom> {
     } catch (e) {
       print("Error customization: $e");
     }
+  }
+
+  Future<void> _showDesignsDialog() async {
+    List<Map<String, dynamic>> designs = [];
+    
+    try {
+      final response = await supabase.from('tbl_design').select();
+      designs = List<Map<String, dynamic>>.from(response);
+    } catch (e) {
+      print("Error fetching designs: $e");
+      return;
+    }
+
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          child: Container(
+            width: double.maxFinite,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                AppBar(
+                  backgroundColor: const Color.fromARGB(255, 3, 1, 68),
+                  title: Text(
+                    "Select Design",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  leading: IconButton(
+                    icon: Icon(Icons.close, color: Colors.white),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ),
+                Flexible(
+                  child: Container(
+                    height: MediaQuery.of(context).size.height * 0.7,
+                    child: GridView.builder(
+                      padding: EdgeInsets.all(8),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 8,
+                        mainAxisSpacing: 8,
+                        childAspectRatio: 0.75,
+                      ),
+                      itemCount: designs.length,
+                      itemBuilder: (context, index) {
+                        final data = designs[index];
+                        return GestureDetector(
+                          onTap: () async {
+                            try {
+                              final response = await http.get(Uri.parse(data['design_photo']));
+                              final bytes = response.bodyBytes;
+                              final tempDir = await getTemporaryDirectory();
+                              final tempFile = File('${tempDir.path}/temp_design.jpg');
+                              await tempFile.writeAsBytes(bytes);
+                              
+                              setState(() {
+                                _image = tempFile;
+                              });
+                              Navigator.pop(context);
+                            } catch (e) {
+                              print("Error selecting design: $e");
+                            }
+                          },
+                          child: Card(
+                            child: Column(
+                              children: [
+                                Expanded(
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.vertical(
+                                        top: Radius.circular(4),
+                                      ),
+                                      image: DecorationImage(
+                                        image: NetworkImage(data['design_photo']),
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(8),
+                                  child: Text(
+                                    data['design_name'],
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   final formkey = GlobalKey<FormState>();
@@ -114,13 +208,7 @@ class _CustomState extends State<Custom> {
               Icons.image,
               color: Colors.white,
             ),
-            onPressed: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => Viewdesign(),
-                  ));
-            },
+            onPressed: _showDesignsDialog,
           ),
         ],
       ),
@@ -164,7 +252,9 @@ class _CustomState extends State<Custom> {
                 //   Icons.description,
                 //   color: const Color.fromARGB(255, 7, 2, 54),
                 // ),
-                hintText: " Description",
+                hintText:
+                    " Description \n Work \n Size \n Color \n Other Specific Requests",
+
                 hintStyle: TextStyle(
                     color: const Color.fromARGB(255, 169, 168, 168),
                     fontWeight: FontWeight.bold),

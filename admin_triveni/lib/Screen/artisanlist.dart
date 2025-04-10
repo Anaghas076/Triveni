@@ -17,7 +17,7 @@ class _ArtisanlistState extends State<Artisanlist> {
           .from('tbl_artisan')
           .select()
           .eq('artisan_status', 0)
-          .order('created_at', ascending: true);
+          .order('created_at', ascending: false);
 
       setState(() {
         artisans = response;
@@ -34,7 +34,7 @@ class _ArtisanlistState extends State<Artisanlist> {
 
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text(status == 1 ? " Accepted" : " Rejected"),
-        backgroundColor: const Color.fromARGB(255, 27, 1, 69),
+        backgroundColor: status == 1 ? Colors.green : Colors.red,
       ));
 
       fetchartisan(); // Refresh list
@@ -60,7 +60,7 @@ class _ArtisanlistState extends State<Artisanlist> {
                 crossAxisCount: 5,
                 crossAxisSpacing: 5,
                 mainAxisSpacing: 5,
-                childAspectRatio: .85, // Adjusted for better proportions
+                childAspectRatio: 1.5, // Adjusted for better proportions
               ),
               itemCount: artisans.length,
               itemBuilder: (context, index) {
@@ -121,20 +121,8 @@ class _ArtisanlistState extends State<Artisanlist> {
                           ),
                         ],
                       ),
-                      SizedBox(height: 10),
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(8),
-                        child: Image.network(
-                          data['artisan_proof'] ?? "",
-                          width: 150,
-                          height: 100,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) =>
-                              Icon(Icons.image, size: 80, color: Colors.grey),
-                        ),
-                      ),
                       SizedBox(
-                        height: 5,
+                        height: 10,
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,

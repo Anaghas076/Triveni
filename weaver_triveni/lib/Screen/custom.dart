@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:weaver_triveni/main.dart';
 
 class Viewdesign extends StatefulWidget {
@@ -44,7 +45,7 @@ class _ViewdesignState extends State<Viewdesign> {
           },
         ),
         title: Text(
-          "View Design",
+          "Custom Order",
           style: TextStyle(
             color: Colors.white,
             fontSize: 18,
@@ -52,62 +53,54 @@ class _ViewdesignState extends State<Viewdesign> {
           ),
         ),
       ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 1, // Adjust based on requirement
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-              childAspectRatio: 1, // Adjust for better layout
-            ),
-            itemCount: customs.length,
-            itemBuilder: (context, index) {
-              final data = customs[index];
-              return Card(
-                elevation: 3,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+      body: customs.isEmpty
+          ? Center(child: CircularProgressIndicator())
+          : Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: GridView.builder(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 4,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  childAspectRatio: 0.75,
                 ),
-                child: Padding(
-                  padding: EdgeInsets.all(10),
-                  child: SizedBox.expand(
-                    // Expands to fit available height
+                itemCount: customs.length,
+                itemBuilder: (context, index) {
+                  final data = customs[index];
+                  return Card(
+                    elevation: 3,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     child: Column(
-                      mainAxisAlignment:
-                          MainAxisAlignment.center, // Centers all content
                       children: [
-                        Spacer(), // Push content down
                         Container(
-                          width: 100, // Square size
-                          height: 100,
+                          height: 200,
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10),
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(12),
+                              topRight: Radius.circular(12),
+                            ),
                             image: DecorationImage(
-                              image: NetworkImage(
-                                  data['customization_photo'] ?? ""),
+                              image: NetworkImage(data['customization_photo']),
                               fit: BoxFit.cover,
                             ),
                           ),
                         ),
-                        SizedBox(height: 10),
-                        Text(
-                          data['customization_description'] ??
-                              "No description available",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(color: Colors.black54),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            data['customization_description'] ?? '',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: 14),
+                          ),
                         ),
-                        Spacer(), // Push content up
                       ],
                     ),
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-      ),
+                  );
+                },
+              ),
+            ),
     );
   }
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:user_triveni/Screen/custom.dart';
-import 'package:user_triveni/Screen/myorder.dart';
+import 'package:user_triveni/screen/custom.dart';
 
 import 'package:user_triveni/main.dart'; // Import your Supabase connection
 
@@ -33,7 +32,6 @@ class _CartState extends State<Cart> {
       setState(() {
         bookingid = bid;
       });
-
       final response = await supabase
           .from('tbl_cart')
           .select(" *, tbl_product(*)")

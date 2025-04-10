@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:user_triveni/Component/formvalidation.dart';
-import 'package:user_triveni/Component/product_card.dart';
+import 'package:user_triveni/component/formvalidation.dart';
+import 'package:user_triveni/component/product_card.dart';
 import 'package:user_triveni/main.dart';
 
 class Search extends StatefulWidget {
@@ -468,7 +468,7 @@ class _SearchState extends State<Search> {
                 crossAxisCount: 2,
                 crossAxisSpacing: 5,
                 mainAxisSpacing: 5,
-                childAspectRatio: 0.52,
+                childAspectRatio: 0.55,
               ),
               itemBuilder: (context, index) {
                 final data = filteredProducts[index];

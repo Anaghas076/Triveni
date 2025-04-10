@@ -141,11 +141,11 @@ class _ChangepasswordState extends State<Changepassword> {
                 SizedBox(height: 30),
                 Text(
                   'Security',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
+                  // style: GoogleFonts.poppins(
+                  //   fontSize: 18,
+                  //   fontWeight: FontWeight.bold,
+                  //   color: Colors.black87,
+                  // ),
                 ),
                 SizedBox(height: 16),
                 _buildPasswordField(
@@ -243,19 +243,14 @@ class _ChangepasswordState extends State<Changepassword> {
                   decoration: BoxDecoration(
                     color: Colors.blue.shade50,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: const Color.fromARGB(255, 3, 1, 68),
-                    ),
+                    border: Border.all(color: Colors.blue.shade200),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         children: [
-                          Icon(
-                            Icons.info_outline,
-                            color: const Color.fromARGB(255, 3, 1, 68),
-                          ),
+                          Icon(Icons.info_outline, color: Colors.blue),
                           SizedBox(width: 8),
                           Text(
                             'Password Tips',
@@ -298,15 +293,13 @@ class _ChangepasswordState extends State<Changepassword> {
       child: TextFormField(
         controller: controller,
         obscureText: obscureText,
+        keyboardType: TextInputType.visiblePassword,
         decoration: InputDecoration(
           labelText: label,
           // labelStyle: GoogleFonts.poppins(
           //   color: Colors.grey[600],
           // ),
-          prefixIcon: Icon(
-            icon,
-            color: const Color.fromARGB(255, 3, 1, 68),
-          ),
+          prefixIcon: Icon(icon, color: Colors.blue.shade400),
           suffixIcon: IconButton(
             icon: Icon(
               obscureText ? Icons.visibility_off : Icons.visibility,
@@ -324,9 +317,7 @@ class _ChangepasswordState extends State<Changepassword> {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(
-              color: const Color.fromARGB(255, 3, 1, 68),
-            ),
+            borderSide: BorderSide(color: Colors.blue.shade400),
           ),
           filled: true,
           fillColor: Colors.white,

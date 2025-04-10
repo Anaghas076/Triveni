@@ -1,119 +1,61 @@
-import 'package:weaver_triveni/main.dart';
 import 'package:flutter/material.dart';
-import 'package:weaver_triveni/Screen/custom.dart';
-
-import 'package:intl/intl.dart';
+import 'package:weaver_triveni/main.dart';
 
 class Homecontent extends StatefulWidget {
+  const Homecontent({super.key});
+
   @override
-  _HomecontentDataState createState() => _HomecontentDataState();
+  State<Homecontent> createState() => _HomecontentState();
 }
 
-class _HomecontentDataState extends State<Homecontent> {
+class _HomecontentState extends State<Homecontent> {
   Map<String, dynamic> weaverid = {};
-
+  int usercount = 0;
   int weavercount = 0;
+  int artisancount = 0;
+  int productcount = 0;
+  int designcount = 0;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-
-    fetchweaver();
-    fetchBooking();
+    fetchUser();
+    fetchWeaver();
+    fetchArtisan();
+    fetchDesign();
+    fetchProduct();
     fetchName();
   }
 
-  String formatDate(String timestamp) {
-    DateTime parsedDate = DateTime.parse(timestamp);
-    return DateFormat('dd-MM-yyyy').format(parsedDate);
-  }
-
-  List<Map<String, dynamic>> bookingData = [];
-  int bookingid = 0;
-  Future<void> fetchBooking() async {
+  Future<void> fetchUser() async {
     try {
-      final response = await supabase
-          .from('tbl_booking')
-          .select(
-              "*, tbl_cart(*, tbl_product(*)), tbl_user(user_name, user_contact)")
-          .eq('booking_status', 2);
-
-      List<Map<String, dynamic>> orders = [];
-
-      for (var data in response) {
-        final cart = data['tbl_cart'] ?? [];
-        List<Map<String, dynamic>> cartItems = [];
-
-        bool hasCustom = false;
-
-        for (var cartData in cart) {
-          int total = cartData['cart_quantity'] *
-              cartData['tbl_product']['product_price'];
-
-          bool isCustom = false;
-
-          final custom = await supabase
-              .from('tbl_customization')
-              .count()
-              .eq('cart_id', cartData['cart_id']);
-          if (custom > 0) {
-            isCustom = true;
-            hasCustom = true;
-          }
-
-          cartItems.add({
-            'cart_id': cartData['cart_id'],
-            'cart_quantity': cartData['cart_quantity'],
-            'product_name': cartData['tbl_product']['product_name'],
-            'product_photo': cartData['tbl_product']['product_photo'],
-            'product_price': cartData['tbl_product']['product_price'],
-            'product_code': cartData['tbl_product']['product_code'],
-            'total': total,
-            'isCustom': isCustom,
-          });
-        }
-
-        orders.add({
-          'booking_id': data['booking_id'],
-          'created_at': data['created_at'],
-          'booking_amount': data['booking_amount'],
-          'booking_status': data['booking_status'],
-          'user_name': data['tbl_user']['user_name'],
-          'user_contact': data['tbl_user']['user_contact'],
-          'cart': cartItems,
-          'hasCustom': hasCustom
-        });
-      }
-
+      final response = await supabase.from('tbl_user').count();
       setState(() {
-        bookingData = orders;
+        usercount = response;
       });
-    } catch (e) {
-      print("Error fetching bookings: $e");
-    }
-  }
-
-  Future<void> order(int bookingId, int status) async {
-    try {
-      final weaverId = supabase.auth.currentUser!.id;
-      await supabase.from('tbl_booking').update({
-        'booking_status': status,
-        'weaver_id': weaverId,
-      }).eq('booking_id', bookingId);
-
-      fetchBooking();
     } catch (e) {
       print("Error: $e");
     }
   }
 
-  Future<void> fetchweaver() async {
+  Future<void> fetchProduct() async {
+    try {
+      final response = await supabase.from('tbl_product').count();
+      setState(() {
+        productcount = response;
+      });
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
+  Future<void> fetchArtisan() async {
     try {
       final response =
-          await supabase.from('tbl_weaver').count().eq('weaver_status', 1);
+          await supabase.from('tbl_artisan').count().eq('artisan_status', 1);
       setState(() {
-        weavercount = response;
+        artisancount = response;
       });
     } catch (e) {
       print("Error: $e");
@@ -136,234 +78,194 @@ class _HomecontentDataState extends State<Homecontent> {
     }
   }
 
+  Future<void> fetchWeaver() async {
+    try {
+      final response =
+          await supabase.from('tbl_weaver').count().eq('weaver_status', 1);
+      setState(() {
+        weavercount = response;
+      });
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
+  Future<void> fetchDesign() async {
+    try {
+      final response = await supabase.from('tbl_design').count();
+      setState(() {
+        designcount = response;
+      });
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            SizedBox(
-              width: 170,
-              child: Card(
-                child: Column(
-                  children: [
-                    Icon(
-                      Icons.architecture,
-                      color: const Color.fromARGB(255, 3, 1, 68),
-                      size: 70,
-                    ),
-                    Text(
-                      "Hello ",
-                      style: TextStyle(
-                          color: const Color.fromARGB(255, 3, 1, 68),
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      weaverid['weaver_name'] ?? "weaver Name",
-                      style: TextStyle(
-                          color: const Color.fromARGB(255, 3, 1, 68),
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(
-              width: 170,
-              child: Card(
-                child: Column(
-                  children: [
-                    Icon(
-                      Icons.person,
-                      color: const Color.fromARGB(255, 3, 1, 68),
-                      size: 70,
-                    ),
-                    Text(
-                      "weaver",
-                      style: TextStyle(
-                          color: const Color.fromARGB(255, 3, 1, 68),
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      weavercount.toString(),
-                      style: TextStyle(
-                          color: const Color.fromARGB(255, 3, 1, 68),
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
+        body: Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: GridView(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10,
+          childAspectRatio: 1,
         ),
-        Expanded(
-          child: bookingData.isEmpty
-              ? Center(child: Text("No Orders"))
-              : ListView.builder(
-                  padding: EdgeInsets.all(10),
-                  itemCount: bookingData.length,
-                  itemBuilder: (context, index) {
-                    final bookingItems = bookingData[index];
-                    final cartData = bookingData[index]['cart'];
-
-                    return Card(
-                      margin: EdgeInsets.symmetric(vertical: 8),
-                      elevation: 2,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10)),
-                      child: Padding(
-                        padding: EdgeInsets.all(12),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              bookingItems['user_name'] ?? "User Name",
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(height: 5),
-                            Text(
-                              bookingItems['user_contact'] ?? "User Contact",
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(height: 5),
-                            Text(
-                              "Date: ${formatDate(bookingItems['created_at'])}",
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(height: 5),
-                            Text(
-                              "Total Amount: ₹${bookingItems['booking_amount']}",
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.green,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(height: 10),
-                            Column(
-                              children: cartData.map<Widget>((cartItem) {
-                                return ListTile(
-                                  leading: Image.network(
-                                    cartItem['product_photo'] ?? "",
-                                    width: 60,
-                                    height: 60,
-                                    fit: BoxFit.cover,
-                                    errorBuilder:
-                                        (context, error, stackTrace) => Icon(
-                                            Icons.image_not_supported,
-                                            size: 50),
-                                  ),
-                                  title: Text(
-                                    cartItem['product_name'] ?? "Product Name",
-                                    style:
-                                        TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                  subtitle: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text("Code: ${cartItem['product_code']}"),
-                                      Text("QTY: ${cartItem['cart_quantity']}"),
-                                      cartItem['isCustom']
-                                          ? ElevatedButton(
-                                              onPressed: () {
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          Viewdesign(
-                                                        cartId:
-                                                            cartItem['cart_id'],
-                                                      ),
-                                                    ));
-                                              },
-                                              child: Text("View Design",
-                                                  style: TextStyle(
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.bold)))
-                                          : SizedBox()
-                                    ],
-                                  ),
-                                  trailing: Text(
-                                    " ₹${cartItem['total']}",
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black),
-                                  ),
-                                );
-                              }).toList(),
-                            ),
-                            SizedBox(height: 10),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    if (bookingItems['booking_status'] == 2)
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          order(bookingItems['booking_id'], 3);
-                                        },
-                                        child: Text(
-                                          "Accept",
-                                          style: TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ),
-                                    if (bookingItems['booking_status'] == 3)
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          order(bookingItems['booking_id'], 4);
-                                        },
-                                        child: Text(
-                                          "Complete",
-                                          style: TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ),
-                                  ],
-                                ),
-                                Text(
-                                  bookingItems['booking_status'] == 2
-                                      ? "New Order"
-                                      : bookingItems['booking_status'] == 3
-                                          ? "Accepted"
-                                          : bookingItems['booking_status'] >= 4
-                                              ? "Completed"
-                                              : "Unknown Status",
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
+        children: [
+          Card(
+            child: Column(
+              children: [
+                Icon(
+                  Icons.architecture,
+                  color: const Color.fromARGB(255, 3, 1, 68),
+                  size: 70,
                 ),
-        ),
-      ],
+                Text(
+                  "Hello ",
+                  style: TextStyle(
+                      color: const Color.fromARGB(255, 3, 1, 68),
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  weaverid['weaver_name'] ?? "weaver Name",
+                  style: TextStyle(
+                      color: const Color.fromARGB(255, 3, 1, 68),
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ),
+          Card(
+            child: Column(
+              children: [
+                Icon(
+                  Icons.person,
+                  color: const Color.fromARGB(255, 3, 1, 68),
+                  size: 70,
+                ),
+                Text(
+                  "Weaver",
+                  style: TextStyle(
+                      color: const Color.fromARGB(255, 3, 1, 68),
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  weavercount.toString(),
+                  style: TextStyle(
+                      color: const Color.fromARGB(255, 3, 1, 68),
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ),
+          Card(
+            child: Column(
+              children: [
+                Icon(
+                  Icons.palette,
+                  color: const Color.fromARGB(255, 3, 1, 68),
+                  size: 70,
+                ),
+                Text(
+                  "Artisan",
+                  style: TextStyle(
+                      color: const Color.fromARGB(255, 3, 1, 68),
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  artisancount.toString(),
+                  style: TextStyle(
+                      color: const Color.fromARGB(255, 3, 1, 68),
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ),
+          Card(
+            child: Column(
+              children: [
+                Icon(
+                  Icons.people,
+                  color: const Color.fromARGB(255, 3, 1, 68),
+                  size: 70,
+                ),
+                Text(
+                  "User",
+                  style: TextStyle(
+                      color: const Color.fromARGB(255, 3, 1, 68),
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  usercount.toString(),
+                  style: TextStyle(
+                      color: const Color.fromARGB(255, 3, 1, 68),
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ),
+          Card(
+            child: Column(
+              children: [
+                Icon(
+                  Icons.shopping_bag,
+                  color: const Color.fromARGB(255, 3, 1, 68),
+                  size: 70,
+                ),
+                Text(
+                  "Product",
+                  style: TextStyle(
+                      color: const Color.fromARGB(255, 3, 1, 68),
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  productcount.toString(),
+                  style: TextStyle(
+                      color: const Color.fromARGB(255, 3, 1, 68),
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ),
+          Card(
+            child: Column(
+              children: [
+                Icon(
+                  Icons.design_services,
+                  color: const Color.fromARGB(255, 3, 1, 68),
+                  size: 70,
+                ),
+                Text(
+                  "Design",
+                  style: TextStyle(
+                      color: const Color.fromARGB(255, 3, 1, 68),
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold),
+                ),
+                Text(
+                  designcount.toString(),
+                  style: TextStyle(
+                      color: const Color.fromARGB(255, 3, 1, 68),
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     ));
   }
 }

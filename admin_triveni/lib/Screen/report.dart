@@ -58,8 +58,7 @@ class _CountReportState extends State<CountReport> {
 
       final response = await supabase
           .from('tbl_booking')
-          .select(
-              "*, tbl_cart(*, tbl_product(*)), tbl_weaver(*), tbl_artisan(*)")
+          .select("*, tbl_cart(*, tbl_product(*)), tbl_weaver(*), tbl_artisan(*)")
           .gte('created_at', startDate!.toIso8601String())
           .lte('created_at', endDate!.toIso8601String())
           .order('booking_id', ascending: false);
@@ -80,8 +79,7 @@ class _CountReportState extends State<CountReport> {
             : 'N/A';
 
         // Flatten tbl_cart list into cart items with additional booking-level info
-        final cartList =
-            List<Map<String, dynamic>>.from(booking['tbl_cart'] ?? []);
+        final cartList = List<Map<String, dynamic>>.from(booking['tbl_cart'] ?? []);
         for (var cartItem in cartList) {
           tempCartItems.add({
             ...cartItem,
@@ -161,77 +159,70 @@ class _CountReportState extends State<CountReport> {
               child: const Text("Submit"),
             ),
             const SizedBox(height: 20),
-            Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey), // Adds border
-                borderRadius: BorderRadius.circular(10), // Rounded corners
-                color: Colors.white, // Background color
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 5,
-                    spreadRadius: 2,
-                  ),
-                ],
-              ),
-              padding: const EdgeInsets.all(10),
-              margin: const EdgeInsets.symmetric(vertical: 10),
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: DataTable(
-                  columns: const [
-                    DataColumn(label: Text("SNo.")),
-                    DataColumn(label: Text("Image")),
-                    DataColumn(label: Text("Product")),
-                    DataColumn(label: Text("Weaver")),
-                    DataColumn(label: Text("Artisan")),
-                    DataColumn(label: Text("Subcategory")),
-                    DataColumn(label: Text("Code")),
-                    DataColumn(label: Text("Price")),
-                    DataColumn(label: Text("Quantity")),
-                    DataColumn(label: Text("Type")),
-                  ],
-                  rows: List.generate(
-                    cartItems.length,
-                    (index) {
-                      var cartItem = cartItems[index];
-                      var product = cartItem['tbl_product'] ?? {};
+            if (isLoading)
+              const Center(child: CircularProgressIndicator())
+            else if (cartItems.isEmpty)
+              const Center(child: Text("No products found in this date range"))
+            else
+              Expanded(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: FittedBox(
+                    child: DataTable(
+                      columns: const [
+                        DataColumn(label: Text("SNo.")),
+                        DataColumn(label: Text("Product Image")),
+                        DataColumn(label: Text("Product")),
+                        DataColumn(label: Text("Weaver")),
+                        DataColumn(label: Text("Artisan")),
+                        DataColumn(label: Text("Subcategory")),
+                        DataColumn(label: Text("Code")),
+                        DataColumn(label: Text("Price")),
+                        DataColumn(label: Text("Quantity")),
+                        DataColumn(label: Text("Type")),
+                      ],
+                      rows: List.generate(
+                        cartItems.length,
+                        (index) {
+                          var cartItem = cartItems[index];
+                          var product = cartItem['tbl_product'] ?? {};
 
-                      return DataRow(
-                        cells: [
-                          DataCell(Text((index + 1).toString())),
-                          DataCell(
-                            CircleAvatar(
-                              backgroundImage: NetworkImage(
-                                product['product_photo']?.toString() ?? '',
+                          return DataRow(
+                            cells: [
+                              DataCell(Text((index + 1).toString())),
+                              DataCell(
+                                CircleAvatar(
+                                  backgroundImage: NetworkImage(
+                                    product['product_photo']?.toString() ?? '',
+                                  ),
+                                  onBackgroundImageError: (_, __) =>
+                                      const Icon(Icons.error),
+                                ),
                               ),
-                              onBackgroundImageError: (_, __) =>
-                                  const Icon(Icons.error),
-                            ),
-                          ),
-                          DataCell(
-                              Text(product['product_name']?.toString() ?? '')),
-                          DataCell(Text(
-                              cartItem['weaver_name']?.toString() ?? 'N/A')),
-                          DataCell(Text(
-                              cartItem['artisan_name']?.toString() ?? 'N/A')),
-                          DataCell(Text(
-                              product['subcategory_id']?.toString() ?? '')),
-                          DataCell(
-                              Text(product['product_code']?.toString() ?? '')),
-                          DataCell(
-                              Text(product['product_price']?.toString() ?? '')),
-                          DataCell(Text(
-                              cartItem['cart_quantity']?.toString() ?? '0')),
-                          DataCell(
-                              Text(product['product_type']?.toString() ?? '')),
-                        ],
-                      );
-                    },
+                              DataCell(Text(
+                                  product['product_name']?.toString() ?? '')),
+                              DataCell(
+                                  Text(cartItem['weaver_name']?.toString() ?? 'N/A')),
+                              DataCell(
+                                  Text(cartItem['artisan_name']?.toString() ?? 'N/A')),
+                              DataCell(Text(
+                                  product['subcategory_id']?.toString() ?? '')),
+                              DataCell(Text(
+                                  product['product_code']?.toString() ?? '')),
+                              DataCell(Text(
+                                  product['product_price']?.toString() ?? '')),
+                              DataCell(Text(
+                                  cartItem['cart_quantity']?.toString() ?? '0')),
+                              DataCell(Text(
+                                  product['product_type']?.toString() ?? '')),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
                   ),
                 ),
               ),
-            ),
             const SizedBox(height: 20),
             Text(
               "Total Amount: ₹$totalAmount",

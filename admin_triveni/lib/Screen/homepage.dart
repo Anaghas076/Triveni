@@ -71,7 +71,7 @@ class _HomepageState extends State<Homepage> {
     Userlist(),
     Weaverlist(),
     Wacceptedlist(),
-    Wrejectedlist(),
+    Wrejectectedlist(),
     Artisanlist(),
     Aacceptedlist(),
     Arejectedlist(),

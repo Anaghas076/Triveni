@@ -76,19 +76,6 @@ class _GalleryState extends State<Gallery> {
     }
   }
 
-  Future<void> delete(int id) async {
-    try {
-      await supabase.from('tbl_gallery').delete().eq('gallery_id', id);
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("Deleted"),
-        backgroundColor: const Color.fromARGB(255, 3, 1, 68),
-      ));
-      fetchGallery();
-    } catch (e) {
-      print("Error: $e");
-    }
-  }
-
   // Fetch Gallery Data
   Future<void> fetchGallery() async {
     try {
@@ -114,127 +101,90 @@ class _GalleryState extends State<Gallery> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: const Color.fromARGB(255, 3, 1, 68),
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          ),
-          title: Text(
-            "View gallery",
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
+      appBar: AppBar(
+        backgroundColor: const Color.fromARGB(255, 3, 1, 68),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        title: Text(
+          "View Design",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
           ),
         ),
-        body: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(children: [
-              // Image Picker
-              GestureDetector(
-                onTap: handleImagePick,
-                child: Container(
-                  height: 100,
-                  width: 100,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.grey[300],
-                  ),
-                  child: pickedImage == null
-                      ? Icon(
-                          Icons.add_a_photo,
-                          size: 50,
-                          color: const Color.fromARGB(255, 3, 1, 68),
-                        )
-                      : ClipOval(
-                          child: Image.memory(
-                            Uint8List.fromList(pickedImage!.bytes!),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          children: [
+            // Image Picker
+            GestureDetector(
+              onTap: handleImagePick,
+              child: Container(
+                height: 100,
+                width: 100,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.grey[300],
+                ),
+                child: pickedImage == null
+                    ? Icon(
+                        Icons.add_a_photo,
+                        size: 50,
+                        color: const Color.fromARGB(255, 3, 1, 68),
+                      )
+                    : ClipOval(
+                        child: Image.memory(
+                          Uint8List.fromList(pickedImage!.bytes!),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+              ),
+            ),
+            SizedBox(height: 20),
+            // Submit Button
+            ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 3, 1, 68),
+                ),
+                onPressed: () {
+                  submit();
+                },
+                child: Text(
+                  "Submit",
+                  style: TextStyle(color: Colors.white),
+                )),
+            SizedBox(height: 30),
+            // Gallery Grid
+            Expanded(
+              child: gallerys.isEmpty
+                  ? Center(child: Text("No Photos Available"))
+                  : GridView.builder(
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        crossAxisSpacing: 10,
+                        mainAxisSpacing: 10,
+                      ),
+                      itemCount: gallerys.length,
+                      itemBuilder: (context, index) {
+                        return ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Image.network(
+                            gallerys[index]['gallery_photo'],
                             fit: BoxFit.cover,
                           ),
-                        ),
-                ),
-              ),
-              SizedBox(height: 20),
-              // Submit Button
-              ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 3, 1, 68),
-                  ),
-                  onPressed: () {
-                    submit();
-                  },
-                  child: Text(
-                    "Submit",
-                    style: TextStyle(color: Colors.white),
-                  )),
-              SizedBox(height: 30),
-              Center(
-                child: Container(
-                  width: 300, // Adjust width as needed
-                  padding: EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.2),
-                        blurRadius: 5,
-                        spreadRadius: 2,
-                        offset: Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      Text(
-                        "Gallery",
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Color.fromARGB(255, 54, 3, 116),
-                        ),
-                      ),
-                      SizedBox(height: 10),
-                      gallerys.isNotEmpty
-                          ? ListView.builder(
-                              itemCount: gallerys.length,
-                              shrinkWrap: true,
-                              physics:
-                                  NeverScrollableScrollPhysics(), // Prevent nested scrolling issues
-                              itemBuilder: (context, index) {
-                                final data = gallerys[index];
-                                return Card(
-                                  elevation: 2,
-                                  margin: EdgeInsets.symmetric(vertical: 5),
-                                  child: ListTile(
-                                    leading: CircleAvatar(
-                                      backgroundImage: NetworkImage(
-                                          data['gallery_photo'] ?? ""),
-                                    ),
-                                    title: Text("Gallery Item ${index + 1}"),
-                                    trailing: IconButton(
-                                      onPressed: () {
-                                        delete(data['gallery_id'] ?? "");
-                                      },
-                                      icon:
-                                          Icon(Icons.delete, color: Colors.red),
-                                    ),
-                                  ),
-                                );
-                              },
-                            )
-                          : Text(
-                              "No images available",
-                              style: TextStyle(color: Colors.grey),
-                            ),
-                    ],
-                  ),
-                ),
-              )
-            ])));
+                        );
+                      },
+                    ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

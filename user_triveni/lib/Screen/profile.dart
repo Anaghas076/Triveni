@@ -1,7 +1,7 @@
-import 'package:user_triveni/Screen/changepassword.dart';
-import 'package:user_triveni/Screen/edit.dart';
-import 'package:user_triveni/Screen/viewcomplaint.dart';
-import 'package:user_triveni/Screen/wallet.dart';
+import 'package:user_triveni/screen/changepassword.dart';
+import 'package:user_triveni/screen/edit.dart';
+import 'package:user_triveni/screen/viewcomplaint.dart';
+import 'package:user_triveni/screen/wallet.dart';
 import 'package:user_triveni/main.dart';
 import 'package:flutter/material.dart';
 
@@ -14,8 +14,6 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   Map<String, dynamic> userid = {};
-  int walletBalance = 0;
-  int walletCredit = 0;
 
   Future<void> fetchuser() async {
     try {
@@ -32,182 +30,176 @@ class _ProfileState extends State<Profile> {
     }
   }
 
-  Future<void> fetchWalletDetails() async {
-    try {
-      final userId = supabase.auth.currentUser?.id;
-      if (userId == null) return;
-
-      final response = await supabase
-          .from('tbl_wallet')
-          .select('wallet_balance, wallet_credit')
-          .eq('user_id', userId)
-          .maybeSingle();
-
-      if (response != null) {
-        setState(() {
-          walletBalance = response['wallet_balance'] ?? 0;
-          walletCredit = response['wallet_credit'] ?? 0;
-        });
-      }
-    } catch (e) {
-      print("Error fetching wallet: $e");
-    }
-  }
-
   @override
   void initState() {
     super.initState();
     fetchuser();
-    fetchWalletDetails();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: EdgeInsets.all(10),
+      body: SingleChildScrollView(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 25),
-            Expanded(
-              child: SingleChildScrollView(
+            // Profile Header
+            Container(
+              height: 200,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color.fromARGB(255, 3, 1, 68),
+                    Color.fromARGB(255, 54, 3, 116),
+                  ],
+                ),
+              ),
+              child: SafeArea(
                 child: Center(
-                  child: Container(
-                    width: 400,
-                    height: 330,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: Colors.grey.shade300),
-                      boxShadow: [
-                        BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 5,
-                            spreadRadius: 2),
-                      ],
-                    ),
-                    padding: EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        CircleAvatar(
-                          radius: 40,
-                          backgroundImage:
-                              NetworkImage(userid['user_photo'] ?? ""),
-                          backgroundColor: Colors.grey.shade200,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircleAvatar(
+                        radius: 50,
+                        backgroundImage: NetworkImage(userid['user_photo'] ?? ""),
+                        backgroundColor: Colors.white,
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        userid['user_name'] ?? "User Name",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
                         ),
-                        SizedBox(height: 20),
-                        Text(
-                          userid['user_name'] ?? "user Name",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                            color: Colors.black87,
-                          ),
-                        ),
-                        SizedBox(height: 20),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.location_on,
-                              size: 16,
-                              color: Color.fromARGB(255, 54, 3, 116),
-                            ),
-                            SizedBox(width: 6),
-                            Expanded(
-                              child: Text(
-                                userid['user_address'] ?? "Address unavailable",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
-                                    color: Colors.black),
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 20),
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.phone,
-                              size: 16,
-                              color: Color.fromARGB(255, 54, 3, 116),
-                            ),
-                            SizedBox(width: 6),
-                            Text(
-                              userid['user_contact'] ?? "No contact info",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
-                                  color: Colors.black),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 20),
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.email,
-                              size: 16,
-                              color: Color.fromARGB(255, 54, 3, 116),
-                            ),
-                            SizedBox(width: 6),
-                            Text(
-                              userid['user_email'] ?? "No email",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 14,
-                                  color: Colors.black),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),
             ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 3, 1, 68),
-                  minimumSize: Size(double.infinity, 50)),
-              onPressed: () => Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => Edit())),
-              child: Text("Edit Profile",
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.white,
-                  )),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 3, 1, 68),
-                  minimumSize: Size(double.infinity, 50)),
-              onPressed: () => Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => Changepassword())),
-              child: Text("Change Password",
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.white,
-                  )),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 3, 1, 68),
-                  minimumSize: Size(double.infinity, 50)),
-              onPressed: () => Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => Complaint())),
-              child: Text("View Complaints",
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.white,
-                  )),
+
+            // Profile Information Cards
+            Padding(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  // Contact Information Card
+                  Card(
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Contact Information",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Color.fromARGB(255, 3, 1, 68),
+                            ),
+                          ),
+                          Divider(),
+                          ListTile(
+                            leading: Icon(Icons.email, color: Color.fromARGB(255, 54, 3, 116)),
+                            title: Text("Email"),
+                            subtitle: Text(userid['user_email'] ?? "No email"),
+                          ),
+                          ListTile(
+                            leading: Icon(Icons.phone, color: Color.fromARGB(255, 54, 3, 116)),
+                            title: Text("Phone"),
+                            subtitle: Text(userid['user_contact'] ?? "No contact"),
+                          ),
+                          ListTile(
+                            leading: Icon(Icons.location_on, color: Color.fromARGB(255, 54, 3, 116)),
+                            title: Text("Address"),
+                            subtitle: Text(userid['user_address'] ?? "No address"),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 16),
+
+                  // Quick Actions Card
+                  Card(
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Quick Actions",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Color.fromARGB(255, 3, 1, 68),
+                            ),
+                          ),
+                          Divider(),
+                          ListTile(
+                            leading: Icon(Icons.edit, color: Color.fromARGB(255, 54, 3, 116)),
+                            title: Text("Edit Profile"),
+                            trailing: Icon(Icons.arrow_forward_ios, size: 16),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => Edit()),
+                              ).then((value) {
+                                if (value == true) {
+                                  fetchuser();
+                                }
+                              });
+                            },
+                          ),
+                          ListTile(
+                            leading: Icon(Icons.lock, color: Color.fromARGB(255, 54, 3, 116)),
+                            title: Text("Change Password"),
+                            trailing: Icon(Icons.arrow_forward_ios, size: 16),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => Changepassword()),
+                              );
+                            },
+                          ),
+                          ListTile(
+                            leading: Icon(Icons.report_problem, color: Color.fromARGB(255, 54, 3, 116)),
+                            title: Text("Complaints"),
+                            trailing: Icon(Icons.arrow_forward_ios, size: 16),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => Complaint()),
+                              );
+                            },
+                          ),
+                          ListTile(
+                            leading: Icon(Icons.wallet, color: Color.fromARGB(255, 54, 3, 116)),
+                            title: Text("Wallet"),
+                            trailing: Icon(Icons.arrow_forward_ios, size: 16),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => WalletPage()),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

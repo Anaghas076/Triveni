@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:user_triveni/Component/formvalidation.dart';
+import 'package:user_triveni/component/formvalidation.dart';
 import 'package:user_triveni/main.dart';
 
 class Postcomplaint extends StatefulWidget {

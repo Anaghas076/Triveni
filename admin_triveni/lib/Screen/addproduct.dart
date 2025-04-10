@@ -1,10 +1,7 @@
-// import 'dart:io';
-// import 'dart:typed_data';
-import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:admin_triveni/Components/formvalidation.dart';
-import 'package:admin_triveni/Screen/gallery.dart';
+import 'package:admin_triveni/components/formvalidation.dart';
+import 'package:admin_triveni/screen/gallery.dart';
 
 import 'package:admin_triveni/main.dart';
 import 'package:file_picker/file_picker.dart';
@@ -455,6 +452,7 @@ class _AddProductState extends State<AddProduct> {
                                                   value),
                                           style: TextStyle(color: Colors.white),
                                           controller: nameController,
+                                          keyboardType: TextInputType.name,
                                           decoration: InputDecoration(
                                             hintText: "Enter Product Name",
                                             hintStyle: TextStyle(

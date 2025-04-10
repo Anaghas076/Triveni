@@ -1,6 +1,6 @@
-import 'package:user_triveni/Component/formvalidation.dart';
-import 'package:user_triveni/Screen/homepage.dart';
-import 'package:user_triveni/Screen/registerpage.dart';
+import 'package:user_triveni/component/formvalidation.dart';
+import 'package:user_triveni/screen/homepage.dart';
+import 'package:user_triveni/screen/registerpage.dart';
 import 'package:user_triveni/main.dart';
 import 'package:flutter/material.dart';
 
@@ -85,6 +85,7 @@ class _LoginPageState extends State<LoginPage> {
                 TextFormField(
                   validator: (value) => FormValidation.validateEmail(value),
                   controller: emailController,
+                  keyboardType: TextInputType.emailAddress,
                   style: TextStyle(
                       color: const Color.fromARGB(255, 3, 1, 68),
                       fontWeight: FontWeight.bold),

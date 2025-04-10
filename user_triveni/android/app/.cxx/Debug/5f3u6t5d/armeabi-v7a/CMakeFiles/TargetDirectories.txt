@@ -1,0 +1,2 @@
+C:/Projects/Triveni-Flutter-App/user_triveni/android/app/.cxx/Debug/5f3u6t5d/armeabi-v7a/CMakeFiles/edit_cache.dir
+C:/Projects/Triveni-Flutter-App/user_triveni/android/app/.cxx/Debug/5f3u6t5d/armeabi-v7a/CMakeFiles/rebuild_cache.dir

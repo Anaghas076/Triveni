@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:artisan_triveni/Component/formvalidation.dart';
-import 'package:artisan_triveni/Screen/homepage.dart';
-import 'package:artisan_triveni/Screen/registerpage.dart';
+import 'package:artisan_triveni/screen/homepage.dart';
+import 'package:artisan_triveni/screen/registerpage.dart';
 import 'package:artisan_triveni/main.dart';
 
 class LoginPage extends StatefulWidget {
@@ -103,6 +103,7 @@ class _LoginPageState extends State<LoginPage> {
                 TextFormField(
                   validator: (value) => FormValidation.validateEmail(value),
                   controller: emailController,
+                  keyboardType: TextInputType.emailAddress,
                   style: TextStyle(
                       color: const Color.fromARGB(255, 3, 1, 68),
                       fontWeight: FontWeight.bold),

@@ -1,5 +1,7 @@
-import 'package:artisan_triveni/Screen/changepassword.dart';
-import 'package:artisan_triveni/Screen/edit.dart';
+import 'package:artisan_triveni/screen/changepassword.dart';
+import 'package:artisan_triveni/screen/daily.dart';
+import 'package:artisan_triveni/screen/edit.dart';
+import 'package:artisan_triveni/screen/report.dart';
 import 'package:artisan_triveni/main.dart';
 import 'package:flutter/material.dart';
 
@@ -37,123 +39,172 @@ class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView.builder(
-        padding: EdgeInsets.all(10),
-        itemCount: 1,
-        itemBuilder: (context, index) {
-          return Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey.shade300),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black12,
-                  blurRadius: 5,
-                  spreadRadius: 2,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            // Profile Header with Background
+            Container(
+              height: 200,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color.fromARGB(255, 3, 1, 68),
+                    Color.fromARGB(255, 54, 3, 116),
+                  ],
                 ),
-              ],
-            ),
-            padding: EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                CircleAvatar(
-                  radius: 40,
-                  backgroundImage:
-                      NetworkImage(artisanid['artisan_photo'] ?? ""),
-                  backgroundColor: Colors.grey.shade200,
-                ),
-                SizedBox(height: 20),
-                Text(
-                  artisanid['artisan_name'] ?? "Artisan Name",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 18,
-                    color: Colors.black87,
+              ),
+              child: SafeArea(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircleAvatar(
+                        radius: 50,
+                        backgroundImage: NetworkImage(artisanid['artisan_photo'] ?? ""),
+                        backgroundColor: Colors.white,
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        artisanid['artisan_name'] ?? "Artisan Name",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                SizedBox(height: 20),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.location_on,
-                      size: 16,
-                      color: Color.fromARGB(255, 54, 3, 116),
+              ),
+            ),
+
+            // Profile Information Cards
+            Padding(
+              padding: EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  // Contact Information Card
+                  Card(
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
                     ),
-                    SizedBox(width: 6),
-                    Expanded(
-                      child: Text(
-                        artisanid['artisan_address'] ?? "Address unavailable",
-                        style: TextStyle(fontSize: 14, color: Colors.black54),
+                    child: Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Contact Information",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Color.fromARGB(255, 3, 1, 68),
+                            ),
+                          ),
+                          Divider(),
+                          ListTile(
+                            leading: Icon(Icons.phone, color: Color.fromARGB(255, 54, 3, 116)),
+                            title: Text("Phone"),
+                            subtitle: Text(artisanid['artisan_contact'] ?? "No contact info"),
+                          ),
+                          ListTile(
+                            leading: Icon(Icons.email, color: Color.fromARGB(255, 54, 3, 116)),
+                            title: Text("Email"),
+                            subtitle: Text(artisanid['artisan_email'] ?? "No email"),
+                          ),
+                          ListTile(
+                            leading: Icon(Icons.location_on, color: Color.fromARGB(255, 54, 3, 116)),
+                            title: Text("Address"),
+                            subtitle: Text(artisanid['artisan_address'] ?? "Address unavailable"),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
-                SizedBox(height: 20),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.phone,
-                      size: 16,
-                      color: Color.fromARGB(255, 54, 3, 116),
+                  ),
+                  SizedBox(height: 16),
+
+                  // Quick Actions Card
+                  Card(
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
                     ),
-                    SizedBox(width: 6),
-                    Text(
-                      artisanid['artisan_contact'] ?? "No contact info",
-                      style: TextStyle(fontSize: 14, color: Colors.black54),
+                    child: Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Quick Actions",
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Color.fromARGB(255, 3, 1, 68),
+                            ),
+                          ),
+                          Divider(),
+                          ListTile(
+                            leading: Icon(Icons.edit, color: Color.fromARGB(255, 54, 3, 116)),
+                            title: Text("Edit Profile"),
+                            trailing: Icon(Icons.arrow_forward_ios, size: 16),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => Edit()),
+                              ).then((value) {
+                                if (value == true) {
+                                  fetchartisan();
+                                }
+                              });
+                            },
+                          ),
+                          ListTile(
+                            leading: Icon(Icons.lock, color: Color.fromARGB(255, 54, 3, 116)),
+                            title: Text("Change Password"),
+                            trailing: Icon(Icons.arrow_forward_ios, size: 16),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => Changepassword()),
+                              );
+                            },
+                          ),
+                          ListTile(
+                            leading: Icon(Icons.assessment, color: Color.fromARGB(255, 54, 3, 116)),
+                            title: Text("Work Analysis"),
+                            trailing: Icon(Icons.arrow_forward_ios, size: 16),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => ReportPage()),
+                              );
+                            },
+                          ),
+                          ListTile(
+                            leading: Icon(Icons.history, color: Color.fromARGB(255, 54, 3, 116)),
+                            title: Text("Daily Transactions"),
+                            trailing: Icon(Icons.arrow_forward_ios, size: 16),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => ArtisanPage()),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
                     ),
-                  ],
-                ),
-                SizedBox(height: 20),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.email,
-                      size: 16,
-                      color: Color.fromARGB(255, 54, 3, 116),
-                    ),
-                    SizedBox(width: 6),
-                    Text(
-                      artisanid['artisan_email'] ?? "No email",
-                      style: TextStyle(fontSize: 14, color: Colors.black54),
-                    ),
-                  ],
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Row(
-                  children: [
-                    ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => Edit(),
-                              ));
-                        },
-                        child: Text("Edit")),
-                    SizedBox(
-                      width: 50,
-                    ),
-                    ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => Changepassword(),
-                              ));
-                        },
-                        child: Text("Change password")),
-                  ],
-                )
-              ],
+                  ),
+                ],
+              ),
             ),
-          );
-        },
+          ],
+        ),
       ),
     );
   }
 }
+
