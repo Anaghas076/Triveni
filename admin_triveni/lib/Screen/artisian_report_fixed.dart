@@ -2,17 +2,17 @@ import 'package:admin_triveni/main.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
-class WeaverReportWidget extends StatefulWidget {
-  const WeaverReportWidget({super.key});
+class ArtisanReportWidget extends StatefulWidget {
+  const ArtisanReportWidget({super.key});
 
   @override
-  State<WeaverReportWidget> createState() => _WeaverReportWidgetState();
+  State<ArtisanReportWidget> createState() => _ArtisanReportWidgetState();
 }
 
-class _WeaverReportWidgetState extends State<WeaverReportWidget> {
+class _ArtisanReportWidgetState extends State<ArtisanReportWidget> {
   List<Map<String, dynamic>> bookings = [];
-  Map<String, String> weaverNames = {};
-  Map<String, int> weaverWorkCount = {};
+  Map<String, String> artisanNames = {};
+  Map<String, int> artisanWorkCount = {};
 
   @override
   void initState() {
@@ -24,25 +24,25 @@ class _WeaverReportWidgetState extends State<WeaverReportWidget> {
     try {
       // Create some dummy data for testing
       Map<String, int> dummyWorkCount = {
-        '86103f2c-d473-4e8c-819d-fec1a95f2916': 5, // Vani Naveen
-        'fe8709e3-1efc-445a-b552-d12b093d493c': 3, // vami jay
-        'b9b2d4fc-83e4-472c-a2c4-db0a46f32aa1': 7, // Veda Vikram
-        '22903326-8e4b-4e7d-a1c7-5741274396e0': 2  // Vidhu Ram
+        '21e7d0e2-c421-4ac8-a8f5-d133a3bdc521': 6, // Amy Dev
+        '71c675a3-9e51-4eba-9c47-23cb424938eb': 4, // Arav Ravi
+        '7dbc4c25-fbe9-47c9-86b1-c7739a3612bd': 8, // Abin Raj
+        'ac9c3835-1f59-40f9-b6ab-811293233ab1': 3  // Ayan Raj
       };
-
-      // Fetch weaver names
-      final weaverResponse =
-          await supabase.from('tbl_weaver')
-            .select('weaver_id, weaver_name');
-
+      
+      // Fetch artisan names
+      final artisanResponse =
+          await supabase.from('tbl_artisan')
+            .select('artisan_id, artisan_name');
+      
       setState(() {
-        weaverNames = {
-          for (var weaver in weaverResponse)
-            weaver['weaver_id']: weaver['weaver_name']
+        artisanNames = {
+          for (var artisan in artisanResponse)
+            artisan['artisan_id']: artisan['artisan_name']
         };
-
+        
         // Use dummy data for now
-        weaverWorkCount = dummyWorkCount;
+        artisanWorkCount = dummyWorkCount;
       });
     } catch (e) {
       // Log error
@@ -56,7 +56,7 @@ class _WeaverReportWidgetState extends State<WeaverReportWidget> {
 
   @override
   Widget build(BuildContext context) {
-    if (weaverWorkCount.isEmpty) {
+    if (artisanWorkCount.isEmpty) {
       return Container(
         height: 300,
         padding: const EdgeInsets.all(16.0),
@@ -93,7 +93,7 @@ class _WeaverReportWidgetState extends State<WeaverReportWidget> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Weaver Work Report",
+            "Artisan Work Report",
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -105,7 +105,9 @@ class _WeaverReportWidgetState extends State<WeaverReportWidget> {
             child: BarChart(
               BarChartData(
                 alignment: BarChartAlignment.spaceAround,
-                maxY: (weaverWorkCount.values.reduce((a, b) => a > b ? a : b) + 1).toDouble(),
+                maxY: artisanWorkCount.isEmpty 
+                    ? 1.0 
+                    : (artisanWorkCount.values.reduce((a, b) => a > b ? a : b) + 1).toDouble(),
                 barGroups: _buildBarGroups(),
                 titlesData: FlTitlesData(
                   leftTitles: AxisTitles(
@@ -126,14 +128,14 @@ class _WeaverReportWidgetState extends State<WeaverReportWidget> {
                       reservedSize: 80, // Increased space for labels
                       getTitlesWidget: (value, meta) {
                         try {
-                          final sortedEntries = weaverWorkCount.entries.toList()
+                          final sortedEntries = artisanWorkCount.entries.toList()
                             ..sort((a, b) => b.value.compareTo(a.value));
                           final sortedKeys = sortedEntries.map((e) => e.key).toList();
-
+                          
                           if (value.toInt() >= 0 && value.toInt() < sortedKeys.length) {
-                            final weaverId = sortedKeys[value.toInt()];
-                            final name = weaverNames[weaverId] ??
-                                (weaverId.length > 6 ? weaverId.substring(0, 6) : weaverId);
+                            final artisanId = sortedKeys[value.toInt()];
+                            final name = artisanNames[artisanId] ?? 
+                                (artisanId.length > 6 ? artisanId.substring(0, 6) : artisanId);
                             return SideTitleWidget(
                               meta: meta,
                               child: RotatedBox(
@@ -156,7 +158,6 @@ class _WeaverReportWidgetState extends State<WeaverReportWidget> {
                             child: Text(''),
                           );
                         }
-
                       },
                     ),
                   ),
@@ -180,13 +181,13 @@ class _WeaverReportWidgetState extends State<WeaverReportWidget> {
                   touchTooltipData: BarTouchTooltipData(
                     getTooltipItem: (group, groupIndex, rod, rodIndex) {
                       try {
-                        final sortedEntries = weaverWorkCount.entries.toList()
+                        final sortedEntries = artisanWorkCount.entries.toList()
                           ..sort((a, b) => b.value.compareTo(a.value));
                         final sortedKeys = sortedEntries.map((e) => e.key).toList();
-
+                        
                         if (group.x >= 0 && group.x < sortedKeys.length) {
-                          final weaverId = sortedKeys[group.x];
-                          final name = weaverNames[weaverId] ?? 'Unknown';
+                          final artisanId = sortedKeys[group.x];
+                          final name = artisanNames[artisanId] ?? 'Unknown';
                           return BarTooltipItem(
                             '$name\nWorks: ${rod.toY.toInt()}',
                             TextStyle(color: Colors.white),
@@ -209,25 +210,23 @@ class _WeaverReportWidgetState extends State<WeaverReportWidget> {
   }
 
   List<BarChartGroupData> _buildBarGroups() {
-    if (weaverWorkCount.isEmpty) {
+    if (artisanWorkCount.isEmpty) {
       return [];
     }
-
+    
     try {
       // Sort by work count (highest first) instead of by key
-      final sortedEntries = weaverWorkCount.entries.toList()
+      final sortedEntries = artisanWorkCount.entries.toList()
         ..sort((a, b) => b.value.compareTo(a.value));
-
+      
       final sortedKeys = sortedEntries.map((e) => e.key).toList();
-
+      
       return sortedKeys.asMap().entries.map((entry) {
         final index = entry.key;
-        final weaverId = entry.value;
-        final count = weaverWorkCount[weaverId] ?? 0;
-        // Name is used in tooltip only
-
-        // Build bar for weaver
-
+        final artisanId = entry.value;
+        final count = artisanWorkCount[artisanId] ?? 0;
+        
+        // Build bar for artisan
         return BarChartGroupData(
           x: index,
           barRods: [

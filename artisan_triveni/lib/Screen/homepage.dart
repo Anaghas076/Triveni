@@ -1,9 +1,11 @@
+import 'package:artisan_triveni/main.dart';
 import 'package:artisan_triveni/screen/homecontent.dart';
 import 'package:artisan_triveni/screen/order.dart';
 
 import 'package:artisan_triveni/screen/profile.dart';
 import 'package:artisan_triveni/screen/mydesign.dart';
 import 'package:flutter/material.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -22,6 +24,27 @@ class _HomepageState extends State<Homepage> {
     Booking(),
     MyDesign(),
   ];
+
+  Future<void> saveFcmToken() async {
+    try {
+      final fcmToken = await FirebaseMessaging.instance.getToken();
+      if (fcmToken != null) {
+        await supabase.from('tbl_artisan').update({'fcm_token': fcmToken}).eq(
+            'artisan_id', supabase.auth.currentUser!.id);
+      }
+      print("FCM GENERATED");
+      print(fcmToken);
+    } catch (e) {
+      print("FCM Token Error: $e");
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    saveFcmToken();
+  }
 
   @override
   Widget build(BuildContext context) {

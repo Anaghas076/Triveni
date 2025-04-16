@@ -1,5 +1,5 @@
-import 'package:admin_triveni/screen/artisian_report.dart';
-import 'package:admin_triveni/screen/weaver_report.dart';
+import 'package:admin_triveni/screen/artisian_report_fixed.dart';
+import 'package:admin_triveni/screen/weaver_report_fixed.dart';
 import 'package:admin_triveni/main.dart';
 import 'package:flutter/material.dart';
 
@@ -288,7 +288,7 @@ class _DashboardState extends State<Dashboard> {
               Expanded(child: ArtisanReportWidget()),
             ],
           ),
-         
+
         ],
       ),
     ));

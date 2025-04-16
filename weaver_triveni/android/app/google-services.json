@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "717779983230",
+    "project_id": "kerala-traditional-wear",
+    "storage_bucket": "kerala-traditional-wear.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:717779983230:android:2b187dacc95d49922b312f",
+        "android_client_info": {
+          "package_name": "com.example.artisan_triveni"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDmcla6ceCogqkxkQijtghorCj4jsCEe5c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:717779983230:android:f4a778a60899983d2b312f",
+        "android_client_info": {
+          "package_name": "com.example.user_triveni"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDmcla6ceCogqkxkQijtghorCj4jsCEe5c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:717779983230:android:f554f81dcc21f8742b312f",
+        "android_client_info": {
+          "package_name": "com.example.weaver_triveni"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDmcla6ceCogqkxkQijtghorCj4jsCEe5c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

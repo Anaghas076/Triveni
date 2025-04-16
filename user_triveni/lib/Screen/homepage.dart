@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:user_triveni/main.dart';
 import 'package:user_triveni/screen/cart.dart';
-
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:user_triveni/screen/homecontent.dart';
-
 import 'package:user_triveni/screen/myorder.dart';
-
 import 'package:user_triveni/screen/profile.dart';
 import 'package:user_triveni/screen/search.dart';
 
@@ -25,6 +24,26 @@ class _HomepageState extends State<Homepage> {
     Myorder(),
     Search(),
   ];
+
+  Future<void> saveFcmToken() async {
+    try {
+      final fcmToken = await FirebaseMessaging.instance.getToken();
+      if (fcmToken != null) {
+        await supabase.from('tbl_user').update({'fcm_token': fcmToken}).eq(
+            'user_id', supabase.auth.currentUser!.id);
+      }
+      print("FCM GENERATED");
+      print(fcmToken);
+    } catch (e) {
+      print("FCM Token Error: $e");
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    saveFcmToken();
+  }
 
   @override
   Widget build(BuildContext context) {

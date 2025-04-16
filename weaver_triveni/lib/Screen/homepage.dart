@@ -1,5 +1,7 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:weaver_triveni/Screen/daily.dart';
+import 'package:weaver_triveni/main.dart';
 import 'package:weaver_triveni/screen/dashboard.dart';
 
 import 'package:weaver_triveni/screen/myorder.dart';
@@ -23,6 +25,27 @@ class _HomepageState extends State<Homepage> {
     Myorder(),
     DailyWeaver(),
   ];
+
+  Future<void> saveFcmToken() async {
+    try {
+      final fcmToken = await FirebaseMessaging.instance.getToken();
+      if (fcmToken != null) {
+        await supabase.from('tbl_weaver').update({'fcm_token': fcmToken}).eq(
+            'weaver_id', supabase.auth.currentUser!.id);
+      }
+      print("FCM GENERATED");
+      print(fcmToken);
+    } catch (e) {
+      print("FCM Token Error: $e");
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    saveFcmToken();
+  }
 
   @override
   Widget build(BuildContext context) {
