@@ -1,0 +1,2 @@
+D:/JIthin/Triveni/Triveni/user_triveni/android/app/.cxx/Debug/3h4m24b5/x86/CMakeFiles/edit_cache.dir
+D:/JIthin/Triveni/Triveni/user_triveni/android/app/.cxx/Debug/3h4m24b5/x86/CMakeFiles/rebuild_cache.dir

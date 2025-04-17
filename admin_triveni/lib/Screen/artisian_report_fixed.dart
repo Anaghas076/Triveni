@@ -27,20 +27,19 @@ class _ArtisanReportWidgetState extends State<ArtisanReportWidget> {
         '21e7d0e2-c421-4ac8-a8f5-d133a3bdc521': 6, // Amy Dev
         '71c675a3-9e51-4eba-9c47-23cb424938eb': 4, // Arav Ravi
         '7dbc4c25-fbe9-47c9-86b1-c7739a3612bd': 8, // Abin Raj
-        'ac9c3835-1f59-40f9-b6ab-811293233ab1': 3  // Ayan Raj
+        'ac9c3835-1f59-40f9-b6ab-811293233ab1': 3 // Ayan Raj
       };
-      
+
       // Fetch artisan names
       final artisanResponse =
-          await supabase.from('tbl_artisan')
-            .select('artisan_id, artisan_name');
-      
+          await supabase.from('tbl_artisan').select('artisan_id, artisan_name');
+
       setState(() {
         artisanNames = {
           for (var artisan in artisanResponse)
             artisan['artisan_id']: artisan['artisan_name']
         };
-        
+
         // Use dummy data for now
         artisanWorkCount = dummyWorkCount;
       });
@@ -58,7 +57,7 @@ class _ArtisanReportWidgetState extends State<ArtisanReportWidget> {
   Widget build(BuildContext context) {
     if (artisanWorkCount.isEmpty) {
       return Container(
-        height: 300,
+        height: 500,
         padding: const EdgeInsets.all(16.0),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -76,7 +75,7 @@ class _ArtisanReportWidgetState extends State<ArtisanReportWidget> {
     }
 
     return Container(
-      height: 350, // Increased height
+      height: 450, // Increased height
       padding: const EdgeInsets.all(20.0), // Increased padding
       decoration: BoxDecoration(
         color: Colors.white,
@@ -97,7 +96,7 @@ class _ArtisanReportWidgetState extends State<ArtisanReportWidget> {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Colors.blueAccent,
+              color: const Color.fromARGB(255, 3, 1, 68),
             ),
           ),
           SizedBox(height: 16),
@@ -105,9 +104,11 @@ class _ArtisanReportWidgetState extends State<ArtisanReportWidget> {
             child: BarChart(
               BarChartData(
                 alignment: BarChartAlignment.spaceAround,
-                maxY: artisanWorkCount.isEmpty 
-                    ? 1.0 
-                    : (artisanWorkCount.values.reduce((a, b) => a > b ? a : b) + 1).toDouble(),
+                maxY: artisanWorkCount.isEmpty
+                    ? 1.0
+                    : (artisanWorkCount.values.reduce((a, b) => a > b ? a : b) +
+                            1)
+                        .toDouble(),
                 barGroups: _buildBarGroups(),
                 titlesData: FlTitlesData(
                   leftTitles: AxisTitles(
@@ -128,21 +129,27 @@ class _ArtisanReportWidgetState extends State<ArtisanReportWidget> {
                       reservedSize: 80, // Increased space for labels
                       getTitlesWidget: (value, meta) {
                         try {
-                          final sortedEntries = artisanWorkCount.entries.toList()
+                          final sortedEntries = artisanWorkCount.entries
+                              .toList()
                             ..sort((a, b) => b.value.compareTo(a.value));
-                          final sortedKeys = sortedEntries.map((e) => e.key).toList();
-                          
-                          if (value.toInt() >= 0 && value.toInt() < sortedKeys.length) {
+                          final sortedKeys =
+                              sortedEntries.map((e) => e.key).toList();
+
+                          if (value.toInt() >= 0 &&
+                              value.toInt() < sortedKeys.length) {
                             final artisanId = sortedKeys[value.toInt()];
-                            final name = artisanNames[artisanId] ?? 
-                                (artisanId.length > 6 ? artisanId.substring(0, 6) : artisanId);
+                            final name = artisanNames[artisanId] ??
+                                (artisanId.length > 6
+                                    ? artisanId.substring(0, 6)
+                                    : artisanId);
                             return SideTitleWidget(
                               meta: meta,
                               child: RotatedBox(
                                 quarterTurns: 3,
                                 child: Text(
                                   name,
-                                  style: TextStyle(fontSize: 10), // Reduced font size
+                                  style: TextStyle(
+                                      fontSize: 10), // Reduced font size
                                   textAlign: TextAlign.center,
                                 ),
                               ),
@@ -166,7 +173,8 @@ class _ArtisanReportWidgetState extends State<ArtisanReportWidget> {
                   rightTitles:
                       AxisTitles(sideTitles: SideTitles(showTitles: false)),
                 ),
-                borderData: FlBorderData(border: Border(
+                borderData: FlBorderData(
+                    border: Border(
                   left: BorderSide(color: Colors.black, width: 1),
                   bottom: BorderSide(color: Colors.black, width: 1),
                 )),
@@ -183,8 +191,9 @@ class _ArtisanReportWidgetState extends State<ArtisanReportWidget> {
                       try {
                         final sortedEntries = artisanWorkCount.entries.toList()
                           ..sort((a, b) => b.value.compareTo(a.value));
-                        final sortedKeys = sortedEntries.map((e) => e.key).toList();
-                        
+                        final sortedKeys =
+                            sortedEntries.map((e) => e.key).toList();
+
                         if (group.x >= 0 && group.x < sortedKeys.length) {
                           final artisanId = sortedKeys[group.x];
                           final name = artisanNames[artisanId] ?? 'Unknown';
@@ -213,26 +222,26 @@ class _ArtisanReportWidgetState extends State<ArtisanReportWidget> {
     if (artisanWorkCount.isEmpty) {
       return [];
     }
-    
+
     try {
       // Sort by work count (highest first) instead of by key
       final sortedEntries = artisanWorkCount.entries.toList()
         ..sort((a, b) => b.value.compareTo(a.value));
-      
+
       final sortedKeys = sortedEntries.map((e) => e.key).toList();
-      
+
       return sortedKeys.asMap().entries.map((entry) {
         final index = entry.key;
         final artisanId = entry.value;
         final count = artisanWorkCount[artisanId] ?? 0;
-        
+
         // Build bar for artisan
         return BarChartGroupData(
           x: index,
           barRods: [
             BarChartRodData(
               toY: count.toDouble(),
-              color: Colors.blue,
+              color: const Color.fromARGB(255, 3, 1, 68),
               width: 18,
               borderRadius: BorderRadius.circular(6),
             ),

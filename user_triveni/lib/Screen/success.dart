@@ -5,6 +5,8 @@ import 'package:lottie/lottie.dart';
 import 'package:user_triveni/screen/homepage.dart';
 
 class PaymentSuccessPage extends StatefulWidget {
+  const PaymentSuccessPage({super.key});
+
   @override
   _PaymentSuccessPageState createState() => _PaymentSuccessPageState();
 }

@@ -1,5 +1,5 @@
+import 'package:artisan_triveni/Screen/dashboard.dart';
 import 'package:artisan_triveni/main.dart';
-import 'package:artisan_triveni/screen/homecontent.dart';
 import 'package:artisan_triveni/screen/order.dart';
 
 import 'package:artisan_triveni/screen/profile.dart';
@@ -19,7 +19,7 @@ class _HomepageState extends State<Homepage> {
 
   // List of pages for bottom navigation
   final List<Widget> pageContent = [
-    Homecontent(), // New HomeScreen widget
+    Orders(), // New HomeScreen widget
     Profile(), // Dummy category page
     Booking(),
     MyDesign(),
@@ -81,7 +81,7 @@ class _HomepageState extends State<Homepage> {
           BottomNavigationBarItem(
               icon: Icon(Icons.shopping_bag), label: "My Orders"),
           BottomNavigationBarItem(
-              icon: Icon(Icons.settings), label: "Settings"),
+              icon: Icon(Icons.palette), label: "My Designs"),
         ],
         selectedItemColor:
             const Color.fromARGB(255, 241, 233, 7), // Color of selected icon

@@ -84,14 +84,17 @@ class _CategorySearchState extends State<CategorySearch> {
 
   void _filterProducts() {
     String query = searchController.text.toLowerCase();
-    
+
     setState(() {
       filteredProducts = products.where((product) {
-        // print("Product name: ${product['product_name']}");
-        print("Query: ${product['product_name']}");
+        // Check if the query matches the product name or description
         bool matchesKeyword =
-            product['product_name'].toString().toLowerCase().contains(query);
-        print(matchesKeyword );
+            product['product_name'].toString().toLowerCase().contains(query) ||
+                product['product_description']
+                    .toString()
+                    .toLowerCase()
+                    .contains(query);
+
         bool matchesSubcategory = selectedSub == null ||
             product['tbl_subcategory']['subcategory_id'].toString() ==
                 selectedSub;
@@ -427,6 +430,7 @@ class _CategorySearchState extends State<CategorySearch> {
       ),
     );
   }
+
   double _getResponsiveAspectRatio(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;

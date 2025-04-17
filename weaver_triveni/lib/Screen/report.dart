@@ -205,8 +205,7 @@ class _ReportPageState extends State<ReportPage> {
                     ),
                     pw.SizedBox(height: 20),
                   ])
-              .expand((widgets) => widgets)
-              .toList(),
+              .expand((widgets) => widgets),
         ],
       ),
     );
@@ -308,7 +307,11 @@ class _ReportPageState extends State<ReportPage> {
       children: [
         _buildStatCard('Income', totalIncome, Colors.green),
         _buildStatCard('Expense', totalExpense, Colors.red),
-        _buildStatCard('Bookings', totalBookings.toDouble(), Colors.blue),
+        _buildStatCard(
+          'Bookings',
+          totalBookings.toDouble(),
+          const Color.fromARGB(255, 3, 1, 68),
+        ),
       ],
     );
   }
@@ -376,8 +379,8 @@ class _ReportPageState extends State<ReportPage> {
       });
 
     // Find max absolute value for scaling
-    double maxValue = dailyProfitLoss.isEmpty 
-        ? 1.0 
+    double maxValue = dailyProfitLoss.isEmpty
+        ? 1.0
         : dailyProfitLoss.values.map((e) => e.abs()).reduce(max);
 
     return Card(
@@ -395,7 +398,7 @@ class _ReportPageState extends State<ReportPage> {
               ),
             ),
             SizedBox(height: 16),
-            Container(
+            SizedBox(
               height: 300,
               child: dailyProfitLoss.isEmpty
                   ? Center(child: Text('No data available for this month'))
@@ -429,8 +432,8 @@ class _ReportPageState extends State<ReportPage> {
                                   return Transform.rotate(
                                     angle: 0.785398, // 45 degrees in radians
                                     child: Text(
-                                      sortedDays[index]
-                                          .split(' ')[0], // Show only day number
+                                      sortedDays[index].split(
+                                          ' ')[0], // Show only day number
                                       style: TextStyle(
                                         fontSize: 10,
                                         fontWeight: FontWeight.bold,
@@ -458,10 +461,10 @@ class _ReportPageState extends State<ReportPage> {
                               },
                             ),
                           ),
-                          rightTitles:
-                              AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                          topTitles:
-                              AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                          rightTitles: AxisTitles(
+                              sideTitles: SideTitles(showTitles: false)),
+                          topTitles: AxisTitles(
+                              sideTitles: SideTitles(showTitles: false)),
                         ),
                         borderData: FlBorderData(
                           show: true,
@@ -479,7 +482,7 @@ class _ReportPageState extends State<ReportPage> {
                               );
                             }),
                             isCurved: false, // Straight lines between points
-                            color: Colors.blue,
+                            color: const Color.fromARGB(255, 3, 1, 68),
                             barWidth: 2,
                             isStrokeCapRound: true,
                             dotData: FlDotData(
@@ -499,7 +502,8 @@ class _ReportPageState extends State<ReportPage> {
                         ],
                         lineTouchData: LineTouchData(
                           touchTooltipData: LineTouchTooltipData(
-                            getTooltipItems: (List<LineBarSpot> touchedBarSpots) {
+                            getTooltipItems:
+                                (List<LineBarSpot> touchedBarSpots) {
                               return touchedBarSpots.map((barSpot) {
                                 final day = sortedDays[barSpot.x.toInt()];
                                 final profitLoss = barSpot.y;

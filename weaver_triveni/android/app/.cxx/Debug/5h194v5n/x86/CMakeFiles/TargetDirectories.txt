@@ -1,0 +1,2 @@
+D:/Triveni/weaver_triveni/android/app/.cxx/Debug/5h194v5n/x86/CMakeFiles/edit_cache.dir
+D:/Triveni/weaver_triveni/android/app/.cxx/Debug/5h194v5n/x86/CMakeFiles/rebuild_cache.dir

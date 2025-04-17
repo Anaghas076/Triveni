@@ -190,7 +190,7 @@ class _ProductdemoState extends State<Productdemo> {
                 ),
               SizedBox(height: 10),
               if (widget.product['product_size'] == true)
-                Container(
+                SizedBox(
                   width: 500,
                   height: 50,
                   child: Row(
@@ -356,7 +356,10 @@ class _ProductdemoState extends State<Productdemo> {
                                         ),
                                         SizedBox(height: 4),
                                         Text(
-                                          '${DateTime.parse(review['created_at']).toLocal().toString().split(' ')[0]}',
+                                          DateTime.parse(review['created_at'])
+                                              .toLocal()
+                                              .toString()
+                                              .split(' ')[0],
                                           style: TextStyle(
                                             color: Color(0xFF999999),
                                             fontSize: 12,

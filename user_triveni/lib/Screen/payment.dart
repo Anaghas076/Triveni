@@ -20,7 +20,7 @@ class _PaymentGatewayScreenState extends State<PaymentGatewayScreen> {
   String cvvCode = '';
   bool isCvvFocused = false;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  
+
   bool redeemPoints = false;
   int availablePoints = 0;
   double finalAmount = 0.0;
@@ -41,7 +41,7 @@ class _PaymentGatewayScreenState extends State<PaymentGatewayScreen> {
           .select('wallet_balance')
           .eq('user_id', userId)
           .maybeSingle();
-      
+
       if (walletResponse != null) {
         setState(() {
           availablePoints = walletResponse['wallet_balance'] ?? 0;
@@ -64,8 +64,9 @@ class _PaymentGatewayScreenState extends State<PaymentGatewayScreen> {
         // Calculate points needed based on conversion rate
         // double amountInRupees = availablePoints * POINT_VALUE;
         int pointsToUse = (widget.amt / POINT_VALUE).ceil();
-        pointsToUse = pointsToUse > availablePoints ? availablePoints : pointsToUse;
-        
+        pointsToUse =
+            pointsToUse > availablePoints ? availablePoints : pointsToUse;
+
         // Update wallet balance after redemption
         final newBalance = availablePoints - pointsToUse;
         await supabase.from('tbl_wallet').update({
@@ -147,12 +148,15 @@ class _PaymentGatewayScreenState extends State<PaymentGatewayScreen> {
   @override
   Widget build(BuildContext context) {
     double pointsValueInRupees = availablePoints * POINT_VALUE;
-    
+
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [const Color.fromARGB(255, 245, 239, 255), const Color.fromARGB(255, 237, 237, 237)],
+            colors: [
+              const Color.fromARGB(255, 245, 239, 255),
+              const Color.fromARGB(255, 237, 237, 237)
+            ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -198,7 +202,8 @@ class _PaymentGatewayScreenState extends State<PaymentGatewayScreen> {
                                 children: [
                                   Checkbox(
                                     value: redeemPoints,
-                                    onChanged: (value) => _updateFinalAmount(value!),
+                                    onChanged: (value) =>
+                                        _updateFinalAmount(value!),
                                   ),
                                   Text(
                                     'Redeem Points ($availablePoints = ₹${pointsValueInRupees.toStringAsFixed(2)})',
@@ -223,7 +228,8 @@ class _PaymentGatewayScreenState extends State<PaymentGatewayScreen> {
                           ],
                         ),
                       ),
-                      if (finalAmount > 0) // Show credit card form only if amount is due
+                      if (finalAmount >
+                          0) // Show credit card form only if amount is due
                         CreditCardForm(
                           cardNumber: cardNumber,
                           expiryDate: expiryDate,
@@ -266,7 +272,8 @@ class _PaymentGatewayScreenState extends State<PaymentGatewayScreen> {
                             if (month < 1 || month > 12) {
                               return 'Invalid month';
                             }
-                            if (year < currentYear || (year == currentYear && month < currentMonth)) {
+                            if (year < currentYear ||
+                                (year == currentYear && month < currentMonth)) {
                               return 'Card has expired';
                             }
                             return null;
@@ -294,14 +301,19 @@ class _PaymentGatewayScreenState extends State<PaymentGatewayScreen> {
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blueAccent,
-                          padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 50, vertical: 15),
                         ),
                         onPressed: () {
-                          if (finalAmount == 0 || formKey.currentState!.validate()) {
+                          if (finalAmount == 0 ||
+                              formKey.currentState!.validate()) {
                             checkout();
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Please fill in all fields correctly!')),
+                              SnackBar(
+                                content: Text(
+                                    'Please fill in all fields correctly!'),
+                              ),
                             );
                           }
                         },

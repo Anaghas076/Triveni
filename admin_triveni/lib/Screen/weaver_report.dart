@@ -27,13 +27,12 @@ class _WeaverReportWidgetState extends State<WeaverReportWidget> {
         '86103f2c-d473-4e8c-819d-fec1a95f2916': 5, // Vani Naveen
         'fe8709e3-1efc-445a-b552-d12b093d493c': 3, // vami jay
         'b9b2d4fc-83e4-472c-a2c4-db0a46f32aa1': 7, // Veda Vikram
-        '22903326-8e4b-4e7d-a1c7-5741274396e0': 2  // Vidhu Ram
+        '22903326-8e4b-4e7d-a1c7-5741274396e0': 2 // Vidhu Ram
       };
 
       // Fetch weaver names
       final weaverResponse =
-          await supabase.from('tbl_weaver')
-            .select('weaver_id, weaver_name');
+          await supabase.from('tbl_weaver').select('weaver_id, weaver_name');
 
       setState(() {
         weaverNames = {
@@ -97,7 +96,7 @@ class _WeaverReportWidgetState extends State<WeaverReportWidget> {
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
-              color: Colors.blueAccent,
+              color: const Color.fromARGB(255, 3, 1, 68),
             ),
           ),
           SizedBox(height: 16),
@@ -105,7 +104,9 @@ class _WeaverReportWidgetState extends State<WeaverReportWidget> {
             child: BarChart(
               BarChartData(
                 alignment: BarChartAlignment.spaceAround,
-                maxY: (weaverWorkCount.values.reduce((a, b) => a > b ? a : b) + 1).toDouble(),
+                maxY:
+                    (weaverWorkCount.values.reduce((a, b) => a > b ? a : b) + 1)
+                        .toDouble(),
                 barGroups: _buildBarGroups(),
                 titlesData: FlTitlesData(
                   leftTitles: AxisTitles(
@@ -128,19 +129,24 @@ class _WeaverReportWidgetState extends State<WeaverReportWidget> {
                         try {
                           final sortedEntries = weaverWorkCount.entries.toList()
                             ..sort((a, b) => b.value.compareTo(a.value));
-                          final sortedKeys = sortedEntries.map((e) => e.key).toList();
+                          final sortedKeys =
+                              sortedEntries.map((e) => e.key).toList();
 
-                          if (value.toInt() >= 0 && value.toInt() < sortedKeys.length) {
+                          if (value.toInt() >= 0 &&
+                              value.toInt() < sortedKeys.length) {
                             final weaverId = sortedKeys[value.toInt()];
                             final name = weaverNames[weaverId] ??
-                                (weaverId.length > 6 ? weaverId.substring(0, 6) : weaverId);
+                                (weaverId.length > 6
+                                    ? weaverId.substring(0, 6)
+                                    : weaverId);
                             return SideTitleWidget(
                               meta: meta,
                               child: RotatedBox(
                                 quarterTurns: 3,
                                 child: Text(
                                   name,
-                                  style: TextStyle(fontSize: 10), // Reduced font size
+                                  style: TextStyle(
+                                      fontSize: 10), // Reduced font size
                                   textAlign: TextAlign.center,
                                 ),
                               ),
@@ -156,7 +162,6 @@ class _WeaverReportWidgetState extends State<WeaverReportWidget> {
                             child: Text(''),
                           );
                         }
-
                       },
                     ),
                   ),
@@ -165,7 +170,8 @@ class _WeaverReportWidgetState extends State<WeaverReportWidget> {
                   rightTitles:
                       AxisTitles(sideTitles: SideTitles(showTitles: false)),
                 ),
-                borderData: FlBorderData(border: Border(
+                borderData: FlBorderData(
+                    border: Border(
                   left: BorderSide(color: Colors.black, width: 1),
                   bottom: BorderSide(color: Colors.black, width: 1),
                 )),
@@ -182,7 +188,8 @@ class _WeaverReportWidgetState extends State<WeaverReportWidget> {
                       try {
                         final sortedEntries = weaverWorkCount.entries.toList()
                           ..sort((a, b) => b.value.compareTo(a.value));
-                        final sortedKeys = sortedEntries.map((e) => e.key).toList();
+                        final sortedKeys =
+                            sortedEntries.map((e) => e.key).toList();
 
                         if (group.x >= 0 && group.x < sortedKeys.length) {
                           final weaverId = sortedKeys[group.x];
@@ -233,7 +240,7 @@ class _WeaverReportWidgetState extends State<WeaverReportWidget> {
           barRods: [
             BarChartRodData(
               toY: count.toDouble(),
-              color: Colors.blue,
+              color: const Color.fromARGB(255, 3, 1, 68),
               width: 18,
               borderRadius: BorderRadius.circular(6),
             ),

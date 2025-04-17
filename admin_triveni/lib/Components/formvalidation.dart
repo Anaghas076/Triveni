@@ -80,6 +80,13 @@ class FormValidation {
     if (price == null || price.isEmpty) {
       return 'Please enter your price';
     }
+    final numValue = num.tryParse(price);
+    if (numValue == null) {
+      return 'Only numbers are allowed';
+    }
+    if (numValue <= 0) {
+      return 'Amount must be greater than zero';
+    }
     return null;
   }
 

@@ -201,7 +201,7 @@ class _RatingState extends State<Rating> {
             const Icon(
               Icons.check_circle_outline,
               size: 100,
-              color: const Color.fromARGB(255, 3, 1, 68),
+              color: Color.fromARGB(255, 3, 1, 68),
             ),
             const SizedBox(height: 24),
             const Text(

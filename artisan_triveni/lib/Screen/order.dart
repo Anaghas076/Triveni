@@ -1,11 +1,12 @@
-import 'package:artisan_triveni/screen/custom.dart';
+import 'package:artisan_triveni/Screen/custom.dart';
 import 'package:artisan_triveni/main.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class Booking extends StatefulWidget {
-  const Booking({super.key});
+import 'package:photo_view/photo_view.dart';
+import 'package:photo_view/photo_view_gallery.dart';
 
+class Booking extends StatefulWidget {
   @override
   _MybookingDataState createState() => _MybookingDataState();
 }
@@ -13,15 +14,67 @@ class Booking extends StatefulWidget {
 class _MybookingDataState extends State<Booking> {
   List<Map<String, dynamic>> bookingData = [];
   int bookingid = 0;
-  final DateFormat dateFormatter = DateFormat('dd MMM yyyy, hh:mm a');
 
-  String getFormattedDate(String? dateString) {
-    if (dateString == null) return "Not available";
+  Future<void> showCustomImage(int cartId) async {
     try {
-      final DateTime date = DateTime.parse(dateString);
-      return dateFormatter.format(date);
+      final response = await supabase
+          .from('tbl_customization')
+          .select('customization_photo,customization_description')
+          .eq('cart_id', cartId);
+
+      if (response == null || response.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('No custom images found.')),
+        );
+        return;
+      }
+
+      showDialog(
+        context: context,
+        builder: (context) {
+          return Dialog(
+            child: SizedBox(
+              width: 350,
+              height: 400,
+              child: Column(
+                children: [
+                  Expanded(
+                    child: PhotoViewGallery.builder(
+                      itemCount: response.length,
+                      builder: (context, index) {
+                        final imgUrl = response[index]['customization_photo'];
+                        return PhotoViewGalleryPageOptions(
+                          imageProvider: NetworkImage(imgUrl),
+                          minScale: PhotoViewComputedScale.contained,
+                          maxScale: PhotoViewComputedScale.covered * 2,
+                        );
+                      },
+                      scrollPhysics: BouncingScrollPhysics(),
+                      backgroundDecoration: BoxDecoration(color: Colors.white),
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(8),
+                    child: Text(
+                      response[0]['customization_description'] ?? '',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text('Close'),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
     } catch (e) {
-      return "Invalid date";
+      print("Error fetching custom image: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error loading images')),
+      );
     }
   }
 
@@ -31,7 +84,9 @@ class _MybookingDataState extends State<Booking> {
           .from('tbl_booking')
           .select(
               "*, tbl_cart(*, tbl_product(*)), tbl_user(user_name, user_contact)")
-          .gte('booking_status', 5); // Ensure only valid bookings are fetched
+          .gte('booking_status', 6)
+          .eq('artisan_id', supabase.auth.currentUser!.id);
+      ; // Ensure only valid bookings are fetched
 
       List<Map<String, dynamic>> orders = [];
 
@@ -88,6 +143,11 @@ class _MybookingDataState extends State<Booking> {
     }
   }
 
+  String formatDate(String timestamp) {
+    DateTime parsedDate = DateTime.parse(timestamp);
+    return DateFormat('dd-MM-yyyy').format(parsedDate);
+  }
+
   Future<void> order(int bookingId, int status) async {
     try {
       final artisanId = supabase.auth.currentUser!.id;
@@ -135,23 +195,33 @@ class _MybookingDataState extends State<Booking> {
                           bookingItems['user_name'] ?? "User Name",
                           style: TextStyle(
                               fontSize: 14,
-                              color: Colors.grey,
+                              color: Colors.black,
                               fontWeight: FontWeight.bold),
                         ),
                         SizedBox(height: 5),
                         Text(
                           bookingItems['user_contact'] ?? "User Contact",
-                          style: TextStyle(fontSize: 14, color: Colors.green),
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                         SizedBox(height: 5),
                         Text(
-                          "Date: ${getFormattedDate(bookingItems['created_at'])}",
-                          style: TextStyle(fontSize: 14, color: Colors.grey),
+                          "Date: ${formatDate(bookingItems['created_at'])}",
+                          style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold),
                         ),
                         SizedBox(height: 5),
                         Text(
                           "Total Amount: ₹${bookingItems['booking_amount']}",
-                          style: TextStyle(fontSize: 14, color: Colors.green),
+                          style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.green),
                         ),
 
                         SizedBox(height: 10),
@@ -180,15 +250,8 @@ class _MybookingDataState extends State<Booking> {
                                   cartItem['isCustom']
                                       ? ElevatedButton(
                                           onPressed: () {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      Viewdesign(
-                                                    cartId: cartItem['cart_id'],
-                                                    // customs:cartItem['customData']
-                                                  ),
-                                                ));
+                                            showCustomImage(
+                                                cartItem['cart_id']);
                                           },
                                           child: Text("View Design",
                                               style: TextStyle(
@@ -262,4 +325,3 @@ class _MybookingDataState extends State<Booking> {
     );
   }
 }
-

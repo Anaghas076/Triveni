@@ -1,6 +1,7 @@
 import 'package:artisan_triveni/screen/changepassword.dart';
 import 'package:artisan_triveni/screen/daily.dart';
 import 'package:artisan_triveni/screen/edit.dart';
+import 'package:artisan_triveni/screen/loginpage.dart';
 import 'package:artisan_triveni/screen/report.dart';
 import 'package:artisan_triveni/main.dart';
 import 'package:flutter/material.dart';
@@ -62,7 +63,8 @@ class _ProfileState extends State<Profile> {
                     children: [
                       CircleAvatar(
                         radius: 50,
-                        backgroundImage: NetworkImage(artisanid['artisan_photo'] ?? ""),
+                        backgroundImage:
+                            NetworkImage(artisanid['artisan_photo'] ?? ""),
                         backgroundColor: Colors.white,
                       ),
                       SizedBox(height: 10),
@@ -106,19 +108,25 @@ class _ProfileState extends State<Profile> {
                           ),
                           Divider(),
                           ListTile(
-                            leading: Icon(Icons.phone, color: Color.fromARGB(255, 54, 3, 116)),
+                            leading: Icon(Icons.phone,
+                                color: Color.fromARGB(255, 54, 3, 116)),
                             title: Text("Phone"),
-                            subtitle: Text(artisanid['artisan_contact'] ?? "No contact info"),
+                            subtitle: Text(artisanid['artisan_contact'] ??
+                                "No contact info"),
                           ),
                           ListTile(
-                            leading: Icon(Icons.email, color: Color.fromARGB(255, 54, 3, 116)),
+                            leading: Icon(Icons.email,
+                                color: Color.fromARGB(255, 54, 3, 116)),
                             title: Text("Email"),
-                            subtitle: Text(artisanid['artisan_email'] ?? "No email"),
+                            subtitle:
+                                Text(artisanid['artisan_email'] ?? "No email"),
                           ),
                           ListTile(
-                            leading: Icon(Icons.location_on, color: Color.fromARGB(255, 54, 3, 116)),
+                            leading: Icon(Icons.location_on,
+                                color: Color.fromARGB(255, 54, 3, 116)),
                             title: Text("Address"),
-                            subtitle: Text(artisanid['artisan_address'] ?? "Address unavailable"),
+                            subtitle: Text(artisanid['artisan_address'] ??
+                                "Address unavailable"),
                           ),
                         ],
                       ),
@@ -147,7 +155,8 @@ class _ProfileState extends State<Profile> {
                           ),
                           Divider(),
                           ListTile(
-                            leading: Icon(Icons.edit, color: Color.fromARGB(255, 54, 3, 116)),
+                            leading: Icon(Icons.edit,
+                                color: Color.fromARGB(255, 54, 3, 116)),
                             title: Text("Edit Profile"),
                             trailing: Icon(Icons.arrow_forward_ios, size: 16),
                             onTap: () {
@@ -162,35 +171,80 @@ class _ProfileState extends State<Profile> {
                             },
                           ),
                           ListTile(
-                            leading: Icon(Icons.lock, color: Color.fromARGB(255, 54, 3, 116)),
+                            leading: Icon(Icons.lock,
+                                color: Color.fromARGB(255, 54, 3, 116)),
                             title: Text("Change Password"),
                             trailing: Icon(Icons.arrow_forward_ios, size: 16),
                             onTap: () {
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (context) => Changepassword()),
+                                MaterialPageRoute(
+                                    builder: (context) => Changepassword()),
                               );
                             },
                           ),
                           ListTile(
-                            leading: Icon(Icons.assessment, color: Color.fromARGB(255, 54, 3, 116)),
+                            leading: Icon(Icons.assessment,
+                                color: Color.fromARGB(255, 54, 3, 116)),
                             title: Text("Work Analysis"),
                             trailing: Icon(Icons.arrow_forward_ios, size: 16),
                             onTap: () {
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (context) => ReportPage()),
+                                MaterialPageRoute(
+                                    builder: (context) => ReportPage()),
                               );
                             },
                           ),
                           ListTile(
-                            leading: Icon(Icons.history, color: Color.fromARGB(255, 54, 3, 116)),
+                            leading: Icon(Icons.history,
+                                color: Color.fromARGB(255, 54, 3, 116)),
                             title: Text("Daily Transactions"),
                             trailing: Icon(Icons.arrow_forward_ios, size: 16),
                             onTap: () {
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (context) => ArtisanPage()),
+                                MaterialPageRoute(
+                                    builder: (context) => ArtisanPage()),
+                              );
+                            },
+                          ),
+                          ListTile(
+                            leading: Icon(Icons.logout_rounded,
+                                color: Color.fromARGB(255, 54, 3, 116)),
+                            title: Text("Log Out"),
+                            trailing: Icon(Icons.arrow_forward_ios, size: 16),
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return AlertDialog(
+                                    title: Text("Log Out"),
+                                    content: Text(
+                                        "Are you sure you want to log out?"),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text("Cancel"),
+                                      ),
+                                      TextButton(
+                                        onPressed: () async {
+                                          await supabase.auth.signOut();
+                                          Navigator.pushAndRemoveUntil(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => LoginPage(),
+                                            ),
+                                            (route) => false,
+                                          );
+                                        },
+                                        child: Text("Log Out"),
+                                      ),
+                                    ],
+                                  );
+                                },
                               );
                             },
                           ),
@@ -207,4 +261,3 @@ class _ProfileState extends State<Profile> {
     );
   }
 }
-

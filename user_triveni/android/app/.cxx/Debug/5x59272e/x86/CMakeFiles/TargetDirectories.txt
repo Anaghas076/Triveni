@@ -1,0 +1,2 @@
+D:/Triveni/user_triveni/android/app/.cxx/Debug/5x59272e/x86/CMakeFiles/edit_cache.dir
+D:/Triveni/user_triveni/android/app/.cxx/Debug/5x59272e/x86/CMakeFiles/rebuild_cache.dir

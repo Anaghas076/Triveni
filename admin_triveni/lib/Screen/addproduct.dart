@@ -97,9 +97,9 @@ class _AddProductState extends State<AddProduct> {
             .single();
         int id = response['product_id'];
         int pcode = 1000 + id;
-        String product_code = "TRVI$pcode";
+        String productCode = "TRVI$pcode";
         await supabase.from('tbl_product').update({
-          'product_code': product_code,
+          'product_code': productCode,
         }).eq('product_id', id);
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text("Inserted"),
@@ -245,7 +245,7 @@ class _AddProductState extends State<AddProduct> {
                   padding: const EdgeInsets.all(8.0),
                   child: Form(
                     key: formkey,
-                    child: Container(
+                    child: SizedBox(
                       width: 100,
                       height: 300,
                       child: SingleChildScrollView(
@@ -262,7 +262,7 @@ class _AddProductState extends State<AddProduct> {
                                       children: [
                                         GestureDetector(
                                           onTap: handleImagePick,
-                                          child: Container(
+                                          child: SizedBox(
                                             height: 50,
                                             width: 100,
                                             child: pickedImage == null
@@ -565,7 +565,18 @@ class _AddProductState extends State<AddProduct> {
                                 child: ElevatedButton(
                                   onPressed: () {
                                     if (formkey.currentState!.validate()) {
-                                      submit();
+                                      if (selectedType == "" &&
+                                          selectedSize == "") {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                                'Select Product Type First'),
+                                          ),
+                                        );
+                                      } else {
+                                        submit();
+                                      }
                                     }
                                   },
                                   child: Text("Submit"),

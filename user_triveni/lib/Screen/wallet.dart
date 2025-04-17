@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class WalletPage extends StatefulWidget {
+  const WalletPage({super.key});
+
   @override
   _WalletPageState createState() => _WalletPageState();
 }

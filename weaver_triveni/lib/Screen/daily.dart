@@ -35,7 +35,7 @@ class _DailyWeaverState extends State<DailyWeaver> {
           .select()
           .not('weaver_id', 'is', null)
           .order('created_at', ascending: false);
-      
+
       setState(() {
         weaverData = response;
         processMonthlyData();
@@ -102,7 +102,7 @@ class _DailyWeaverState extends State<DailyWeaver> {
   Future<void> _showAddExpenseDialog() async {
     nameController.clear();
     amountController.clear();
-    
+
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -170,18 +170,21 @@ class _DailyWeaverState extends State<DailyWeaver> {
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red,
-                          padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 30, vertical: 15),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
                         onPressed: () => Navigator.pop(context),
-                        child: Text('Cancel', style: TextStyle(color: Colors.white)),
+                        child: Text('Cancel',
+                            style: TextStyle(color: Colors.white)),
                       ),
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color.fromARGB(255, 3, 1, 68),
-                          padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 30, vertical: 15),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -192,7 +195,8 @@ class _DailyWeaverState extends State<DailyWeaver> {
                             Navigator.pop(context);
                           }
                         },
-                        child: Text('Submit', style: TextStyle(color: Colors.white)),
+                        child: Text('Submit',
+                            style: TextStyle(color: Colors.white)),
                       ),
                     ],
                   ),
@@ -264,8 +268,14 @@ class _DailyWeaverState extends State<DailyWeaver> {
             ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _showAddExpenseDialog,
-        label: Text('Add Expense'),
-        icon: Icon(Icons.add),
+        label: Text(
+          'Add Expense',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+        icon: Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
         backgroundColor: const Color.fromARGB(255, 3, 1, 68),
       ),
     );
@@ -387,7 +397,8 @@ class _DailyWeaverState extends State<DailyWeaver> {
                           sideTitles: SideTitles(
                             showTitles: true,
                             getTitlesWidget: (value, meta) {
-                              final month = monthlyData.keys.elementAt(value.toInt());
+                              final month =
+                                  monthlyData.keys.elementAt(value.toInt());
                               return Padding(
                                 padding: const EdgeInsets.only(top: 8.0),
                                 child: Text(
@@ -400,6 +411,12 @@ class _DailyWeaverState extends State<DailyWeaver> {
                               );
                             },
                           ),
+                        ),
+                        rightTitles: AxisTitles(
+                          sideTitles: SideTitles(showTitles: false),
+                        ),
+                        topTitles: AxisTitles(
+                          sideTitles: SideTitles(showTitles: false),
                         ),
                         leftTitles: AxisTitles(
                           sideTitles: SideTitles(
@@ -449,7 +466,8 @@ class _DailyWeaverState extends State<DailyWeaver> {
               ),
               child: ListTile(
                 leading: CircleAvatar(
-                  backgroundColor: isIncome ? Colors.green[100] : Colors.red[100],
+                  backgroundColor:
+                      isIncome ? Colors.green[100] : Colors.red[100],
                   child: Icon(
                     isIncome ? Icons.arrow_upward : Icons.arrow_downward,
                     color: isIncome ? Colors.green : Colors.red,

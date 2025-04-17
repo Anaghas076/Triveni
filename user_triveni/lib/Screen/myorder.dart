@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:user_triveni/screen/payment.dart';
-import 'package:user_triveni/screen/postcomplaint.dart';
-import 'package:user_triveni/screen/rating.dart';
+import 'package:user_triveni/Screen/payment.dart';
+import 'package:user_triveni/Screen/postcomplaint.dart';
+import 'package:user_triveni/Screen/rating.dart';
 import 'package:user_triveni/main.dart';
 import 'package:intl/intl.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -17,7 +17,6 @@ class Myorder extends StatefulWidget {
 
 class _MybookingDataState extends State<Myorder> {
   List<Map<String, dynamic>> bookingData = [];
-
   Future<void> fetchBooking() async {
     try {
       final user = supabase.auth.currentUser;
@@ -27,7 +26,8 @@ class _MybookingDataState extends State<Myorder> {
 
       final response = await supabase
           .from('tbl_booking')
-          .select(" *, tbl_cart(*, tbl_product(*))")
+          .select(
+              " *, tbl_cart(*, tbl_product(*)), tbl_user(user_name,user_address,user_contact), tbl_artisan(artisan_name,artisan_address,artisan_contact), tbl_weaver(weaver_name,weaver_address,weaver_contact)")
           .gte('booking_status', 1)
           .eq('user_id', user.id);
 
@@ -51,18 +51,35 @@ class _MybookingDataState extends State<Myorder> {
           });
         }
 
+        // Extract user details safely
+        Map<String, dynamic> userData = {
+          'user_name': data['tbl_user']?['user_name'] ?? 'N/A',
+          'user_address': data['tbl_user']?['user_address'] ?? 'N/A',
+          'user_contact': data['tbl_user']?['user_contact'] ?? 'N/A',
+          'artisan_name': data['tbl_artisan']?['artisan_name'] ?? 'N/A',
+          'artisan_address': data['tbl_artisan']?['artisan_address'] ?? 'N/A',
+          'artisan_contact': data['tbl_artisan']?['artisan_contact'] ?? 'N/A',
+          'weaver_name': data['tbl_weaver']?['weaver_name'] ?? 'N/A',
+          'weaver_address': data['tbl_weaver']?['weaver_address'] ?? 'N/A',
+          'weaver_contact': data['tbl_weaver']?['weaver_contact'] ?? 'N/A',
+        };
+
         orders.add({
           'booking_id': data['booking_id'],
           'booking_status': data['booking_status'],
           'booking_amount': data['booking_amount'],
           'created_at': data['created_at'],
           'cart': cartItems,
+          'user': userData, // Store user details safely
         });
       }
 
-      setState(() {
-        bookingData = orders;
-      });
+      // Check if widget is still mounted before calling setState
+      if (mounted) {
+        setState(() {
+          bookingData = orders;
+        });
+      }
     } catch (e) {
       print("Error: $e");
     }
@@ -90,7 +107,6 @@ class _MybookingDataState extends State<Myorder> {
     return DateFormat('dd-MM-yyyy').format(parsedDate);
   }
 
-  // Generate and preview PDF bill
   Future<void> generateBill(Map<String, dynamic> booking) async {
     try {
       final pdf = pw.Document();
@@ -111,6 +127,38 @@ class _MybookingDataState extends State<Myorder> {
                 pw.Text('Date: ${formatDate(booking['created_at'])}'),
                 pw.Text('Total Amount: Rs.${booking['booking_amount']}'),
                 pw.SizedBox(height: 20),
+
+                // User Details Section
+                pw.Text(
+                  'Customer Details:',
+                  style: pw.TextStyle(
+                      fontSize: 18, fontWeight: pw.FontWeight.bold),
+                ),
+                pw.Text('Customer Name: ${booking['user']['user_name']}'),
+                pw.Text('Customer Address: ${booking['user']['user_address']}'),
+                pw.Text('Customer Contact: ${booking['user']['user_contact']}'),
+
+                pw.Text(
+                  'Weaver Details:',
+                  style: pw.TextStyle(
+                      fontSize: 18, fontWeight: pw.FontWeight.bold),
+                ),
+                pw.Text('Weaver: ${booking['user']['weaver_name']}'),
+                pw.Text('Weaver Address: ${booking['user']['weaver_address']}'),
+                pw.Text('Weaver Contact: ${booking['user']['weaver_contact']}'),
+                pw.SizedBox(height: 20),
+
+                pw.Text(
+                  'Artisan Details:',
+                  style: pw.TextStyle(
+                      fontSize: 18, fontWeight: pw.FontWeight.bold),
+                ),
+                pw.Text('Artisan: ${booking['user']['artisan_name']}'),
+                pw.Text(
+                    'Artisan Address: ${booking['user']['artisan_address']}'),
+                pw.Text(
+                    'Artisan Contact: ${booking['user']['artisan_contact']}'),
+
                 pw.Text(
                   'Items:',
                   style: pw.TextStyle(
@@ -225,7 +273,23 @@ class _MybookingDataState extends State<Myorder> {
                               color: Colors.black,
                               fontWeight: FontWeight.bold),
                         ),
-                        SizedBox(height: 10),
+
+                        Text(
+                          getStatusText(bookingItems['booking_status']),
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.green,
+                          ),
+                        ),
+                        Text(
+                          "Total Amount: ₹${bookingItems['booking_amount']}",
+                          style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold),
+                        ),
+
                         Column(
                           children: cartData.map<Widget>((cartItem) {
                             return Column(
@@ -256,114 +320,87 @@ class _MybookingDataState extends State<Myorder> {
                                       Text("QTY: ${cartItem['cart_quantity']}"),
                                     ],
                                   ),
-                                  trailing: Column(
-                                    children: [
-                                      Text(
-                                        "Rs.${cartItem['total']}",
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black),
-                                      ),
-                                      SizedBox(height: 10),
-                                      if (bookingItems['booking_status'] == 12)
-                                        SizedBox(
-                                          width: 110,
-                                          height: 30,
-                                          child: ElevatedButton(
-                                            onPressed: () {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          Postcomplaint(
-                                                              productId: cartItem[
-                                                                  'product_id'])));
-                                            },
-                                            child: Text(
-                                              "Complaint",
-                                              style: TextStyle(
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                          ),
-                                        ),
-                                    ],
+                                  trailing: Text(
+                                    "Rs.${cartItem['total']}",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black),
                                   ),
                                 ),
+                                SizedBox(height: 10),
                                 if (bookingItems['booking_status'] == 12)
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => Rating(
-                                              pid: cartItem['product_id']),
-                                        ),
-                                      );
-                                    },
-                                    child: Text(
-                                      "Rate",
-                                      style: TextStyle(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.bold),
-                                    ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      Postcomplaint(
+                                                          productId: cartItem[
+                                                              'product_id'])));
+                                        },
+                                        child: Text("Complaint",
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold)),
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => Rating(
+                                                  pid: cartItem['product_id']),
+                                            ),
+                                          );
+                                        },
+                                        child: Text("Rate",
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold)),
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          generateBill(bookingItems);
+                                        },
+                                        child: Text("Generate Bill",
+                                            style: TextStyle(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold)),
+                                      ),
+                                    ],
                                   ),
                               ],
                             );
                           }).toList(),
                         ),
-                        SizedBox(height: 10),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            if (bookingItems['booking_status'] == 9)
-                              ElevatedButton(
-                                onPressed: () {
-                                  order(bookingItems['booking_id'], 10,
-                                      bookingItems['booking_amount']);
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          PaymentGatewayScreen(
-                                        amt: bookingItems['booking_amount'],
-                                        id: bookingItems['booking_id'],
-                                      ),
-                                    ),
-                                  );
-                                },
-                                child: Text(
-                                  "Pay Amount",
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold),
+
+                        // Payment button (only if status is 9)
+                        if (bookingItems['booking_status'] == 9)
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PaymentGatewayScreen(
+                                    amt: bookingItems['booking_amount'],
+                                    id: bookingItems['booking_id'],
+                                  ),
                                 ),
-                              ),
-                            SizedBox(width: 5),
-                            Text(
-                              getStatusText(bookingItems['booking_status']),
-                              style: TextStyle(
-                                  fontSize: 15, fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(width: 5),
-                          ],
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        bookingItems['booking_status'] == 12
-                            ? ElevatedButton(
-                                onPressed: () {
-                                  generateBill(bookingItems);
-                                },
-                                child: Text(
-                                  "Generate Bill",
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              )
-                            : SizedBox(),
+                              );
+                            },
+                            child: Text("Pay Amount",
+                                style: TextStyle(
+                                    fontSize: 12, fontWeight: FontWeight.bold)),
+                          ),
+
+                        // Status text
+
+                        // Generate Bill button (only if status is 12)
                       ],
                     ),
                   ),

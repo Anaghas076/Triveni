@@ -13,7 +13,8 @@ class MyDesign extends StatefulWidget {
   State<MyDesign> createState() => _MyDesignState();
 }
 
-class _MyDesignState extends State<MyDesign> with AutomaticKeepAliveClientMixin {
+class _MyDesignState extends State<MyDesign>
+    with AutomaticKeepAliveClientMixin {
   List<Map<String, dynamic>> designs = [];
   bool isLoading = false;
 
@@ -27,7 +28,10 @@ class _MyDesignState extends State<MyDesign> with AutomaticKeepAliveClientMixin 
       isLoading = true;
     });
     try {
-      final response = await supabase.from('tbl_design').select().eq('artisan_id', supabase.auth.currentUser!.id);
+      final response = await supabase
+          .from('tbl_design')
+          .select()
+          .eq('artisan_id', supabase.auth.currentUser!.id);
       if (!mounted) return;
 
       setState(() {
@@ -48,22 +52,23 @@ class _MyDesignState extends State<MyDesign> with AutomaticKeepAliveClientMixin 
     try {
       // Show confirmation dialog
       bool confirm = await showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: Text('Delete Design'),
-          content: Text('Are you sure you want to delete this design?'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: Text('Cancel'),
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text('Delete Design'),
+              content: Text('Are you sure you want to delete this design?'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  child: Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(context, true),
+                  child: Text('Delete', style: TextStyle(color: Colors.red)),
+                ),
+              ],
             ),
-            TextButton(
-              onPressed: () => Navigator.pop(context, true),
-              child: Text('Delete', style: TextStyle(color: Colors.red)),
-            ),
-          ],
-        ),
-      ) ?? false;
+          ) ??
+          false;
 
       if (confirm) {
         setState(() {
@@ -115,7 +120,8 @@ class _MyDesignState extends State<MyDesign> with AutomaticKeepAliveClientMixin 
 
   @override
   Widget build(BuildContext context) {
-    super.build(context); // Must call super.build for AutomaticKeepAliveClientMixin
+    super.build(
+        context); // Must call super.build for AutomaticKeepAliveClientMixin
     return Scaffold(
       body: isLoading
           ? Center(child: CircularProgressIndicator())
@@ -153,7 +159,8 @@ class _MyDesignState extends State<MyDesign> with AutomaticKeepAliveClientMixin 
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Color.fromARGB(255, 3, 1, 68),
                           foregroundColor: Colors.white,
-                          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 24, vertical: 12),
                         ),
                       ),
                     ],
@@ -219,12 +226,16 @@ class _MyDesignState extends State<MyDesign> with AutomaticKeepAliveClientMixin 
 
           // Upload image
           final timestamp = DateTime.now();
-          final formattedDate = 'Design-${timestamp.day}-${timestamp.month}-${timestamp.year}-${timestamp.hour}-${timestamp.minute}';
+          final formattedDate =
+              'Design-${timestamp.day}-${timestamp.month}-${timestamp.year}-${timestamp.hour}-${timestamp.minute}';
 
-          await supabase.storage.from('design').upload(formattedDate, selectedImage!);
+          await supabase.storage
+              .from('design')
+              .upload(formattedDate, selectedImage!);
 
           // Get public URL
-          final imageUrl = supabase.storage.from('design').getPublicUrl(formattedDate);
+          final imageUrl =
+              supabase.storage.from('design').getPublicUrl(formattedDate);
 
           // Save to database
           await supabase.from('tbl_design').insert({
@@ -296,7 +307,8 @@ class _MyDesignState extends State<MyDesign> with AutomaticKeepAliveClientMixin 
                         height: 120,
                         width: 120,
                         decoration: BoxDecoration(
-                          color: Color.fromARGB(26, 3, 1, 68), // 10% opacity (255 * 0.1 = ~26)
+                          color: Color.fromARGB(
+                              26, 3, 1, 68), // 10% opacity (255 * 0.1 = ~26)
                           shape: BoxShape.circle,
                           image: selectedImage != null
                               ? DecorationImage(
@@ -322,15 +334,18 @@ class _MyDesignState extends State<MyDesign> with AutomaticKeepAliveClientMixin 
                       validator: (value) => FormValidation.validateName(value),
                       decoration: InputDecoration(
                         labelText: 'Design Name',
-                        prefixIcon: Icon(Icons.design_services, color: Color.fromARGB(255, 3, 1, 68)),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                        prefixIcon: Icon(Icons.design_services,
+                            color: Color.fromARGB(255, 3, 1, 68)),
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12)),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide(color: Colors.grey.shade300),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Color.fromARGB(255, 3, 1, 68)),
+                          borderSide:
+                              BorderSide(color: Color.fromARGB(255, 3, 1, 68)),
                         ),
                       ),
                     ),
@@ -361,7 +376,8 @@ class _MyDesignState extends State<MyDesign> with AutomaticKeepAliveClientMixin 
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Color.fromARGB(255, 3, 1, 68),
                   foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8)),
                 ),
                 child: isLoading
                     ? SizedBox(
@@ -512,7 +528,8 @@ class DesignGalleryView extends StatefulWidget {
   State<DesignGalleryView> createState() => _DesignGalleryViewState();
 }
 
-class _DesignGalleryViewState extends State<DesignGalleryView> with SingleTickerProviderStateMixin {
+class _DesignGalleryViewState extends State<DesignGalleryView>
+    with SingleTickerProviderStateMixin {
   late PageController _pageController;
   late int _currentIndex;
 
@@ -558,7 +575,8 @@ class _DesignGalleryViewState extends State<DesignGalleryView> with SingleTicker
                   children: [
                     Icon(Icons.broken_image, color: Colors.white, size: 48),
                     SizedBox(height: 16),
-                    Text('Failed to load image', style: TextStyle(color: Colors.white)),
+                    Text('Failed to load image',
+                        style: TextStyle(color: Colors.white)),
                   ],
                 ),
               );
@@ -574,7 +592,8 @@ class _DesignGalleryViewState extends State<DesignGalleryView> with SingleTicker
               color: Colors.white,
               value: event == null
                   ? 0
-                  : event.cumulativeBytesLoaded / (event.expectedTotalBytes ?? 1),
+                  : event.cumulativeBytesLoaded /
+                      (event.expectedTotalBytes ?? 1),
             ),
           ),
         ),
@@ -589,4 +608,3 @@ class _DesignGalleryViewState extends State<DesignGalleryView> with SingleTicker
     );
   }
 }
-

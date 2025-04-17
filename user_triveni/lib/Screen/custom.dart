@@ -82,7 +82,7 @@ class _CustomState extends State<Custom> {
 
   Future<void> _showDesignsDialog() async {
     List<Map<String, dynamic>> designs = [];
-    
+
     try {
       final response = await supabase.from('tbl_design').select();
       designs = List<Map<String, dynamic>>.from(response);
@@ -95,7 +95,7 @@ class _CustomState extends State<Custom> {
       context: context,
       builder: (BuildContext context) {
         return Dialog(
-          child: Container(
+          child: SizedBox(
             width: double.maxFinite,
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -112,7 +112,7 @@ class _CustomState extends State<Custom> {
                   ),
                 ),
                 Flexible(
-                  child: Container(
+                  child: SizedBox(
                     height: MediaQuery.of(context).size.height * 0.7,
                     child: GridView.builder(
                       padding: EdgeInsets.all(8),
@@ -128,12 +128,14 @@ class _CustomState extends State<Custom> {
                         return GestureDetector(
                           onTap: () async {
                             try {
-                              final response = await http.get(Uri.parse(data['design_photo']));
+                              final response = await http
+                                  .get(Uri.parse(data['design_photo']));
                               final bytes = response.bodyBytes;
                               final tempDir = await getTemporaryDirectory();
-                              final tempFile = File('${tempDir.path}/temp_design.jpg');
+                              final tempFile =
+                                  File('${tempDir.path}/temp_design.jpg');
                               await tempFile.writeAsBytes(bytes);
-                              
+
                               setState(() {
                                 _image = tempFile;
                               });
@@ -152,7 +154,8 @@ class _CustomState extends State<Custom> {
                                         top: Radius.circular(4),
                                       ),
                                       image: DecorationImage(
-                                        image: NetworkImage(data['design_photo']),
+                                        image:
+                                            NetworkImage(data['design_photo']),
                                         fit: BoxFit.cover,
                                       ),
                                     ),

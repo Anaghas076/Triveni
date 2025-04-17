@@ -277,7 +277,7 @@ class _DashboardState extends State<Dashboard> {
             ],
           ),
           SizedBox(
-            height: 20,
+            height: 30,
           ),
           Row(
             children: [
@@ -288,7 +288,6 @@ class _DashboardState extends State<Dashboard> {
               Expanded(child: ArtisanReportWidget()),
             ],
           ),
-
         ],
       ),
     ));

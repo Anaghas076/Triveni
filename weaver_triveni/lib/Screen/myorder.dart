@@ -3,6 +3,8 @@ import 'package:weaver_triveni/screen/custom.dart';
 import 'package:weaver_triveni/main.dart';
 
 class Myorder extends StatefulWidget {
+  const Myorder({super.key});
+
   @override
   _MyorderDataState createState() => _MyorderDataState();
 }
@@ -18,7 +20,6 @@ class _MyorderDataState extends State<Myorder> {
               "*, tbl_cart(*, tbl_product(*)), tbl_user(user_name, user_contact)")
           .gte('booking_status', 2)
           .eq('weaver_id', supabase.auth.currentUser!.id);
-      ;
 
       List<Map<String, dynamic>> orders = [];
 

@@ -56,6 +56,22 @@ class _HomepageState extends State<Homepage> {
           padding: const EdgeInsets.all(5.0),
           child: Image.asset("asset/Logo.jpeg"),
         ),
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "TRIVENI",
+              style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 25),
+            ),
+            Text(
+              "Handloom with heritage, fashion with soul",
+              style: TextStyle(color: Colors.white, fontSize: 10),
+            )
+          ],
+        ),
         // leading: CircleAvatar(
         //   child: Image.asset("asset/Logo.jpeg"),
         // ),

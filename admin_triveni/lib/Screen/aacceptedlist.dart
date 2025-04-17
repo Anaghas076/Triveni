@@ -17,13 +17,30 @@ class _AacceptedlistState extends State<Aacceptedlist> {
           .from('tbl_artisan')
           .select()
           .eq('artisan_status', 1)
-          .order('created_at', ascending: false);
+          .order('created_at', ascending: true);
 
       setState(() {
-        artisans = response;
+        artisans = List<Map<String, dynamic>>.from(response);
       });
     } catch (e) {
-      print("Error: $e");
+      print("Error fetching artisans: $e");
+    }
+  }
+
+  Future<void> updateartisanStatus(String artisanId, int status) async {
+    try {
+      await supabase
+          .from('tbl_artisan')
+          .update({'artisan_status': status}).eq('artisan_id', artisanId);
+
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text("Artisan Rejected"),
+        backgroundColor: const Color.fromARGB(255, 27, 1, 69),
+      ));
+
+      fetchartisan(); // Refresh the list
+    } catch (e) {
+      print("Error updating status: $e");
     }
   }
 
@@ -44,7 +61,7 @@ class _AacceptedlistState extends State<Aacceptedlist> {
                 crossAxisCount: 5,
                 crossAxisSpacing: 5,
                 mainAxisSpacing: 5,
-                childAspectRatio: 2, // Adjusted for better proportions
+                childAspectRatio: .85,
               ),
               itemCount: artisans.length,
               itemBuilder: (context, index) {
@@ -64,42 +81,59 @@ class _AacceptedlistState extends State<Aacceptedlist> {
                     ],
                   ),
                   padding: EdgeInsets.all(10),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                  child: Column(
                     children: [
-                      CircleAvatar(
-                        radius: 30, // Reduced size for better alignment
-                        backgroundImage:
-                            NetworkImage(data['artisan_photo'] ?? ""),
-                        backgroundColor: Colors.grey.shade200,
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          CircleAvatar(
+                            radius: 30,
+                            backgroundImage:
+                                NetworkImage(data['artisan_photo'] ?? ""),
+                            backgroundColor: Colors.grey.shade200,
+                          ),
+                          SizedBox(width: 18),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  data['artisan_name'] ?? " ",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                Text(data['artisan_address'] ?? " "),
+                                Text(data['artisan_contact'] ?? " "),
+                                Text(data['artisan_email'] ?? " "),
+                                Text(
+                                  data['artisan_password'] ?? " ",
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                      SizedBox(width: 18), // Space between image and text
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              data['artisan_name'] ?? " ",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 14,
-                              ),
-                            ),
-                            Text(
-                              data['artisan_address'] ?? " ",
-                            ),
-                            Text(
-                              data['artisan_contact'] ?? " ",
-                            ),
-                            Text(
-                              data['artisan_email'] ?? " ",
-                            ),
-                            Text(
-                              data['artisan_password'] ?? " ",
-                            ),
-                          ],
+                      SizedBox(height: 10),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.network(
+                          data['artisan_proof'] ?? "",
+                          width: 150,
+                          height: 100,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              Icon(Icons.image, size: 80, color: Colors.grey),
                         ),
+                      ),
+                      SizedBox(height: 5),
+                      ElevatedButton(
+                        onPressed: () {
+                          updateartisanStatus(data['artisan_id'].toString(), 2);
+                        },
+                        child: Text("Reject"),
                       ),
                     ],
                   ),

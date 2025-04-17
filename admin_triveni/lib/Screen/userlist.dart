@@ -42,7 +42,7 @@ class _UserlistState extends State<Userlist> {
                 crossAxisCount: 5,
                 crossAxisSpacing: 5,
                 mainAxisSpacing: 5,
-                childAspectRatio: 2, // Adjusted for better proportions
+                childAspectRatio: 1.75, // Adjusted for better proportions
               ),
               itemCount: users.length,
               itemBuilder: (context, index) {

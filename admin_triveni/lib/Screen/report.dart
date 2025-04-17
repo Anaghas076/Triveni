@@ -21,7 +21,7 @@ class _CountReportState extends State<CountReport> {
   Future<void> _selectDate(BuildContext context, bool isStart) async {
     DateTime initialDate = DateTime.now();
     DateTime firstDate = DateTime(2020);
-    DateTime lastDate = DateTime(2100);
+    DateTime lastDate = DateTime.now();
 
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -58,7 +58,8 @@ class _CountReportState extends State<CountReport> {
 
       final response = await supabase
           .from('tbl_booking')
-          .select("*, tbl_cart(*, tbl_product(*)), tbl_weaver(*), tbl_artisan(*)")
+          .select(
+              "*, tbl_cart(*, tbl_product(*)), tbl_weaver(*), tbl_artisan(*)")
           .gte('created_at', startDate!.toIso8601String())
           .lte('created_at', endDate!.toIso8601String())
           .order('booking_id', ascending: false);
@@ -79,7 +80,8 @@ class _CountReportState extends State<CountReport> {
             : 'N/A';
 
         // Flatten tbl_cart list into cart items with additional booking-level info
-        final cartList = List<Map<String, dynamic>>.from(booking['tbl_cart'] ?? []);
+        final cartList =
+            List<Map<String, dynamic>>.from(booking['tbl_cart'] ?? []);
         for (var cartItem in cartList) {
           tempCartItems.add({
             ...cartItem,
@@ -201,10 +203,12 @@ class _CountReportState extends State<CountReport> {
                               ),
                               DataCell(Text(
                                   product['product_name']?.toString() ?? '')),
-                              DataCell(
-                                  Text(cartItem['weaver_name']?.toString() ?? 'N/A')),
-                              DataCell(
-                                  Text(cartItem['artisan_name']?.toString() ?? 'N/A')),
+                              DataCell(Text(
+                                  cartItem['weaver_name']?.toString() ??
+                                      'N/A')),
+                              DataCell(Text(
+                                  cartItem['artisan_name']?.toString() ??
+                                      'N/A')),
                               DataCell(Text(
                                   product['subcategory_id']?.toString() ?? '')),
                               DataCell(Text(
@@ -212,7 +216,8 @@ class _CountReportState extends State<CountReport> {
                               DataCell(Text(
                                   product['product_price']?.toString() ?? '')),
                               DataCell(Text(
-                                  cartItem['cart_quantity']?.toString() ?? '0')),
+                                  cartItem['cart_quantity']?.toString() ??
+                                      '0')),
                               DataCell(Text(
                                   product['product_type']?.toString() ?? '')),
                             ],

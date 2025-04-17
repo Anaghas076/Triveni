@@ -15,7 +15,7 @@ class _LandingpageState extends State<Landingpage> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
-        child: Container(
+        child: SizedBox(
           width: 650,
           height: 650,
           child: Padding(
