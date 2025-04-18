@@ -137,7 +137,7 @@ class _MybookingDataState extends State<Myorder> {
                 pw.Text('Customer Name: ${booking['user']['user_name']}'),
                 pw.Text('Customer Address: ${booking['user']['user_address']}'),
                 pw.Text('Customer Contact: ${booking['user']['user_contact']}'),
-
+                pw.SizedBox(height: 20),
                 pw.Text(
                   'Weaver Details:',
                   style: pw.TextStyle(
@@ -158,7 +158,7 @@ class _MybookingDataState extends State<Myorder> {
                     'Artisan Address: ${booking['user']['artisan_address']}'),
                 pw.Text(
                     'Artisan Contact: ${booking['user']['artisan_contact']}'),
-
+                pw.SizedBox(height: 20),
                 pw.Text(
                   'Items:',
                   style: pw.TextStyle(

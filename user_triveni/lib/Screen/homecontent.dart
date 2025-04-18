@@ -163,6 +163,6 @@ class _HomecontentState extends State<Homecontent> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     // Example: Adjust ratio based on screen width and desired height
-    return (screenWidth / 2) / (screenHeight * 0.37); // Customize as needed
+    return (screenWidth / 2) / (screenHeight * 0.43); // Customize as needed
   }
 }

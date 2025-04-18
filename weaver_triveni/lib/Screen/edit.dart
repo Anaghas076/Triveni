@@ -1,4 +1,3 @@
-import 'package:weaver_triveni/Component/formvalidation.dart';
 import 'package:weaver_triveni/main.dart';
 import 'package:flutter/material.dart';
 
@@ -11,9 +10,9 @@ class Edit extends StatefulWidget {
 
 class _EditState extends State<Edit> {
   final TextEditingController nameController = TextEditingController();
-  final TextEditingController addressController = TextEditingController();
   final TextEditingController contactController = TextEditingController();
-  bool isLoading = false;
+  final TextEditingController addressController = TextEditingController();
+  final formkey = GlobalKey<FormState>();
 
   Future<void> fetchweaver() async {
     try {
@@ -22,21 +21,20 @@ class _EditState extends State<Edit> {
           .select()
           .eq('weaver_id', supabase.auth.currentUser!.id)
           .single();
+
       setState(() {
-        nameController.text = response['weaver_name'] ?? "";
-        contactController.text = response['weaver_contact'] ?? "";
-        addressController.text = response['weaver_address'] ?? "";
+        nameController.text = response['weaver_name'] ?? '';
+        contactController.text = response['weaver_contact'] ?? '';
+        addressController.text = response['weaver_address'] ?? '';
       });
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Error fetching profile: $e")),
-        );
-      }
+      print("Error: $e");
     }
   }
 
   Future<void> update() async {
+    if (!formkey.currentState!.validate()) return;
+
     try {
       await supabase.from('tbl_weaver').update({
         'weaver_name': nameController.text,
@@ -44,15 +42,11 @@ class _EditState extends State<Edit> {
         'weaver_address': addressController.text,
       }).eq('weaver_id', supabase.auth.currentUser!.id);
 
-      if (mounted) {
-        Navigator.pop(context, true); // Return true to refresh profile
-      }
+      Navigator.pop(context, true); // Return true to refresh profile
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Error updating profile: $e")),
-        );
-      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error updating profile: $e")),
+      );
     }
   }
 
@@ -61,8 +55,6 @@ class _EditState extends State<Edit> {
     super.initState();
     fetchweaver();
   }
-
-  final formkey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -100,103 +92,118 @@ class _EditState extends State<Edit> {
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(20),
+              padding: EdgeInsets.all(16),
               child: Form(
                 key: formkey,
                 child: Column(
                   children: [
-                    SizedBox(height: 20),
-                    TextFormField(
-                      controller: nameController,
-                      keyboardType: TextInputType.name,
-                      decoration: InputDecoration(
-                        labelText: "Full Name",
-                        prefixIcon: Icon(Icons.person, color: Color.fromARGB(255, 54, 3, 116)),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Color.fromARGB(255, 54, 3, 116)),
+                    Card(
+                      elevation: 4,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Column(
+                          children: [
+                            TextFormField(
+                              controller: nameController,
+                              decoration: InputDecoration(
+                                labelText: "Name",
+                                prefixIcon: Icon(Icons.person,
+                                    color: Color.fromARGB(255, 54, 3, 116)),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(
+                                      color: Color.fromARGB(255, 3, 1, 68)),
+                                ),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your name';
+                                }
+                                return null;
+                              },
+                            ),
+                            SizedBox(height: 16),
+                            TextFormField(
+                              controller: contactController,
+                              decoration: InputDecoration(
+                                labelText: "Contact",
+                                prefixIcon: Icon(Icons.phone,
+                                    color: Color.fromARGB(255, 54, 3, 116)),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(
+                                      color: Color.fromARGB(255, 3, 1, 68)),
+                                ),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your contact number';
+                                }
+                                // Regex for 10-digit contact number (you can modify this pattern for specific formats)
+                                String pattern = r'^[0-9]{10}$';
+                                RegExp regExp = RegExp(pattern);
+                                if (!regExp.hasMatch(value)) {
+                                  return 'Please enter a valid 10-digit contact number';
+                                }
+                                return null;
+                              },
+                            ),
+                            SizedBox(height: 16),
+                            TextFormField(
+                              controller: addressController,
+                              maxLines: 3,
+                              decoration: InputDecoration(
+                                labelText: "Address",
+                                prefixIcon: Icon(Icons.location_on,
+                                    color: Color.fromARGB(255, 54, 3, 116)),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(
+                                      color: Color.fromARGB(255, 3, 1, 68)),
+                                ),
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your address';
+                                }
+                                return null;
+                              },
+                            ),
+                          ],
                         ),
                       ),
-                      validator: (value) => FormValidation.validateName(value),
                     ),
-                    SizedBox(height: 20),
-                    TextFormField(
-                      controller: contactController,
-                      keyboardType: TextInputType.phone,
-                      decoration: InputDecoration(
-                        labelText: "Phone Number",
-                        prefixIcon: Icon(Icons.phone, color: Color.fromARGB(255, 54, 3, 116)),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Color.fromARGB(255, 54, 3, 116)),
-                        ),
-                      ),
-                      validator: (value) => FormValidation.validateContact(value),
-                    ),
-                    SizedBox(height: 20),
-                    TextFormField(
-                      controller: addressController,
-                      keyboardType: TextInputType.streetAddress,
-                      maxLines: 3,
-                      decoration: InputDecoration(
-                        labelText: "Address",
-                        prefixIcon: Icon(Icons.location_on, color: Color.fromARGB(255, 54, 3, 116)),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Colors.grey.shade300),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: Color.fromARGB(255, 54, 3, 116)),
-                        ),
-                      ),
-                      validator: (value) => FormValidation.validateAddress(value),
-                    ),
-                    SizedBox(height: 40),
+                    SizedBox(height: 24),
                     SizedBox(
                       width: double.infinity,
                       height: 50,
                       child: ElevatedButton(
-                        onPressed: () async {
-                          if (formkey.currentState!.validate()) {
-                            setState(() => isLoading = true);
-                            await update();
-                            setState(() => isLoading = false);
-                          }
-                        },
+                        onPressed: update,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Color.fromARGB(255, 3, 1, 68),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(10),
                           ),
                         ),
-                        child: isLoading
-                            ? CircularProgressIndicator(color: Colors.white)
-                            : Text(
-                                "Save Changes",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                        child: Text(
+                          "Update Profile",
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
+                        ),
                       ),
                     ),
                   ],

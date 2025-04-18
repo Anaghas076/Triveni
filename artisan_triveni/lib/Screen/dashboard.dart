@@ -99,7 +99,7 @@ class _OrdersDataState extends State<Orders> {
           .from('tbl_booking')
           .select(
               "*, tbl_cart(*, tbl_product(*)), tbl_user(user_name, user_contact, user_id)")
-          .eq('booking_status', 2);
+          .eq('booking_status', 5);
 
       List<Map<String, dynamic>> orders = [];
 
@@ -344,7 +344,7 @@ class _OrdersDataState extends State<Orders> {
                       final booking = recentBookings[index];
                       return ListTile(
                         leading: CircleAvatar(
-                          backgroundColor: Colors.blue,
+                          backgroundColor: const Color.fromARGB(255, 3, 1, 68),
                           child: Text(
                             booking['tbl_user']['user_name'][0].toUpperCase(),
                             style: TextStyle(color: Colors.white),
@@ -419,7 +419,7 @@ class _OrdersDataState extends State<Orders> {
                                             "User Name",
                                         style: TextStyle(
                                             fontSize: 14,
-                                            color: Colors.grey,
+                                            color: Colors.black,
                                             fontWeight: FontWeight.bold),
                                       ),
                                       SizedBox(height: 5),
@@ -427,19 +427,25 @@ class _OrdersDataState extends State<Orders> {
                                         bookingItems['user_contact'] ??
                                             "User Contact",
                                         style: TextStyle(
-                                            fontSize: 14, color: Colors.green),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14,
+                                            color: Colors.green),
                                       ),
                                       SizedBox(height: 5),
                                       Text(
                                         "Date: ${bookingItems['created_at']}",
                                         style: TextStyle(
-                                            fontSize: 14, color: Colors.grey),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14,
+                                            color: Colors.black),
                                       ),
                                       SizedBox(height: 5),
                                       Text(
                                         "Total Amount: ₹${bookingItems['booking_amount']}",
                                         style: TextStyle(
-                                            fontSize: 14, color: Colors.green),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14,
+                                            color: Colors.green),
                                       ),
 
                                       SizedBox(height: 10),
@@ -512,13 +518,13 @@ class _OrdersDataState extends State<Orders> {
                                             children: [
                                               if (bookingItems[
                                                       'booking_status'] ==
-                                                  2)
+                                                  5)
                                                 ElevatedButton(
                                                   onPressed: () {
                                                     order(
                                                         bookingItems[
                                                             'booking_id'],
-                                                        3);
+                                                        6);
                                                   },
                                                   child: Text(
                                                     "Accept",
@@ -530,13 +536,13 @@ class _OrdersDataState extends State<Orders> {
                                                 ),
                                               if (bookingItems[
                                                       'booking_status'] ==
-                                                  3)
+                                                  6)
                                                 ElevatedButton(
                                                   onPressed: () {
                                                     order(
                                                         bookingItems[
                                                             'booking_id'],
-                                                        4);
+                                                        7);
                                                   },
                                                   child: Text(
                                                     "Complete",
@@ -549,15 +555,15 @@ class _OrdersDataState extends State<Orders> {
                                             ],
                                           ),
                                           Text(
-                                            bookingItems['booking_status'] == 2
+                                            bookingItems['booking_status'] == 5
                                                 ? "New Order"
                                                 : bookingItems[
                                                             'booking_status'] ==
-                                                        3
+                                                        6
                                                     ? " Accepted"
                                                     : bookingItems[
                                                                 'booking_status'] >=
-                                                            4
+                                                            7
                                                         ? " Completed"
                                                         : "Unknown Status",
                                             style: TextStyle(

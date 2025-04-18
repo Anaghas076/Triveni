@@ -1,10 +1,12 @@
-import 'package:admin_triveni/screen/custom.dart';
 import 'package:admin_triveni/main.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:intl/intl.dart';
 import 'package:googleapis_auth/auth_io.dart' as auth;
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:photo_view/photo_view.dart';
+import 'package:photo_view/photo_view_gallery.dart';
 
 class Booking extends StatefulWidget {
   const Booking({super.key});
@@ -101,6 +103,69 @@ class _MybookingDataState extends State<Booking> {
       }
     } catch (e) {
       print("Failed Notification: $e");
+    }
+  }
+
+  Future<void> showCustomImage(int cartId) async {
+    try {
+      final response = await supabase
+          .from('tbl_customization')
+          .select('customization_photo,customization_description')
+          .eq('cart_id', cartId);
+
+      if (response == null || response.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('No custom images found.')),
+        );
+        return;
+      }
+
+      showDialog(
+        context: context,
+        builder: (context) {
+          return Dialog(
+            child: SizedBox(
+              width: 350,
+              height: 400,
+              child: Column(
+                children: [
+                  Expanded(
+                    child: PhotoViewGallery.builder(
+                      itemCount: response.length,
+                      builder: (context, index) {
+                        final imgUrl = response[index]['customization_photo'];
+                        return PhotoViewGalleryPageOptions(
+                          imageProvider: NetworkImage(imgUrl),
+                          minScale: PhotoViewComputedScale.contained,
+                          maxScale: PhotoViewComputedScale.covered * 2,
+                        );
+                      },
+                      scrollPhysics: BouncingScrollPhysics(),
+                      backgroundDecoration: BoxDecoration(color: Colors.white),
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(8),
+                    child: Text(
+                      response[0]['customization_description'] ?? '',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text('Close'),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    } catch (e) {
+      print("Error fetching custom image: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error loading images')),
+      );
     }
   }
 
@@ -407,12 +472,17 @@ class _MybookingDataState extends State<Booking> {
     );
   }
 
+  String formatDate(String timestamp) {
+    DateTime parsedDate = DateTime.parse(timestamp);
+    return DateFormat('dd-MM-yyyy').format(parsedDate);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Booking List"),
-        backgroundColor: Colors.blue,
+        // backgroundColor: Colors.blue,
         actions: [
           ElevatedButton(
             onPressed: () async {
@@ -458,11 +528,11 @@ class _MybookingDataState extends State<Booking> {
                   ),
                   SizedBox(height: 5),
                   Text(
-                    "Date: ${bookingItems['created_at']}",
+                    "Date: ${formatDate(bookingItems['created_at'])}",
                     style: TextStyle(
                         fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black),
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 5),
                   Text(
@@ -499,13 +569,7 @@ class _MybookingDataState extends State<Booking> {
                             cartItem['isCustom']
                                 ? ElevatedButton(
                                     onPressed: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => Viewdesign(
-                                              cartId: cartItem['cart_id'],
-                                            ),
-                                          ));
+                                      showCustomImage(cartItem['cart_id']);
                                     },
                                     child: Text("View Design",
                                         style: TextStyle(

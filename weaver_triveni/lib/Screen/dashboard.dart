@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:weaver_triveni/screen/custom.dart';
+
 import 'package:weaver_triveni/main.dart';
+import 'package:intl/intl.dart';
+import 'package:photo_view/photo_view.dart';
+import 'package:photo_view/photo_view_gallery.dart';
 
 class Orders extends StatefulWidget {
   const Orders({super.key});
@@ -27,6 +30,69 @@ class _OrdersDataState extends State<Orders> {
     fetchBooking();
     fetchName();
     fetchStats();
+  }
+
+  Future<void> showCustomImage(int cartId) async {
+    try {
+      final response = await supabase
+          .from('tbl_customization')
+          .select('customization_photo,customization_description')
+          .eq('cart_id', cartId);
+
+      if (response == null || response.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('No custom images found.')),
+        );
+        return;
+      }
+
+      showDialog(
+        context: context,
+        builder: (context) {
+          return Dialog(
+            child: SizedBox(
+              width: 350,
+              height: 400,
+              child: Column(
+                children: [
+                  Expanded(
+                    child: PhotoViewGallery.builder(
+                      itemCount: response.length,
+                      builder: (context, index) {
+                        final imgUrl = response[index]['customization_photo'];
+                        return PhotoViewGalleryPageOptions(
+                          imageProvider: NetworkImage(imgUrl),
+                          minScale: PhotoViewComputedScale.contained,
+                          maxScale: PhotoViewComputedScale.covered * 2,
+                        );
+                      },
+                      scrollPhysics: BouncingScrollPhysics(),
+                      backgroundDecoration: BoxDecoration(color: Colors.white),
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(8),
+                    child: Text(
+                      response[0]['customization_description'] ?? '',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text('Close'),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    } catch (e) {
+      print("Error fetching custom image: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error loading images')),
+      );
+    }
   }
 
   Future<void> fetchBooking() async {
@@ -140,6 +206,11 @@ class _OrdersDataState extends State<Orders> {
     } catch (e) {
       print("Error: $e");
     }
+  }
+
+  String formatDate(String timestamp) {
+    DateTime parsedDate = DateTime.parse(timestamp);
+    return DateFormat('dd-MM-yyyy').format(parsedDate);
   }
 
   Future<void> fetchName() async {
@@ -280,19 +351,30 @@ class _OrdersDataState extends State<Orders> {
                       final booking = recentBookings[index];
                       return ListTile(
                         leading: CircleAvatar(
-                          backgroundColor: Colors.blue,
+                          backgroundColor: const Color.fromARGB(255, 3, 1, 68),
                           child: Text(
                             booking['tbl_user']['user_name'][0].toUpperCase(),
-                            style: TextStyle(color: Colors.white),
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
-                        title: Text(booking['tbl_user']['user_name']),
+                        title: Text(
+                          booking['tbl_user']['user_name'],
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                         subtitle: Text(
                           booking['created_at'] != null
                               ? booking['created_at']
                                   .toString()
                                   .substring(0, 10)
                               : '',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                         trailing: Text(
                           '₹${booking['booking_amount']}',
@@ -355,7 +437,7 @@ class _OrdersDataState extends State<Orders> {
                                             "User Name",
                                         style: TextStyle(
                                             fontSize: 14,
-                                            color: Colors.grey,
+                                            color: Colors.black,
                                             fontWeight: FontWeight.bold),
                                       ),
                                       SizedBox(height: 5),
@@ -363,19 +445,25 @@ class _OrdersDataState extends State<Orders> {
                                         bookingItems['user_contact'] ??
                                             "User Contact",
                                         style: TextStyle(
-                                            fontSize: 14, color: Colors.green),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14,
+                                            color: Colors.green),
                                       ),
                                       SizedBox(height: 5),
                                       Text(
-                                        "Date: ${bookingItems['created_at']}",
+                                        "Date: ${formatDate(bookingItems['created_at'])}",
                                         style: TextStyle(
-                                            fontSize: 14, color: Colors.grey),
+                                            fontSize: 14,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold),
                                       ),
                                       SizedBox(height: 5),
                                       Text(
                                         "Total Amount: ₹${bookingItems['booking_amount']}",
                                         style: TextStyle(
-                                            fontSize: 14, color: Colors.green),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14,
+                                            color: Colors.green),
                                       ),
 
                                       SizedBox(height: 10),
@@ -413,16 +501,9 @@ class _OrdersDataState extends State<Orders> {
                                                 cartItem['isCustom']
                                                     ? ElevatedButton(
                                                         onPressed: () {
-                                                          Navigator.push(
-                                                              context,
-                                                              MaterialPageRoute(
-                                                                builder:
-                                                                    (context) =>
-                                                                        Viewdesign(
-                                                                  cartId: cartItem[
-                                                                      'cart_id'],
-                                                                ),
-                                                              ));
+                                                          showCustomImage(
+                                                              cartItem[
+                                                                  'cart_id']);
                                                         },
                                                         child: Text(
                                                             "View Design",

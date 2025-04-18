@@ -190,13 +190,13 @@ class _MyDesignState extends State<MyDesign>
                     ),
                   ),
                 ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _showAddDesignDialog(context);
-        },
-        backgroundColor: Color.fromARGB(255, 3, 1, 68),
-        child: Icon(Icons.add, color: Colors.white),
-      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     _showAddDesignDialog(context);
+      //   },
+      //   backgroundColor: Color.fromARGB(255, 3, 1, 68),
+      //   child: Icon(Icons.add, color: Colors.white),
+      // ),
     );
   }
 

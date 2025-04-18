@@ -1,6 +1,6 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:weaver_triveni/Screen/daily.dart';
+
 import 'package:weaver_triveni/main.dart';
 import 'package:weaver_triveni/screen/dashboard.dart';
 
@@ -20,10 +20,9 @@ class _HomepageState extends State<Homepage> {
 
   // List of pages for bottom navigation
   final List<Widget> pageContent = [
-    Orders(), // New HomeScreen widget
-    Profile(), // Dummy category page
+    Orders(),
     Myorder(),
-    DailyWeaver(),
+    Profile(),
   ];
 
   Future<void> saveFcmToken() async {
@@ -78,10 +77,9 @@ class _HomepageState extends State<Homepage> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
           BottomNavigationBarItem(
-              icon: Icon(Icons.person), label: "My Account"),
-          BottomNavigationBarItem(
               icon: Icon(Icons.shopping_bag), label: "My Orders"),
-          BottomNavigationBarItem(icon: Icon(Icons.money), label: "Expense"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.person), label: "My Account"),
         ],
         selectedItemColor:
             const Color.fromARGB(255, 241, 233, 7), // Color of selected icon

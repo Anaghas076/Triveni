@@ -102,7 +102,21 @@ class _ArtisanPageState extends State<ArtisanPage> {
                   TextFormField(
                     controller: nameController,
                     decoration: InputDecoration(
+                      enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: BorderSide(
+                            color: const Color.fromARGB(255, 3, 1, 68),
+                            width: 3,
+                          )),
                       labelText: 'Description',
+                      labelStyle: TextStyle(
+                        color: const Color.fromARGB(255, 3, 1, 68),
+                        fontWeight: FontWeight.w900,
+                      ),
+                      hintStyle: TextStyle(
+                        color: const Color.fromARGB(255, 3, 1, 68),
+                        fontWeight: FontWeight.w900,
+                      ),
                       prefixIcon: Icon(Icons.description),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(15),
@@ -120,7 +134,21 @@ class _ArtisanPageState extends State<ArtisanPage> {
                     controller: amountController,
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
+                      enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: BorderSide(
+                            color: const Color.fromARGB(255, 3, 1, 68),
+                            width: 3,
+                          )),
                       labelText: 'Amount',
+                      labelStyle: TextStyle(
+                        color: const Color.fromARGB(255, 3, 1, 68),
+                        fontWeight: FontWeight.w900,
+                      ),
+                      hintStyle: TextStyle(
+                        color: const Color.fromARGB(255, 3, 1, 68),
+                        fontWeight: FontWeight.w900,
+                      ),
                       prefixIcon: Icon(Icons.currency_rupee),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(15),

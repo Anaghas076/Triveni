@@ -59,7 +59,7 @@ class _WeaverlistState extends State<Weaverlist> {
                 crossAxisCount: 5,
                 crossAxisSpacing: 5,
                 mainAxisSpacing: 5,
-                childAspectRatio: .85, // Adjusted for better proportions
+                childAspectRatio: .75, // Adjusted for better proportions
               ),
               itemCount: weavers.length,
               itemBuilder: (context, index) {

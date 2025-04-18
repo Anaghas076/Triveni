@@ -125,6 +125,7 @@ class _DashboardState extends State<Dashboard> {
             ),
             children: [
               Card(
+                color: Colors.white,
                 child: Column(
                   children: [
                     Icon(
@@ -150,6 +151,7 @@ class _DashboardState extends State<Dashboard> {
                 ),
               ),
               Card(
+                color: Colors.white,
                 child: Column(
                   children: [
                     Icon(
@@ -175,6 +177,7 @@ class _DashboardState extends State<Dashboard> {
                 ),
               ),
               Card(
+                color: Colors.white,
                 child: Column(
                   children: [
                     Icon(
@@ -200,6 +203,7 @@ class _DashboardState extends State<Dashboard> {
                 ),
               ),
               Card(
+                color: Colors.white,
                 child: Column(
                   children: [
                     Icon(
@@ -225,6 +229,7 @@ class _DashboardState extends State<Dashboard> {
                 ),
               ),
               Card(
+                color: Colors.white,
                 child: Column(
                   children: [
                     Icon(
@@ -250,6 +255,7 @@ class _DashboardState extends State<Dashboard> {
                 ),
               ),
               Card(
+                color: Colors.white,
                 child: Column(
                   children: [
                     Icon(

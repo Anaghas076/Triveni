@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:weaver_triveni/screen/custom.dart';
+import 'package:photo_view/photo_view.dart';
+import 'package:photo_view/photo_view_gallery.dart';
 import 'package:weaver_triveni/main.dart';
+
+import 'package:intl/intl.dart';
 
 class Myorder extends StatefulWidget {
   const Myorder({super.key});
@@ -12,6 +15,70 @@ class Myorder extends StatefulWidget {
 class _MyorderDataState extends State<Myorder> {
   List<Map<String, dynamic>> bookingData = [];
   int bookingid = 0;
+
+  Future<void> showCustomImage(int cartId) async {
+    try {
+      final response = await supabase
+          .from('tbl_customization')
+          .select('customization_photo,customization_description')
+          .eq('cart_id', cartId);
+
+      if (response == null || response.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('No custom images found.')),
+        );
+        return;
+      }
+
+      showDialog(
+        context: context,
+        builder: (context) {
+          return Dialog(
+            child: SizedBox(
+              width: 350,
+              height: 400,
+              child: Column(
+                children: [
+                  Expanded(
+                    child: PhotoViewGallery.builder(
+                      itemCount: response.length,
+                      builder: (context, index) {
+                        final imgUrl = response[index]['customization_photo'];
+                        return PhotoViewGalleryPageOptions(
+                          imageProvider: NetworkImage(imgUrl),
+                          minScale: PhotoViewComputedScale.contained,
+                          maxScale: PhotoViewComputedScale.covered * 2,
+                        );
+                      },
+                      scrollPhysics: BouncingScrollPhysics(),
+                      backgroundDecoration: BoxDecoration(color: Colors.white),
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.all(8),
+                    child: Text(
+                      response[0]['customization_description'] ?? '',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    child: Text('Close'),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    } catch (e) {
+      print("Error fetching custom image: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error loading images')),
+      );
+    }
+  }
+
   Future<void> fetchBooking() async {
     try {
       final response = await supabase
@@ -90,6 +157,11 @@ class _MyorderDataState extends State<Myorder> {
     }
   }
 
+  String formatDate(String timestamp) {
+    DateTime parsedDate = DateTime.parse(timestamp);
+    return DateFormat('dd-MM-yyyy').format(parsedDate);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -123,23 +195,32 @@ class _MyorderDataState extends State<Myorder> {
                           bookingItems['user_name'] ?? "User Name",
                           style: TextStyle(
                               fontSize: 14,
-                              color: Colors.grey,
+                              color: Colors.black,
                               fontWeight: FontWeight.bold),
                         ),
                         SizedBox(height: 5),
                         Text(
                           bookingItems['user_contact'] ?? "User Contact",
-                          style: TextStyle(fontSize: 14, color: Colors.green),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                              color: Colors.green),
                         ),
                         SizedBox(height: 5),
                         Text(
-                          "Date: ${bookingItems['created_at']}",
-                          style: TextStyle(fontSize: 14, color: Colors.grey),
+                          "Date: ${formatDate(bookingItems['created_at'])}",
+                          style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold),
                         ),
                         SizedBox(height: 5),
                         Text(
                           "Total Amount: ₹${bookingItems['booking_amount']}",
-                          style: TextStyle(fontSize: 14, color: Colors.green),
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                              color: Colors.green),
                         ),
 
                         SizedBox(height: 10),
@@ -168,15 +249,8 @@ class _MyorderDataState extends State<Myorder> {
                                   cartItem['isCustom']
                                       ? ElevatedButton(
                                           onPressed: () {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      Viewdesign(
-                                                    cartId: cartItem['cart_id'],
-                                                    // customs:cartItem['customData']
-                                                  ),
-                                                ));
+                                            showCustomImage(
+                                                cartItem['cart_id']);
                                           },
                                           child: Text("View Design",
                                               style: TextStyle(

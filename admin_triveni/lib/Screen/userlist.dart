@@ -39,11 +39,11 @@ class _UserlistState extends State<Userlist> {
           : GridView.builder(
               padding: EdgeInsets.all(10),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 5,
-                crossAxisSpacing: 5,
-                mainAxisSpacing: 5,
-                childAspectRatio: 1.75, // Adjusted for better proportions
-              ),
+                  crossAxisCount: 5,
+                  crossAxisSpacing: 5,
+                  mainAxisSpacing: 5,
+                  childAspectRatio: 1.50 // Adjusted for better proportions
+                  ),
               itemCount: users.length,
               itemBuilder: (context, index) {
                 final data = users[index];

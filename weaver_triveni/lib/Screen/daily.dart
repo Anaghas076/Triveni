@@ -33,6 +33,7 @@ class _DailyWeaverState extends State<DailyWeaver> {
       final response = await supabase
           .from('tbl_daily')
           .select()
+          .eq('weaver_id', supabase.auth.currentUser!.id)
           .not('weaver_id', 'is', null)
           .order('created_at', ascending: false);
 
@@ -129,8 +130,25 @@ class _DailyWeaverState extends State<DailyWeaver> {
                   TextFormField(
                     controller: nameController,
                     decoration: InputDecoration(
+                      enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: BorderSide(
+                            color: const Color.fromARGB(255, 3, 1, 68),
+                            width: 3,
+                          )),
                       labelText: 'Description',
-                      prefixIcon: Icon(Icons.description),
+                      labelStyle: TextStyle(
+                        color: const Color.fromARGB(255, 3, 1, 68),
+                        fontWeight: FontWeight.w900,
+                      ),
+                      hintStyle: TextStyle(
+                        color: const Color.fromARGB(255, 3, 1, 68),
+                        fontWeight: FontWeight.w900,
+                      ),
+                      prefixIcon: Icon(
+                        Icons.description,
+                        color: const Color.fromARGB(255, 3, 1, 68),
+                      ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(15),
                       ),
@@ -147,8 +165,25 @@ class _DailyWeaverState extends State<DailyWeaver> {
                     controller: amountController,
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
+                      enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(30),
+                          borderSide: BorderSide(
+                            color: const Color.fromARGB(255, 3, 1, 68),
+                            width: 3,
+                          )),
                       labelText: 'Amount',
-                      prefixIcon: Icon(Icons.currency_rupee),
+                      labelStyle: TextStyle(
+                        color: const Color.fromARGB(255, 3, 1, 68),
+                        fontWeight: FontWeight.w900,
+                      ),
+                      hintStyle: TextStyle(
+                        color: const Color.fromARGB(255, 3, 1, 68),
+                        fontWeight: FontWeight.w900,
+                      ),
+                      prefixIcon: Icon(
+                        Icons.currency_rupee,
+                        color: const Color.fromARGB(255, 3, 1, 68),
+                      ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(15),
                       ),
@@ -169,7 +204,8 @@ class _DailyWeaverState extends State<DailyWeaver> {
                     children: [
                       ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red,
+                          backgroundColor:
+                              const Color.fromARGB(255, 223, 53, 41),
                           padding: EdgeInsets.symmetric(
                               horizontal: 30, vertical: 15),
                           shape: RoundedRectangleBorder(
@@ -241,6 +277,10 @@ class _DailyWeaverState extends State<DailyWeaver> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
         title: Text('Financial Overview',
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         backgroundColor: const Color.fromARGB(255, 3, 1, 68),
