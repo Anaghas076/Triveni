@@ -20,9 +20,10 @@ class _HomepageState extends State<Homepage> {
   // List of pages for bottom navigation
   final List<Widget> pageContent = [
     Homecontent(), // New HomeScreen widget
-    Profile(), // Dummy category page
-    Myorder(),
     Search(),
+    Myorder(),
+
+    Profile(),
   ];
 
   Future<void> saveFcmToken() async {
@@ -68,7 +69,10 @@ class _HomepageState extends State<Homepage> {
             ),
             Text(
               "Handloom with heritage, fashion with soul",
-              style: TextStyle(color: Colors.white, fontSize: 10),
+              style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 10),
             )
           ],
         ),
@@ -120,11 +124,11 @@ class _HomepageState extends State<Homepage> {
         type: BottomNavigationBarType.fixed, // Ensure all icons are visible
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.person), label: "My Profile"),
+          BottomNavigationBarItem(icon: Icon(Icons.search), label: "Search"),
           BottomNavigationBarItem(
               icon: Icon(Icons.shopping_bag), label: "My Orders"),
-          BottomNavigationBarItem(icon: Icon(Icons.wallet), label: "Wallet"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.person), label: "My Profile"),
         ],
         selectedItemColor:
             const Color.fromARGB(255, 241, 233, 7), // Color of selected icon

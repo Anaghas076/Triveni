@@ -386,6 +386,23 @@ class _CategorySearchState extends State<CategorySearch> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: const Color.fromARGB(255, 3, 1, 68),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        title: Text(
+          "Category-wise search",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
@@ -435,6 +452,6 @@ class _CategorySearchState extends State<CategorySearch> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     // Example: Adjust ratio based on screen width and desired height
-    return (screenWidth / 2) / (screenHeight * 0.4); // Customize as needed
+    return (screenWidth / 2) / (screenHeight * 0.45); // Customize as needed
   }
 }

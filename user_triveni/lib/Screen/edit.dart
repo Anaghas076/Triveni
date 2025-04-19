@@ -21,7 +21,7 @@ class _EditState extends State<Edit> {
           .select()
           .eq('user_id', supabase.auth.currentUser!.id)
           .single();
-      
+
       setState(() {
         nameController.text = response['user_name'] ?? '';
         contactController.text = response['user_contact'] ?? '';
@@ -110,13 +110,15 @@ class _EditState extends State<Edit> {
                               controller: nameController,
                               decoration: InputDecoration(
                                 labelText: "Name",
-                                prefixIcon: Icon(Icons.person, color: Color.fromARGB(255, 54, 3, 116)),
+                                prefixIcon: Icon(Icons.person,
+                                    color: Color.fromARGB(255, 54, 3, 116)),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(color: Color.fromARGB(255, 3, 1, 68)),
+                                  borderSide: BorderSide(
+                                      color: Color.fromARGB(255, 3, 1, 68)),
                                 ),
                               ),
                               validator: (value) {
@@ -131,18 +133,26 @@ class _EditState extends State<Edit> {
                               controller: contactController,
                               decoration: InputDecoration(
                                 labelText: "Contact",
-                                prefixIcon: Icon(Icons.phone, color: Color.fromARGB(255, 54, 3, 116)),
+                                prefixIcon: Icon(Icons.phone,
+                                    color: Color.fromARGB(255, 54, 3, 116)),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(color: Color.fromARGB(255, 3, 1, 68)),
+                                  borderSide: BorderSide(
+                                      color: Color.fromARGB(255, 3, 1, 68)),
                                 ),
                               ),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
                                   return 'Please enter your contact number';
+                                }
+                                // Regex for 10-digit contact number (you can modify this pattern for specific formats)
+                                String pattern = r'^[0-9]{10}$';
+                                RegExp regExp = RegExp(pattern);
+                                if (!regExp.hasMatch(value)) {
+                                  return 'Please enter a valid 10-digit contact number';
                                 }
                                 return null;
                               },
@@ -153,13 +163,15 @@ class _EditState extends State<Edit> {
                               maxLines: 3,
                               decoration: InputDecoration(
                                 labelText: "Address",
-                                prefixIcon: Icon(Icons.location_on, color: Color.fromARGB(255, 54, 3, 116)),
+                                prefixIcon: Icon(Icons.location_on,
+                                    color: Color.fromARGB(255, 54, 3, 116)),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10),
-                                  borderSide: BorderSide(color: Color.fromARGB(255, 3, 1, 68)),
+                                  borderSide: BorderSide(
+                                      color: Color.fromARGB(255, 3, 1, 68)),
                                 ),
                               ),
                               validator: (value) {
@@ -188,9 +200,9 @@ class _EditState extends State<Edit> {
                         child: Text(
                           "Update Profile",
                           style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
                         ),
                       ),
                     ),

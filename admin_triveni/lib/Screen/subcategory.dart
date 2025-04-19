@@ -118,7 +118,7 @@ class _SubcategoryState extends State<Subcategory> {
             DropdownButtonFormField(
                 validator: (value) => FormValidation.validateDropdown(value),
                 style: TextStyle(color: Colors.white),
-                dropdownColor: Colors.green,
+                dropdownColor: const Color.fromARGB(255, 126, 126, 211),
                 decoration: InputDecoration(
                   fillColor: const Color.fromARGB(255, 54, 3, 116),
                   filled: true,

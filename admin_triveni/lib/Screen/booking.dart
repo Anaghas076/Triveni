@@ -1,10 +1,12 @@
-import 'package:admin_triveni/screen/custom.dart';
 import 'package:admin_triveni/main.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:intl/intl.dart';
 import 'package:googleapis_auth/auth_io.dart' as auth;
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:photo_view/photo_view.dart';
+import 'package:photo_view/photo_view_gallery.dart';
 
 class Booking extends StatefulWidget {
   const Booking({super.key});
@@ -99,50 +101,6 @@ class _MybookingDataState extends State<Booking> {
       } else {
         print(
             'Failed to send FCM message: ${response.statusCode} - ${response.body}');
-      }
-    } catch (e) {
-      print("Failed Notification: $e");
-    }
-  }
-
-  Future<void> multiNotification(
-      List<String> userTokens, String title, String subtitle) async {
-    try {
-      final String serverKey = await getAccessToken();
-      const String projectId = "kerala-traditional-wear"; // Update this!
-      final String fcmEndpoint =
-          'https://fcm.googleapis.com/v1/projects/$projectId/messages:send';
-
-      // Iterate through each user token
-      for (String userToken in userTokens) {
-        final Map<String, dynamic> message = {
-          'message': {
-            'token': userToken,
-            'notification': {
-              'title': title,
-              'body': subtitle,
-            },
-            'data': {
-              'current_user_fcm_token': userToken,
-            },
-          }
-        };
-
-        final response = await http.post(
-          Uri.parse(fcmEndpoint),
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer $serverKey',
-          },
-          body: jsonEncode(message),
-        );
-
-        if (response.statusCode == 200) {
-          print('FCM message sent successfully to $userToken');
-        } else {
-          print(
-              'Failed to send FCM message to $userToken: ${response.statusCode} - ${response.body}');
-        }
       }
     } catch (e) {
       print("Failed Notification: $e");
@@ -485,12 +443,26 @@ class _MybookingDataState extends State<Booking> {
     );
   }
 
+  String formatDate(String timestamp) {
+    DateTime parsedDate = DateTime.parse(timestamp);
+    return DateFormat('dd-MM-yyyy').format(parsedDate);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text("Booking List"),
         backgroundColor: Colors.blue,
+        actions: [
+          ElevatedButton(
+            onPressed: () async {
+              await sendPushNotification(
+                  "frynePeoSXurtWqkw4Nifs:APA91bGvSOWsy7LT8hQqzHmOouGh163eDY-J0BE4G1UEZ4ATfbG_QTCXAqiC_E0ays2J0BZBnfmuO924wDJO7cuM_Vo_RpwU-Rmj5mvuH9HTt6zcnagUK2g"); // Replace with actual token
+            },
+            child: Text("Notify"),
+          ),
+        ],
       ),
       body: ListView.builder(
         padding: EdgeInsets.all(10),
@@ -527,11 +499,11 @@ class _MybookingDataState extends State<Booking> {
                   ),
                   SizedBox(height: 5),
                   Text(
-                    "Date: ${bookingItems['created_at']}",
+                    "Date: ${formatDate(bookingItems['created_at'])}",
                     style: TextStyle(
                         fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black),
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 5),
                   Text(
@@ -568,13 +540,7 @@ class _MybookingDataState extends State<Booking> {
                             cartItem['isCustom']
                                 ? ElevatedButton(
                                     onPressed: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) => Viewdesign(
-                                              cartId: cartItem['cart_id'],
-                                            ),
-                                          ));
+                                      showCustomImage(cartItem['cart_id']);
                                     },
                                     child: Text("View Design",
                                         style: TextStyle(

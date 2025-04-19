@@ -34,7 +34,7 @@ class _ArejectedlistState extends State<Arejectedlist> {
           .update({'artisan_status': status}).eq('artisan_id', artisanId);
 
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text("artisan Accepted"),
+        content: Text("Artisan Accepted"),
         backgroundColor: const Color.fromARGB(255, 27, 1, 69),
       ));
 
@@ -108,9 +108,6 @@ class _ArejectedlistState extends State<Arejectedlist> {
                                 Text(data['artisan_address'] ?? " "),
                                 Text(data['artisan_contact'] ?? " "),
                                 Text(data['artisan_email'] ?? " "),
-                                Text(
-                                  data['artisan_password'] ?? " ",
-                                ),
                               ],
                             ),
                           ),
