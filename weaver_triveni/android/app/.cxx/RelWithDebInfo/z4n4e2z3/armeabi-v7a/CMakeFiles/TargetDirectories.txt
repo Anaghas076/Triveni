@@ -1,0 +1,2 @@
+C:/Projects/Triveni-Flutter-App/weaver_triveni/android/app/.cxx/RelWithDebInfo/z4n4e2z3/armeabi-v7a/CMakeFiles/edit_cache.dir
+C:/Projects/Triveni-Flutter-App/weaver_triveni/android/app/.cxx/RelWithDebInfo/z4n4e2z3/armeabi-v7a/CMakeFiles/rebuild_cache.dir

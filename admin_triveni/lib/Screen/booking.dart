@@ -64,7 +64,8 @@ class _MybookingDataState extends State<Booking> {
     return credentials.accessToken.data;
   }
 
-  Future<void> sendPushNotification(String userToken) async {
+  Future<void> sendPushNotification(
+      String title, String subtitle, String userToken) async {
     try {
       final String serverKey = await getAccessToken();
       const String projectId = "kerala-traditional-wear"; // Update this!
@@ -75,8 +76,8 @@ class _MybookingDataState extends State<Booking> {
         'message': {
           'token': userToken,
           'notification': {
-            'title': 'New Booking Request',
-            'body': 'You have a new task assigned for booking #$bookingid',
+            'title': title,
+            'body': subtitle,
           },
           'data': {
             'current_user_fcm_token': userToken,
@@ -98,6 +99,50 @@ class _MybookingDataState extends State<Booking> {
       } else {
         print(
             'Failed to send FCM message: ${response.statusCode} - ${response.body}');
+      }
+    } catch (e) {
+      print("Failed Notification: $e");
+    }
+  }
+
+  Future<void> multiNotification(
+      List<String> userTokens, String title, String subtitle) async {
+    try {
+      final String serverKey = await getAccessToken();
+      const String projectId = "kerala-traditional-wear"; // Update this!
+      final String fcmEndpoint =
+          'https://fcm.googleapis.com/v1/projects/$projectId/messages:send';
+
+      // Iterate through each user token
+      for (String userToken in userTokens) {
+        final Map<String, dynamic> message = {
+          'message': {
+            'token': userToken,
+            'notification': {
+              'title': title,
+              'body': subtitle,
+            },
+            'data': {
+              'current_user_fcm_token': userToken,
+            },
+          }
+        };
+
+        final response = await http.post(
+          Uri.parse(fcmEndpoint),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $serverKey',
+          },
+          body: jsonEncode(message),
+        );
+
+        if (response.statusCode == 200) {
+          print('FCM message sent successfully to $userToken');
+        } else {
+          print(
+              'Failed to send FCM message to $userToken: ${response.statusCode} - ${response.body}');
+        }
       }
     } catch (e) {
       print("Failed Notification: $e");
@@ -170,44 +215,77 @@ class _MybookingDataState extends State<Booking> {
     }
   }
 
-  Future<void> order(int bookingId, int status, {String? recipientType}) async {
+  Future<void> order(int bookingId, int status) async {
     try {
       await supabase
           .from('tbl_booking')
           .update({'booking_status': status}).eq('booking_id', bookingId);
-
+      final user = await supabase
+          .from('tbl_booking')
+          .select('fcm_token')
+          .eq('booking_id', bookingId)
+          .single();
       // Only process FCM notification if recipientType is provided
-      if (recipientType != null) {
-        // Fetch the recipient's FCM token
-        String? userToken;
-        final booking =
-            bookingData.firstWhere((b) => b['booking_id'] == bookingId);
-        final recipientId = recipientType == 'weaver'
-            ? booking['weaver_id']
-            : booking['artisan_id'];
-
-        if (recipientId != null) {
-          final response = await supabase
-              .from('tbl_user') // Adjust table name if different
-              .select('fcm_token')
-              .eq('id', recipientId)
-              .single();
-
-          userToken = response['fcm_token'] as String?;
-        }
-
-        // Send push notification
-        if (userToken != null) {
-          setState(() {
-            bookingid = bookingId; // Set bookingid for notification message
-          });
-          // await sendPushNotification(userToken);
-        }
+      if (status == 2) {
+        await weaverNotificatin();
+      } else if (status == 5) {
+        await artisanNotificatin();
+      } else if (status == 9) {
+        sendPushNotification(
+            "Item Packed", "Complete Payment!", user['fcm_token']);
+      } else if (status == 11) {
+        sendPushNotification(
+            "Item Shipped", "Item is out for delivery!", user['fcm_token']);
+      } else if (status == 12) {
+        sendPushNotification("Item Delivered", "Item Delivered Successfully!",
+            user['fcm_token']);
       }
 
       fetchBooking();
     } catch (e) {
       print("Error: $e");
+    }
+  }
+
+  Future<void> weaverNotificatin() async {
+    try {
+      final response = await supabase
+          .from('tbl_weaver')
+          .select('fcm_token')
+          .eq('weaver_id', supabase.auth.currentUser!.id)
+          .eq('weaver_status', 1);
+      List<String> weaver = [];
+      for (var data in response) {
+        weaver.add(data['fcm_token']);
+      }
+      multiNotification(weaver, "New Work Assignment",
+          "New Work Assignment Available. Check it out!");
+    } catch (e) {
+      print("Error fetcing weaver: $e");
+    }
+  }
+
+  Future<void> artisanNotificatin() async {
+    try {
+      final response = await supabase
+          .from('tbl_artisan')
+          .select('fcm_token')
+          .eq('artisan_id', supabase.auth.currentUser!.id)
+          .eq('artisan_status', 1);
+      List<String> artisan = [];
+      for (var data in response) {
+        artisan.add(data['fcm_token']);
+      }
+      multiNotification(artisan, "New Work Assignment",
+          "New Work Assignment Available. Check it out!");
+    } catch (e) {
+      print("Error fetcing artisan: $e");
+    }
+  }
+
+  void userNotification(String title, String subtitle, String userId) {
+    try {} catch (e) {
+      print("Error fetching user: $e");
     }
   }
 
@@ -413,15 +491,6 @@ class _MybookingDataState extends State<Booking> {
       appBar: AppBar(
         title: Text("Booking List"),
         backgroundColor: Colors.blue,
-        actions: [
-          ElevatedButton(
-            onPressed: () async {
-              await sendPushNotification(
-                  "frynePeoSXurtWqkw4Nifs:APA91bGvSOWsy7LT8hQqzHmOouGh163eDY-J0BE4G1UEZ4ATfbG_QTCXAqiC_E0ays2J0BZBnfmuO924wDJO7cuM_Vo_RpwU-Rmj5mvuH9HTt6zcnagUK2g"); // Replace with actual token
-            },
-            child: Text("Notify"),
-          ),
-        ],
       ),
       body: ListView.builder(
         padding: EdgeInsets.all(10),
@@ -533,8 +602,7 @@ class _MybookingDataState extends State<Booking> {
                           if (bookingItems['booking_status'] == 1)
                             ElevatedButton(
                               onPressed: () {
-                                order(bookingItems['booking_id'], 2,
-                                    recipientType: 'weaver');
+                                order(bookingItems['booking_id'], 2);
                               },
                               child: Text(
                                 "Publish To Weaver",
@@ -545,8 +613,7 @@ class _MybookingDataState extends State<Booking> {
                           if (bookingItems['booking_status'] == 4)
                             ElevatedButton(
                               onPressed: () {
-                                order(bookingItems['booking_id'], 5,
-                                    recipientType: 'artisan');
+                                order(bookingItems['booking_id'], 5);
                               },
                               child: Text(
                                 "Publish to Artisan",
